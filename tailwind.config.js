@@ -14,6 +14,16 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                coffee: {
+                    espresso: '#2C1A14',
+                    mocha: '#6F4E37',
+                    latte: '#FDFBF7',
+                    amber: '#C87D55',
+                    cream: '#F4EBE1',
+                    roast: '#4A2C21',
+                },
+            },
         },
     },
 

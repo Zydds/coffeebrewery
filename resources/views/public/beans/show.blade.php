@@ -1,0 +1,81 @@
+@extends('layouts.public')
+
+@section('title', $bean->name . ' — CoffeeHub')
+
+@section('content')
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <a href="{{ route('beans.index') }}" class="text-sm font-semibold text-coffee-amber hover:underline">
+            &larr; Back to catalog
+        </a>
+
+        <div class="mt-4 rounded-lg border border-coffee-mocha/30 bg-coffee-cream overflow-hidden">
+            @if ($bean->image_url)
+                <img src="{{ $bean->image_url }}" alt="{{ $bean->name }}" class="w-full h-64 object-cover">
+            @endif
+
+            <div class="p-6 sm:p-8">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <h1 class="text-3xl font-bold text-coffee-espresso">{{ $bean->name }}</h1>
+                    <span class="text-sm font-medium px-3 py-1 rounded-full bg-coffee-mocha/15 text-coffee-mocha">
+                        {{ $bean->category->name ?? 'Uncategorized' }}
+                    </span>
+                </div>
+
+                <dl class="mt-6 grid gap-5 sm:grid-cols-2 text-sm">
+                    <div>
+                        <dt class="text-coffee-mocha">Origin</dt>
+                        <dd class="mt-1 font-semibold text-coffee-espresso text-base">{{ $bean->origin_country }}</dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-coffee-mocha">Acidity</dt>
+                        <dd class="mt-1 text-coffee-amber text-base tracking-wider" aria-label="Acidity {{ $bean->acidity_level }} out of 5">
+                            {{ str_repeat('★', $bean->acidity_level) }}{{ str_repeat('☆', 5 - $bean->acidity_level) }}
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-coffee-mocha">Body</dt>
+                        <dd class="mt-1 text-coffee-amber text-base tracking-wider" aria-label="Body {{ $bean->body_level }} out of 5">
+                            {{ str_repeat('★', $bean->body_level) }}{{ str_repeat('☆', 5 - $bean->body_level) }}
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-coffee-mocha">Recommended Drinks</dt>
+                        <dd class="mt-1 font-medium text-coffee-espresso">
+                            @forelse ($bean->recommended_drinks ?? [] as $drink)
+                                <span class="inline-block text-xs px-2 py-0.5 rounded-full bg-white border border-coffee-mocha/30 mr-1.5 mb-1">{{ $drink }}</span>
+                            @empty
+                                <span class="text-coffee-mocha/70">None listed</span>
+                            @endforelse
+                        </dd>
+                    </div>
+                </dl>
+
+                <div class="mt-6">
+                    <h2 class="text-sm font-semibold text-coffee-mocha uppercase tracking-wider">Flavor Notes</h2>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                        @forelse ($bean->flavor_notes ?? [] as $note)
+                            <span class="text-sm px-3 py-1 rounded-full bg-coffee-amber/20 text-coffee-espresso border border-coffee-amber/40">{{ $note }}</span>
+                        @empty
+                            <span class="text-sm text-coffee-mocha/70">No flavor notes listed.</span>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 flex flex-wrap gap-3">
+            <a href="{{ route('recipes.index') }}"
+               class="px-4 py-2 rounded bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
+                Browse Recipes
+            </a>
+            <button type="button"
+                    @click="window.dispatchEvent(new CustomEvent('open-surprise'))"
+                    class="px-4 py-2 rounded border border-coffee-mocha text-coffee-espresso text-sm font-semibold hover:bg-coffee-cream transition-colors">
+                &#127922; Surprise Me Recipe
+            </button>
+        </div>
+    </div>
+@endsection
