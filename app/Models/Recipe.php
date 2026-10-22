@@ -15,8 +15,10 @@ class Recipe extends Model
         'water_temp_c',
         'grind_size',
         'ratio',
+        'brew_time_min',
         'step_by_step',
         'is_featured',
+        'cheap',
     ];
 
     protected function casts(): array
@@ -24,6 +26,27 @@ class Recipe extends Model
         return [
             'step_by_step' => 'array',
             'is_featured' => 'boolean',
+            'cheap' => 'boolean',
+            'brew_time_min' => 'integer',
+        ];
+    }
+
+    /**
+     * Grams/ml amounts for one serving when the ratio is numeric (1:N).
+     * Espresso-style ratios (small N) get an 18g dose; filter/press get 15g.
+     */
+    public function scaleInfo(): ?array
+    {
+        if (! preg_match('/^1:(\d+(?:\.\d+)?)$/', trim((string) $this->ratio), $m)) {
+            return null;
+        }
+
+        $factor = (float) $m[1];
+        $coffee = $factor <= 3 ? 18 : 15;
+
+        return [
+            'coffee_g' => $coffee,
+            'water_ml' => (int) round($coffee * $factor),
         ];
     }
 

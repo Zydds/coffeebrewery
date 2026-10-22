@@ -52,6 +52,14 @@
             </div>
 
             <div class="mt-4">
+                <x-input-label for="brew_time_min" value="Brew Time (minutes)" />
+                <x-text-input id="brew_time_min" name="brew_time_min" type="number" class="mt-1 block w-full focus:border-coffee-amber focus:ring-coffee-amber"
+                              :value="old('brew_time_min', $recipe->brew_time_min)" min="1" max="120" step="1" placeholder="e.g. 5" />
+                <p class="mt-1 text-xs text-coffee-mocha">Total time including prep. Used for the "Quick" filter.</p>
+                <x-input-error :messages="$errors->get('brew_time_min')" class="mt-2" />
+            </div>
+
+            <div class="mt-4">
                 <x-input-label for="grind_size" value="Grind Size" />
                 <x-text-input id="grind_size" name="grind_size" type="text" class="mt-1 block w-full focus:border-coffee-amber focus:ring-coffee-amber"
                               :value="old('grind_size', $recipe->grind_size)" placeholder="e.g. medium-fine" required maxlength="50" />
@@ -90,6 +98,17 @@
                     <span class="text-sm font-medium text-gray-700">Feature this recipe</span>
                 </label>
                 <x-input-error :messages="$errors->get('is_featured')" class="mt-2" />
+            </div>
+
+            <div class="mt-4">
+                <input type="hidden" name="cheap" value="0">
+                <label for="cheap" class="inline-flex items-center gap-2">
+                    <input id="cheap" name="cheap" type="checkbox" value="1"
+                           @checked(old('cheap', $recipe->cheap))
+                           class="rounded border-gray-300 text-coffee-amber focus:ring-coffee-amber">
+                    <span class="text-sm font-medium text-gray-700">Tag as cheap</span>
+                </label>
+                <x-input-error :messages="$errors->get('cheap')" class="mt-2" />
             </div>
 
             <div class="mt-6 flex items-center gap-3">

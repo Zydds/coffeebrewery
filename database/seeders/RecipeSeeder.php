@@ -12,7 +12,7 @@ class RecipeSeeder extends Seeder
 {
     public function run(): void
     {
-        $beans = CoffeeBean::all()->keyBy('name')->keyBy('name');
+        $beans = CoffeeBean::all()->keyBy('name');
         $methods = BrewMethod::all()->keyBy('name');
 
         $recipes = [
@@ -23,7 +23,9 @@ class RecipeSeeder extends Seeder
                 'water_temp_c' => 93,
                 'grind_size' => 'Medium-Fine',
                 'ratio' => '1:15',
+                'brew_time_min' => 8,
                 'is_featured' => true,
+                'cheap' => false,
                 'steps' => [
                     'Place V60 on scale and position paper filter inside. Rinse filter with hot water.',
                     'Add medium-fine ground coffee (20g) to the filter.',
@@ -40,7 +42,9 @@ class RecipeSeeder extends Seeder
                 'water_temp_c' => 90,
                 'grind_size' => 'Coarse',
                 'ratio' => '1:13',
+                'brew_time_min' => 10,
                 'is_featured' => false,
+                'cheap' => true,
                 'steps' => [
                     'Grind beans to coarse setting. Measure 30g of coffee.',
                     'Preheat French press with hot water, then discard.',
@@ -57,7 +61,9 @@ class RecipeSeeder extends Seeder
                 'water_temp_c' => 92,
                 'grind_size' => 'Fine',
                 'ratio' => '1:2',
+                'brew_time_min' => 4,
                 'is_featured' => true,
+                'cheap' => false,
                 'steps' => [
                     'Grind 20g of coffee to fine consistency, dosing into portafilter.',
                     'Distribute grounds evenly with a distribution tool.',
@@ -74,7 +80,9 @@ class RecipeSeeder extends Seeder
                 'water_temp_c' => 88,
                 'grind_size' => 'Fine',
                 'ratio' => '1:15',
+                'brew_time_min' => 7,
                 'is_featured' => false,
+                'cheap' => false,
                 'steps' => [
                     'Assemble Aeropress with paper filter. Rinse filter with hot water.',
                     'Add 15g of fine-ground coffee to chamber using inverted method.',
@@ -91,7 +99,9 @@ class RecipeSeeder extends Seeder
                 'water_temp_c' => 93,
                 'grind_size' => 'Medium',
                 'ratio' => '1:16',
+                'brew_time_min' => 8,
                 'is_featured' => false,
+                'cheap' => false,
                 'steps' => [
                     'Set up V60 with paper filter and rinse with hot water.',
                     'Add 20g of medium-ground coffee and level the bed.',
@@ -108,7 +118,9 @@ class RecipeSeeder extends Seeder
                 'water_temp_c' => 92,
                 'grind_size' => 'Coarse',
                 'ratio' => '1:12',
+                'brew_time_min' => 10,
                 'is_featured' => false,
+                'cheap' => true,
                 'steps' => [
                     'Use coarse grind. Add 32g coffee to preheated French press.',
                     'Pour 400g water at 92°C, saturating all grounds.',
@@ -125,7 +137,9 @@ class RecipeSeeder extends Seeder
                 'water_temp_c' => 85,
                 'grind_size' => 'Medium-Fine',
                 'ratio' => '1:15',
+                'brew_time_min' => 7,
                 'is_featured' => false,
+                'cheap' => false,
                 'steps' => [
                     'Use medium-fine grind. Place 15g coffee in inverted Aeropress.',
                     'Pour 200ml water at 85°C slowly over grounds.',
@@ -142,7 +156,9 @@ class RecipeSeeder extends Seeder
                 'water_temp_c' => 93,
                 'grind_size' => 'Fine',
                 'ratio' => '1:2.2',
+                'brew_time_min' => 4,
                 'is_featured' => false,
+                'cheap' => false,
                 'steps' => [
                     'Grind 19g to fine consistency for double shot.',
                     'Distribute and tamp evenly with moderate pressure.',
@@ -152,6 +168,108 @@ class RecipeSeeder extends Seeder
                     'Clean portafilter promptly for hygiene.',
                 ],
             ],
+            [
+                'bean' => 'Kapal Api Special Hitam',
+                'method' => 'Sachet Tubruk',
+                'title' => 'Kapal Api Tubruk Sachet',
+                'water_temp_c' => 95,
+                'grind_size' => 'Pre-ground sachet',
+                'ratio' => '1 sachet : 150 ml',
+                'brew_time_min' => 2,
+                'is_featured' => false,
+                'cheap' => true,
+                'steps' => [
+                    'Empty one Kapal Api sachet into your cup.',
+                    'Pour 150 ml of water at 95°C straight over the powder.',
+                    'Stir once, then let it sit for 2 minutes so the grounds settle like tubruk.',
+                    'Drink from the top and leave the sediment behind.',
+                ],
+            ],
+            [
+                'bean' => 'ABC Susu',
+                'method' => 'Sachet Susu Hangat',
+                'title' => 'ABC Susu Hangat',
+                'water_temp_c' => 90,
+                'grind_size' => 'Pre-ground sachet',
+                'ratio' => '1 sachet : 150 ml milk',
+                'brew_time_min' => 4,
+                'is_featured' => false,
+                'cheap' => true,
+                'steps' => [
+                    'Warm 150 ml of milk until steaming but not boiling.',
+                    'Pour the warm milk over one ABC Susu sachet in a cup.',
+                    'Stir well until the powder is fully dissolved.',
+                    'Enjoy a creamy, sweet café-style drink for a fraction of the price.',
+                ],
+            ],
+            [
+                'bean' => 'Nescafe Ice Roast',
+                'method' => 'Es Kopi Sachet',
+                'title' => 'Nescafe Ice Roast Citrus Iced',
+                'water_temp_c' => 90,
+                'grind_size' => 'Pre-ground sachet',
+                'ratio' => '1 sachet : 50 ml hot water + 150 ml cold water',
+                'brew_time_min' => 3,
+                'is_featured' => false,
+                'cheap' => true,
+                'steps' => [
+                    'Dissolve one Nescafe Ice Roast sachet in 50 ml of hot water and stir.',
+                    'Fill a glass with ice cubes.',
+                    'Pour the concentrated coffee over the ice, then top with 150 ml cold water.',
+                    'Stir once and serve immediately — bright, citrusy and refreshing.',
+                ],
+            ],
+            [
+                'bean' => 'Colombian Supremo',
+                'method' => 'Aeropress',
+                'title' => 'Simple Aeropress Weekday Cup',
+                'water_temp_c' => 90,
+                'grind_size' => 'Medium-Fine',
+                'ratio' => '1:14',
+                'brew_time_min' => 6,
+                'is_featured' => false,
+                'cheap' => false,
+                'steps' => [
+                    'Add 16g medium-fine coffee to the Aeropress chamber.',
+                    'Pour 220ml of water at 90°C and stir gently.',
+                    'Steep for 1 minute, then press slowly for 30 seconds.',
+                    'Serve as-is or dilute with a splash of hot water.',
+                ],
+            ],
+            [
+                'bean' => 'Java Preanger',
+                'method' => 'Espresso Machine',
+                'title' => 'Quick Double Espresso',
+                'water_temp_c' => 93,
+                'grind_size' => 'Fine',
+                'ratio' => '1:2',
+                'brew_time_min' => 3,
+                'is_featured' => false,
+                'cheap' => false,
+                'steps' => [
+                    'Grind 18g coffee fine and lock the portafilter in.',
+                    'Tamp level with light, even pressure.',
+                    'Pull for 25-30 seconds until you get roughly 36g of shot.',
+                    'Serve right away.',
+                ],
+            ],
+            [
+                'bean' => 'Gayo Aceh',
+                'method' => 'French Press',
+                'title' => 'Easy Morning French Press',
+                'water_temp_c' => 94,
+                'grind_size' => 'Coarse',
+                'ratio' => '1:15',
+                'brew_time_min' => 10,
+                'is_featured' => false,
+                'cheap' => false,
+                'steps' => [
+                    'Add 30g coarse coffee to the press.',
+                    'Pour 450ml of water at 94°C and give one stir.',
+                    'Wait 4 minutes, skim the floating grounds off the top.',
+                    'Press down slowly and pour.',
+                ],
+            ],
         ];
 
         foreach ($recipes as $recipe) {
@@ -159,17 +277,21 @@ class RecipeSeeder extends Seeder
             $method = $methods[$recipe['method']] ?? null;
 
             if ($bean && $method) {
-                Recipe::create([
-                    'coffee_bean_id' => $bean->id,
-                    'brew_method_id' => $method->id,
-                    'title' => $recipe['title'],
-                    'slug' => Str::slug($recipe['title']),
-                    'water_temp_c' => $recipe['water_temp_c'],
-                    'grind_size' => $recipe['grind_size'],
-                    'ratio' => $recipe['ratio'],
-                    'step_by_step' => $recipe['steps'],
-                    'is_featured' => $recipe['is_featured'],
-                ]);
+                Recipe::updateOrCreate(
+                    ['slug' => Str::slug($recipe['title'])],
+                    [
+                        'coffee_bean_id' => $bean->id,
+                        'brew_method_id' => $method->id,
+                        'title' => $recipe['title'],
+                        'water_temp_c' => $recipe['water_temp_c'],
+                        'grind_size' => $recipe['grind_size'],
+                        'ratio' => $recipe['ratio'],
+                        'brew_time_min' => $recipe['brew_time_min'],
+                        'step_by_step' => $recipe['steps'],
+                        'is_featured' => $recipe['is_featured'],
+                        'cheap' => $recipe['cheap'],
+                    ]
+                );
             }
         }
     }

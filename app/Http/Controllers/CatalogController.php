@@ -9,27 +9,54 @@ use Illuminate\Http\Request;
 
 class CatalogController extends Controller
 {
-    public function welcome()
+    public function welcome(Request $request)
     {
-        $featuredBeans = CoffeeBean::with('category')->take(6)->get();
-        $categories = Category::all();
-        $methods = BrewMethod::take(4)->get();
+        $categories = Category::whereHas('coffeeBeans', fn ($q) => $q->where('is_cheap', false))->get();
+        $featuredBeans = $this->beanQuery($request)->latest()->paginate(8)->withQueryString();
+        $methods = $this->methodQuery($request)->paginate(8)->withQueryString();
 
         return view('public.home', compact('featuredBeans', 'categories', 'methods'));
     }
 
-    public function beansIndex(Request $request)
+    public function cheapIndex(Request $request)
     {
-        $categories = Category::all();
-        $query = CoffeeBean::with('category');
+        $categories = Category::whereHas('coffeeBeans', fn ($q) => $q->where('is_cheap', true))->get();
+        $beans = $this->beanQuery($request, cheap: true)->latest()->paginate(8)->withQueryString();
+        $methods = $this->methodQuery($request, cheap: true)->paginate(8)->withQueryString();
+
+        return view('public.cheap.index', compact('categories', 'beans', 'methods'));
+    }
+
+    private function beanQuery(Request $request, bool $cheap = false)
+    {
+        $query = CoffeeBean::with('category')->where('is_cheap', $cheap);
+
+        if ($q = trim((string) $request->q)) {
+            $needle = '%'.mb_strtolower($q).'%';
+            $query->where(fn ($w) => $w
+                ->whereRaw('LOWER(name) LIKE ?', [$needle])
+                ->orWhereRaw('LOWER(origin_country) LIKE ?', [$needle]));
+        }
 
         if ($request->filled('category')) {
             $query->whereHas('category', fn ($q) => $q->where('slug', $request->category));
         }
 
-        $beans = $query->get();
+        return $query;
+    }
 
-        return view('public.beans.index', compact('beans', 'categories'));
+    private function methodQuery(Request $request, bool $cheap = false)
+    {
+        $query = BrewMethod::withCount('recipes')->where('is_cheap', $cheap);
+
+        if ($q = trim((string) $request->method_q)) {
+            $needle = '%'.mb_strtolower($q).'%';
+            $query->where(fn ($w) => $w
+                ->whereRaw('LOWER(name) LIKE ?', [$needle])
+                ->orWhereRaw('LOWER(description) LIKE ?', [$needle]));
+        }
+
+        return $query;
     }
 
     public function beanShow(string $slug)
@@ -37,13 +64,6 @@ class CatalogController extends Controller
         $bean = CoffeeBean::with('category')->where('slug', $slug)->firstOrFail();
 
         return view('public.beans.show', compact('bean'));
-    }
-
-    public function methodsIndex()
-    {
-        $methods = BrewMethod::all();
-
-        return view('public.methods.index', compact('methods'));
     }
 
     public function methodShow(string $slug)

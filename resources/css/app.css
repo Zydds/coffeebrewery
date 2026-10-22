@@ -5,3 +5,89 @@
 [x-cloak] {
     display: none !important;
 }
+
+/* ── Scroll reveal ─────────────────────────────────────── */
+html.js-motion [data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity .7s ease, transform .7s ease;
+}
+
+html.js-motion [data-reveal].in-view {
+    opacity: 1;
+    transform: none;
+}
+
+/* ── Hero: levitating cup & beans (max 3px) ────────────── */
+.fl,
+.cup-float {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: levitate 4s ease-in-out infinite;
+}
+
+.cup-float {
+    animation-duration: 4.6s;
+}
+
+@keyframes levitate {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+/* ── Hero: shake on hover ──────────────────────────────── */
+.hero-art:hover .fl,
+.hero-art:hover .cup-float {
+    animation: shake .45s ease-in-out infinite;
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0) rotate(0deg);
+    }
+    25% {
+        transform: translateX(-2px) rotate(-1.5deg);
+    }
+    50% {
+        transform: translateX(2px) rotate(1.5deg);
+    }
+    75% {
+        transform: translateX(-1px) rotate(-1deg);
+    }
+}
+
+.carousel {
+    scrollbar-width: thin;
+    scrollbar-color: #6f4e37 #f4ebe1;
+}
+
+.carousel::-webkit-scrollbar {
+    height: 8px;
+}
+
+.carousel::-webkit-scrollbar-track {
+    background: #f4ebe1;
+    border-radius: 999px;
+}
+
+.carousel::-webkit-scrollbar-thumb {
+    background: #6f4e37;
+    border-radius: 999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    html.js-motion [data-reveal] {
+        transition: opacity .7s ease, transform .7s ease !important;
+    }
+}

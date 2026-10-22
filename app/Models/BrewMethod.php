@@ -12,6 +12,7 @@ class BrewMethod extends Model
         'slug',
         'difficulty_level',
         'description',
+        'is_cheap',
         'equipment_needed',
         'image_url',
         'image_public_id',
@@ -21,6 +22,7 @@ class BrewMethod extends Model
     {
         return [
             'equipment_needed' => 'array',
+            'is_cheap' => 'boolean',
         ];
     }
 

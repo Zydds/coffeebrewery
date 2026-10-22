@@ -15,6 +15,10 @@ class RandomRecipeController extends Controller
 
         $recipe = Recipe::with(['coffeeBean.category', 'brewMethod'])
             ->when($exclude, fn ($q) => $q->whereKeyNot($exclude))
+            ->when($request->boolean('cheap'), fn ($q) => $q->where('cheap', true))
+            ->when($request->boolean('quick'), fn ($q) => $q
+                ->whereNotNull('brew_time_min')
+                ->where('brew_time_min', '<=', 5))
             ->inRandomOrder()
             ->first();
 
@@ -28,6 +32,7 @@ class RandomRecipeController extends Controller
                 'title' => $recipe->title,
                 'slug' => $recipe->slug,
                 'ratio' => $recipe->ratio,
+                'brew_time_min' => $recipe->brew_time_min,
                 'water_temp' => $recipe->water_temp_c.'°C',
                 'grind_size' => $recipe->grind_size,
                 'step_by_step' => $recipe->step_by_step,

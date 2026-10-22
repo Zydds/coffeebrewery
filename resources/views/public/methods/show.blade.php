@@ -1,11 +1,11 @@
 @extends('layouts.public')
 
-@section('title', $method->name . ' — CoffeeHub')
+@section('title', $method->name . ' — Coffeebrewery')
 
 @section('content')
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <a href="{{ route('methods.index') }}" class="text-sm font-semibold text-coffee-amber hover:underline">
-            &larr; Back to methods
+        <a href="{{ route('home') }}#brew-methods" class="text-sm font-semibold text-coffee-amber hover:underline">
+            &larr; All methods
         </a>
 
         <div class="mt-4 rounded-lg border border-coffee-mocha/30 bg-coffee-cream overflow-hidden">
@@ -46,11 +46,6 @@
                class="px-4 py-2 rounded bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
                 Browse Recipes
             </a>
-            <button type="button"
-                    @click="window.dispatchEvent(new CustomEvent('open-surprise'))"
-                    class="px-4 py-2 rounded border border-coffee-mocha text-coffee-espresso text-sm font-semibold hover:bg-coffee-cream transition-colors">
-                &#127922; Surprise Me Recipe
-            </button>
         </div>
     </div>
 @endsection

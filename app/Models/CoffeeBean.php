@@ -15,6 +15,9 @@ class CoffeeBean extends Model
         'origin_country',
         'acidity_level',
         'body_level',
+        'price',
+        'price_unit',
+        'is_cheap',
         'flavor_notes',
         'recommended_drinks',
         'image_url',
@@ -26,6 +29,8 @@ class CoffeeBean extends Model
         return [
             'flavor_notes' => 'array',
             'recommended_drinks' => 'array',
+            'price' => 'decimal:2',
+            'is_cheap' => 'boolean',
         ];
     }
 

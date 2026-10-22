@@ -1,11 +1,11 @@
 @extends('layouts.public')
 
-@section('title', $bean->name . ' — CoffeeHub')
+@section('title', $bean->name . ' — Coffeebrewery')
 
 @section('content')
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <a href="{{ route('beans.index') }}" class="text-sm font-semibold text-coffee-amber hover:underline">
-            &larr; Back to catalog
+        <a href="{{ route('home') }}#bean-catalog" class="text-sm font-semibold text-coffee-amber hover:underline">
+            &larr; All beans
         </a>
 
         <div class="mt-4 rounded-lg border border-coffee-mocha/30 bg-coffee-cream overflow-hidden">
@@ -29,15 +29,30 @@
 
                     <div>
                         <dt class="text-coffee-mocha">Acidity</dt>
-                        <dd class="mt-1 text-coffee-amber text-base tracking-wider" aria-label="Acidity {{ $bean->acidity_level }} out of 5">
-                            {{ str_repeat('★', $bean->acidity_level) }}{{ str_repeat('☆', 5 - $bean->acidity_level) }}
+                        <dd class="mt-1 flex items-center gap-2" role="img" aria-label="Acidity {{ $bean->acidity_level }} of 5">
+                            @for ($i = 1; $i <= 5; $i++)
+                                <i class="h-3 w-3 rounded-full border-2 border-coffee-mocha {{ $i <= $bean->acidity_level ? 'border-coffee-espresso bg-coffee-espresso' : '' }}"></i>
+                            @endfor
                         </dd>
                     </div>
 
                     <div>
                         <dt class="text-coffee-mocha">Body</dt>
-                        <dd class="mt-1 text-coffee-amber text-base tracking-wider" aria-label="Body {{ $bean->body_level }} out of 5">
-                            {{ str_repeat('★', $bean->body_level) }}{{ str_repeat('☆', 5 - $bean->body_level) }}
+                        <dd class="mt-1 flex items-center gap-2" role="img" aria-label="Body {{ $bean->body_level }} of 5">
+                            @for ($i = 1; $i <= 5; $i++)
+                                <i class="h-3 w-3 rounded-full border-2 border-coffee-mocha {{ $i <= $bean->body_level ? 'border-coffee-espresso bg-coffee-espresso' : '' }}"></i>
+                            @endfor
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-coffee-mocha">Price</dt>
+                        <dd class="mt-1 font-semibold text-coffee-espresso text-base">
+                            @if ($bean->price !== null)
+                                Rp. {{ number_format((float) $bean->price, 0, ',', '.') }} / {{ $bean->price_unit ?: '100 gr' }}
+                            @else
+                                &mdash;
+                            @endif
                         </dd>
                     </div>
 
@@ -71,11 +86,6 @@
                class="px-4 py-2 rounded bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
                 Browse Recipes
             </a>
-            <button type="button"
-                    @click="window.dispatchEvent(new CustomEvent('open-surprise'))"
-                    class="px-4 py-2 rounded border border-coffee-mocha text-coffee-espresso text-sm font-semibold hover:bg-coffee-cream transition-colors">
-                &#127922; Surprise Me Recipe
-            </button>
         </div>
     </div>
 @endsection

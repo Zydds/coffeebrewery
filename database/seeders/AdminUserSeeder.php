@@ -10,11 +10,13 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name' => 'Admin',
-            'email' => env('ADMIN_EMAIL', 'admin@coffeehub.dev'),
-            'password' => Hash::make(env('ADMIN_PASSWORD', 'password')),
-            'is_admin' => true,
-        ]);
+        User::firstOrCreate(
+            ['email' => env('ADMIN_EMAIL', 'admin@coffeehub.dev')],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make(env('ADMIN_PASSWORD', 'password')),
+                'is_admin' => true,
+            ]
+        );
     }
 }

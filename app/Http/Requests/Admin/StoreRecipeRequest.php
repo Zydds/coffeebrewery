@@ -20,9 +20,11 @@ class StoreRecipeRequest extends FormRequest
             'water_temp_c' => 'required|integer|between:60,100',
             'grind_size' => 'required|string|max:50',
             'ratio' => 'required|string|max:50',
+            'brew_time_min' => 'nullable|integer|between:1,120',
             'step_by_step' => 'required|array|min:1',
             'step_by_step.*' => 'string|max:500',
             'is_featured' => 'boolean',
+            'cheap' => 'boolean',
         ];
     }
 }

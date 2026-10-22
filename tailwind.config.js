@@ -9,10 +9,11 @@ export default {
         './resources/views/**/*.blade.php',
     ],
 
-    theme: {
+        theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                display: ['Outfit', 'system-ui', 'sans-serif'],
             },
             colors: {
                 coffee: {

@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Coffee CMS') — CoffeeHub</title>
+    <title>@yield('title', 'Coffee CMS') — {{ config('app.name', 'Coffeebrewery') }}</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600|outfit:600,700,800&display=swap" rel="stylesheet" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -31,29 +31,29 @@
             <nav class="px-3 py-4 space-y-1" :class="mobileOpen ? 'block' : 'hidden md:block'">
                 <a href="{{ route('dashboard') }}"
                    class="flex items-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors {{ request()->routeIs('dashboard') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
-                    📊 Overview
+                    Overview
                 </a>
                 <a href="{{ route('admin.beans.index') }}"
                    class="flex items-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors {{ request()->routeIs('admin.beans.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
-                    🫘 Beans
+                    Beans
                 </a>
                 <a href="{{ route('admin.recipes.index') }}"
                    class="flex items-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors {{ request()->routeIs('admin.recipes.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
-                    📖 Recipes
+                    Recipes
                 </a>
                 <a href="{{ route('admin.methods.index') }}"
                    class="flex items-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors {{ request()->routeIs('admin.methods.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
-                    ☕ Methods
+                    Methods
                 </a>
                 <a href="{{ route('admin.categories.index') }}"
                    class="flex items-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors {{ request()->routeIs('admin.categories.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
-                    📂 Categories
+                    Categories
                 </a>
 
                 <div class="pt-4 mt-4 border-t border-coffee-roast">
                     <a href="{{ route('home') }}"
                        class="flex items-center gap-2 px-3 py-2 rounded text-sm font-medium text-coffee-latte/70 hover:bg-coffee-roast transition-colors">
-                        🌐 View Site
+                        View Site
                     </a>
                     <form method="POST" action="{{ route('logout') }}" class="mt-1">
                         @csrf

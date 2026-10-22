@@ -5,12 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', config('app.name', 'CoffeeHub'))</title>
+    <title>@yield('title', config('app.name', 'Coffeebrewery'))</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600|outfit:600,700,800&display=swap" rel="stylesheet" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <script>
+        if ('IntersectionObserver' in window) {
+            document.documentElement.classList.add('js-motion');
+        }
+    </script>
 </head>
 <body class="font-sans antialiased bg-coffee-latte text-coffee-espresso">
     <x-navbar />
@@ -19,12 +25,10 @@
         @yield('content')
     </main>
 
-    <footer class="bg-coffee-espresso text-coffee-latte mt-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm text-coffee-latte/80">
-            &copy; {{ date('Y') }} Zaidan Ghiffari | CoffeeHub
+    <footer class="bg-coffee-espresso text-coffee-cream">
+        <div class="max-w-[1200px] mx-auto px-5 sm:px-8 py-8 text-center text-sm">
+            <p>&copy; {{ date('Y') }} Zaidan Ghiffari | Coffeebrewery</p>
         </div>
     </footer>
-
-    <x-surprise-modal />
 </body>
 </html>

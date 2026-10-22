@@ -21,6 +21,7 @@
                     <th class="px-4 py-3 font-semibold">Title</th>
                     <th class="px-4 py-3 font-semibold">Bean</th>
                     <th class="px-4 py-3 font-semibold">Method</th>
+                    <th class="px-4 py-3 font-semibold">Time</th>
                     <th class="px-4 py-3 font-semibold">Featured</th>
                     <th class="px-4 py-3 font-semibold text-right">Actions</th>
                 </tr>
@@ -31,6 +32,7 @@
                         <td class="px-4 py-3 font-medium text-coffee-espresso">{{ $recipe->title }}</td>
                         <td class="px-4 py-3 text-coffee-mocha">{{ $recipe->coffeeBean->name ?? '—' }}</td>
                         <td class="px-4 py-3 text-coffee-mocha">{{ $recipe->brewMethod->name ?? '—' }}</td>
+                        <td class="px-4 py-3 text-coffee-mocha">{{ $recipe->brew_time_min ? $recipe->brew_time_min.' min' : '—' }}</td>
                         <td class="px-4 py-3">
                             @if ($recipe->is_featured)
                                 <span class="rounded-full bg-coffee-amber px-2 py-0.5 text-xs font-medium text-coffee-espresso">Yes</span>
@@ -50,7 +52,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-4 py-6 text-center text-coffee-mocha">No recipes yet.</td>
+                        <td colspan="6" class="px-4 py-6 text-center text-coffee-mocha">No recipes yet.</td>
                     </tr>
                 @endforelse
             </tbody>

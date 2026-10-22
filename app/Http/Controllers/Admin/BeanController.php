@@ -18,7 +18,15 @@ class BeanController extends Controller
 
     public function index()
     {
-        $beans = CoffeeBean::with('category')->latest()->get();
+        $query = CoffeeBean::with('category');
+
+        if (request('filter') === 'cheap') {
+            $query->where('is_cheap', true);
+        } elseif (request('filter') === 'regular') {
+            $query->where('is_cheap', false);
+        }
+
+        $beans = $query->latest()->get();
 
         return view('admin.beans.index', compact('beans'));
     }

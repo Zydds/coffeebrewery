@@ -9,7 +9,7 @@ class CategorySeeder extends Seeder
 {
     public function run(): void
     {
-        Category::insert([
+        $categories = [
             [
                 'name' => 'Arabica',
                 'slug' => 'arabica',
@@ -25,6 +25,20 @@ class CategorySeeder extends Seeder
                 'slug' => 'liberica',
                 'description' => 'Liberica beans are rare and distinctive, offering a unique taste with hints of floral and woody notes. They are less acidic than Arabica and have a fuller body, grown primarily in the Philippines and West Africa.',
             ],
-        ]);
+            [
+                'name' => 'Sachet',
+                'slug' => 'sachet',
+                'description' => 'Powdered coffee sachets brewed like tubruk — full flavour, with a little sediment left in the cup.',
+            ],
+            [
+                'name' => 'Instant',
+                'slug' => 'instant',
+                'description' => 'Freeze-dried soluble coffees that dissolve completely — no residue in the cup.',
+            ],
+        ];
+
+        foreach ($categories as $category) {
+            Category::updateOrCreate(['slug' => $category['slug']], $category);
+        }
     }
 }

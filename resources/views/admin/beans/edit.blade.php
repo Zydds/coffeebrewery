@@ -69,6 +69,32 @@
             </div>
 
             <div class="mt-4">
+                <x-input-label for="price" value="Price (Rp)" />
+                <x-text-input id="price" name="price" type="number" class="mt-1 block w-full focus:border-coffee-amber focus:ring-coffee-amber"
+                              :value="old('price', $bean->price)" min="0" step="1000" placeholder="e.g. 85000" />
+                <x-input-error :messages="$errors->get('price')" class="mt-2" />
+            </div>
+
+            <div class="mt-4">
+                <x-input-label for="price_unit" value="Price unit" />
+                <x-text-input id="price_unit" name="price_unit" type="text" class="mt-1 block w-full focus:border-coffee-amber focus:ring-coffee-amber"
+                              :value="old('price_unit', $bean->price_unit ?: '100 gr')" maxlength="30" placeholder="e.g. 100 gr, sachet" />
+                <p class="mt-1 text-xs text-coffee-mocha">Shown as: Rp. 70.000 / 100 gr</p>
+                <x-input-error :messages="$errors->get('price_unit')" class="mt-2" />
+            </div>
+
+            <div class="mt-4">
+                <input type="hidden" name="is_cheap" value="0">
+                <label for="is_cheap" class="inline-flex items-center gap-2">
+                    <input id="is_cheap" name="is_cheap" type="checkbox" value="1"
+                           @checked(old('is_cheap', $bean->is_cheap))
+                           class="rounded border-gray-300 text-coffee-amber focus:ring-coffee-amber">
+                    <span class="text-sm font-medium text-gray-700">Show on the Cheap page (sachet / instant product)</span>
+                </label>
+                <x-input-error :messages="$errors->get('is_cheap')" class="mt-2" />
+            </div>
+
+            <div class="mt-4">
                 <x-input-label for="flavor_notes" value="Flavor Notes" />
                 <div x-data="{ items: {{ json_encode(old('flavor_notes', $bean->flavor_notes ?? [''])) }} }">
                     <template x-for="(item, index) in items" :key="index">

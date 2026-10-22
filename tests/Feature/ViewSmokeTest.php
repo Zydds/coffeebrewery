@@ -29,14 +29,48 @@ class ViewSmokeTest extends TestCase
         $category = Category::firstOrFail();
 
         $this->get('/')->assertOk();
-        $this->get('/beans')->assertOk();
-        $this->get('/beans?category='.$category->slug)->assertOk();
+        $this->get('/?category='.$category->slug)->assertOk();
+        $this->get('/?q=java')->assertOk();
+        $this->get('/?method_q=press')->assertOk();
         $this->get('/beans/'.$bean->slug)->assertOk();
         $this->get('/recipes')->assertOk();
+        $this->get('/recipes?q=press')->assertOk();
+        $this->get('/recipes?method='.$method->slug)->assertOk();
+        $this->get('/recipes?featured=1')->assertOk();
         $this->get('/recipes/'.$recipe->slug)->assertOk();
-        $this->get('/methods')->assertOk();
+        $this->get('/recipes?cheap=1')->assertOk();
+        $this->get('/recipes?quick=1')->assertOk();
+        $this->get('/recipes/random')->assertRedirect();
         $this->get('/methods/'.$method->slug)->assertOk();
+        $this->get('/cheap')->assertOk();
+        $this->get('/cheap?q=nescafe')->assertOk();
+        $this->get('/cheap?method_q=sachet')->assertOk();
+        $this->get('/custom')->assertOk();
         $this->getJson('/api/recipes/random')->assertOk();
+        $this->getJson('/api/recipes/random?cheap=1')->assertOk();
+        $this->getJson('/api/recipes/random?quick=1')->assertOk();
+    }
+
+    public function test_quick_filter_only_shows_quick_recipes(): void
+    {
+        $this->get('/recipes?quick=1')
+            ->assertOk()
+            ->assertSee('Quick Double Espresso')
+            ->assertDontSee('Easy Morning French Press');
+    }
+
+    public function test_random_redirects_to_a_recipe_page(): void
+    {
+        $response = $this->get('/recipes/random');
+
+        $response->assertRedirect();
+        $this->assertMatchesRegularExpression('#/recipes/[^/]+$#', $response->headers->get('Location'));
+    }
+
+    public function test_removed_index_pages_return_404(): void
+    {
+        $this->get('/beans')->assertNotFound();
+        $this->get('/methods')->assertNotFound();
     }
 
     public function test_all_admin_pages_render_for_admin(): void

@@ -38,6 +38,17 @@
             </div>
 
             <div class="mt-4">
+                <input type="hidden" name="is_cheap" value="0">
+                <label for="is_cheap" class="inline-flex items-center gap-2">
+                    <input id="is_cheap" name="is_cheap" type="checkbox" value="1"
+                           @checked(old('is_cheap'))
+                           class="rounded border-gray-300 text-coffee-amber focus:ring-coffee-amber">
+                    <span class="text-sm font-medium text-gray-700">Show on the Cheap page</span>
+                </label>
+                <x-input-error :messages="$errors->get('is_cheap')" class="mt-2" />
+            </div>
+
+            <div class="mt-4">
                 <x-input-label for="equipment_needed" value="Equipment Needed" />
                 <div x-data="{ items: {{ json_encode(old('equipment_needed', [''])) }} }">
                     <template x-for="(item, index) in items" :key="index">
