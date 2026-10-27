@@ -35,7 +35,9 @@ class RandomRecipeController extends Controller
                 'brew_time_min' => $recipe->brew_time_min,
                 'water_temp' => $recipe->water_temp_c.'°C',
                 'grind_size' => $recipe->grind_size,
-                'step_by_step' => $recipe->step_by_step,
+                'step_by_step' => $recipe->step_by_step
+                    ? array_map(fn ($s) => (string) __($s), $recipe->step_by_step)
+                    : $recipe->step_by_step,
                 'bean' => [
                     'name' => $recipe->coffeeBean->name,
                     'category' => $recipe->coffeeBean->category->name,

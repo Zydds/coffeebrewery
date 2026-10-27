@@ -13,6 +13,11 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <script>
+        window.APP_I18N = @json([
+            'recipeLoadError' => __('Could not load a recipe. Try again.'),
+            'matchError' => __('Could not find a match. Try again.'),
+        ]);
+
         if ('IntersectionObserver' in window) {
             document.documentElement.classList.add('js-motion');
         }

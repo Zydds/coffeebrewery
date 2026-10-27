@@ -79,6 +79,40 @@ html.js-motion [data-reveal].in-view {
     border-radius: 999px;
 }
 
+/* ── Cross-document View Transitions ───────────────────── */
+/* Opt every same-origin navigation into an animated transition —
+   but only for people who have NOT asked for reduced motion.
+   `@view-transition` is a conditional group rule, so it nests
+   inside `@media` the same way `@supports` does. Browsers
+   without support (e.g. Firefox on multi-page sites) ignore it
+   and navigate instantly: progressive enhancement, 0 JS, 0 kB. */
+@media (prefers-reduced-motion: no-preference) {
+    @view-transition {
+        navigation: auto;
+    }
+
+    /* Root snapshot: old page fades out quickly, new page settles in. */
+    ::view-transition-old(root) {
+        animation: .18s ease-out both vt-fade-out;
+    }
+
+    ::view-transition-new(root) {
+        animation: .3s cubic-bezier(.2, .7, .3, 1) both vt-fade-in;
+    }
+}
+
+@keyframes vt-fade-out {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes vt-fade-in {
+    from {
+        opacity: 0;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -89,5 +123,16 @@ html.js-motion [data-reveal].in-view {
 
     html.js-motion [data-reveal] {
         transition: opacity .7s ease, transform .7s ease !important;
+    }
+
+    /* Safety net: the opt-in above is already gated on
+       no-preference, so reduced-motion users never get a
+       transition. These rules only matter if that gate is ever
+       removed — `*` can never match view-transition
+       pseudo-elements, so they need an explicit kill-switch. */
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation: none !important;
     }
 }

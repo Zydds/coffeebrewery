@@ -1,6 +1,6 @@
 ﻿@extends('layouts.public')
 
-@section('title', 'Coffeebrewery — Know Your Beans, Brew Your Perfect Cup')
+@section('title', __('Coffeebrewery — Find Your Bean, Nail Your Brew'))
 
 @section('content')
     {{-- Hero --}}
@@ -8,11 +8,11 @@
         <div class="max-w-[1200px] mx-auto px-5 sm:px-8 py-16 lg:py-[72px] grid gap-10 lg:grid-cols-[1.1fr_.9fr] items-center">
             <div>
                 <h1 class="font-display font-extrabold leading-[1.1] tracking-tight text-[clamp(2.6rem,6vw,4.5rem)]">
-                    Know Your Beans. Brew Your
-                    <mark class="rounded-[10px] bg-coffee-amber px-[0.16em] text-coffee-espresso [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">Perfect Cup!</mark>
+                    {{ __('Find your bean.') }}
+                    <mark class="rounded-[10px] bg-coffee-amber px-[0.16em] text-coffee-espresso [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">{{ __('Nail your brew.') }}</mark>
                 </h1>
                 <p class="mt-6 max-w-[480px] text-lg text-coffee-mocha">
-                    Browse beans by origin, learn how each brew method works, and get a recipe when you cannot decide.
+                    {{ __('Browse beans by origin, learn how each brew method works, and get a recipe when you cannot decide.') }}
                 </p>
 
                 <div class="mt-8 flex flex-wrap gap-3">
@@ -24,17 +24,17 @@
                             <circle cx="15.5" cy="15.5" r="1" fill="currentColor"/>
                             <circle cx="12" cy="12" r="1" fill="currentColor"/>
                         </svg>
-                        Surprise me
+                        {{ __('Surprise me') }}
                     </a>
                     <a href="{{ route('recipes.index', ['quick' => 1]) }}"
                        class="min-h-[52px] px-7 inline-flex items-center rounded-xl border-2 border-coffee-espresso font-semibold text-coffee-espresso hover:bg-coffee-espresso hover:text-coffee-latte transition-colors">
-                        Quick recipes &le;5 min
+                        {{ __('Quick recipes ≤5 min') }}
                     </a>
                 </div>
             </div>
 
             <div class="w-full max-w-[460px] justify-self-center">
-                <svg class="hero-art" viewBox="0 0 440 480" role="img" aria-label="Paper coffee cup surrounded by floating coffee beans">
+                <svg class="hero-art" viewBox="0 0 440 480" role="img" aria-label="{{ __('Paper coffee cup surrounded by floating coffee beans') }}">
                     <defs>
                         <symbol id="bean" viewBox="0 0 40 56">
                             <ellipse cx="20" cy="28" rx="17" ry="26" fill="#2C1A14"/>
@@ -71,13 +71,13 @@
     {{-- Bean catalog --}}
     <section id="bean-catalog" data-reveal class="max-w-[1200px] mx-auto px-5 sm:px-8 pt-[88px]">
         <div class="flex flex-wrap items-end justify-between gap-6">
-            <h2 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">Bean Catalog</h2>
-            <div class="flex flex-wrap gap-2" role="navigation" aria-label="Filter beans by type">
+            <h2 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Bean Catalog') }}</h2>
+            <div class="flex flex-wrap gap-2" role="navigation" aria-label="{{ __('Filter beans by type') }}">
                 <a href="{{ route('home', array_filter(['q' => request('q')])) }}"
                    class="min-h-[44px] px-5 inline-flex items-center rounded-full font-semibold text-[15px] transition-colors {{ request('category') === null
                         ? 'bg-coffee-espresso text-coffee-latte'
                         : 'bg-coffee-cream text-coffee-espresso hover:bg-coffee-espresso hover:text-coffee-latte' }}">
-                    All
+                    {{ __('All') }}
                 </a>
                 @foreach ($categories as $category)
                     <a href="{{ route('home', array_filter(['q' => request('q'), 'category' => $category->slug])) }}"
@@ -90,17 +90,17 @@
             </div>
         </div>
 
-        <x-search-bar :action="route('home')" placeholder="Search beans…" :value="request('q')" :preserves="['category' => request('category')]" />
+        <x-search-bar :action="route('home')" :placeholder="__('Search beans…')" :value="request('q')" :preserves="['category' => request('category')]" />
 
         <div class="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             @forelse ($featuredBeans as $bean)
                 <x-bean-card :bean="$bean" />
             @empty
                 <div class="col-span-full rounded-2xl border border-dashed border-coffee-mocha/50 p-10 text-center">
-                    <p class="text-sm text-coffee-mocha">No beans found.</p>
+                    <p class="text-sm text-coffee-mocha">{{ __('No beans found.') }}</p>
                     @if (request('category') || request('q'))
                         <a href="{{ route('home') }}#bean-catalog" class="mt-3 inline-block text-sm font-semibold text-coffee-amber hover:underline">
-                            Clear search &amp; filters
+                            {{ __('Clear search & filters') }}
                         </a>
                     @endif
                 </div>
@@ -117,19 +117,19 @@
 
     {{-- Brew methods --}}
     <section id="brew-methods" data-reveal class="max-w-[1200px] mx-auto px-5 sm:px-8 pt-[88px]">
-        <h2 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">Brew Methods</h2>
+        <h2 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Brew Methods') }}</h2>
 
-        <x-search-bar :action="route('home')" name="method_q" placeholder="Search brew methods…" :value="request('method_q')" />
+        <x-search-bar :action="route('home')" name="method_q" :placeholder="__('Search brew methods…')" :value="request('method_q')" />
 
         <div class="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             @forelse ($methods as $method)
                 <x-method-card :method="$method" />
             @empty
                 <div class="col-span-full rounded-2xl border border-dashed border-coffee-mocha/50 p-10 text-center">
-                    <p class="text-sm text-coffee-mocha">No brew methods found.</p>
+                    <p class="text-sm text-coffee-mocha">{{ __('No brew methods found.') }}</p>
                     @if (request('method_q'))
                         <a href="{{ route('home') }}#brew-methods" class="mt-3 inline-block text-sm font-semibold text-coffee-amber hover:underline">
-                            Clear search
+                            {{ __('Clear search') }}
                         </a>
                     @endif
                 </div>
@@ -148,8 +148,8 @@
     <section id="surprise" data-reveal class="mt-[88px] bg-coffee-roast py-[88px] text-coffee-cream" x-data="surpriseSection()">
         <div class="max-w-[1200px] mx-auto px-5 sm:px-8 grid gap-10 lg:grid-cols-[.85fr_1.15fr] items-center">
             <div>
-                <h2 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)] text-coffee-latte">Can't decide what to brew?</h2>
-                <p class="mt-4 max-w-[420px]">Roll a random recipe. Every roll gives you a different one.</p>
+                <h2 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)] text-coffee-latte">{{ __('Can\'t decide what to brew?') }}</h2>
+                <p class="mt-4 max-w-[420px]">{{ __('Roll a random recipe. Every roll gives you a different one.') }}</p>
                 <button type="button"
                         @click="rollNext()"
                         :disabled="loading"
@@ -160,33 +160,33 @@
                         <circle cx="15.5" cy="15.5" r="1" fill="currentColor"/>
                         <circle cx="12" cy="12" r="1" fill="currentColor"/>
                     </svg>
-                    <span x-text="rolled ? 'Roll another' : 'Surprise me'"></span>
+                    <span x-text="rolled ? {{ \Illuminate\Support\Js::from(__('Roll another')) }} : {{ \Illuminate\Support\Js::from(__('Surprise me')) }}"></span>
                 </button>
 
                 <div class="mt-4 flex flex-col items-start gap-2">
                     <label class="inline-flex items-center gap-2 text-sm text-coffee-cream cursor-pointer select-none">
                         <input type="checkbox" x-model="cheap" @change="roll()"
                                class="h-4 w-4 rounded border-coffee-latte/40 bg-transparent text-coffee-amber focus:ring-coffee-amber">
-                        Cheap only
+                        {{ __('Cheap only') }}
                     </label>
                     <label class="inline-flex items-center gap-2 text-sm text-coffee-cream cursor-pointer select-none">
                         <input type="checkbox" x-model="quick" @change="roll()"
                                class="h-4 w-4 rounded border-coffee-latte/40 bg-transparent text-coffee-amber focus:ring-coffee-amber">
-                        Quick only (&le;5 min)
+                        {{ __('Quick only (≤5 min)') }}
                     </label>
                 </div>
             </div>
 
             <article class="flex flex-col gap-5 rounded-[20px] bg-coffee-latte p-6 sm:p-8 text-coffee-espresso" aria-live="polite">
-                <p x-show="loading" x-cloak class="text-sm text-coffee-mocha">Brewing a suggestion&hellip;</p>
+                <p x-show="loading" x-cloak class="text-sm text-coffee-mocha">{{ __('Brewing a suggestion…') }}</p>
 
                 <p x-show="error" x-cloak class="text-sm text-red-700">
                     <span x-text="error"></span>
-                    <button type="button" @click="roll(recipe?.id ?? null)" class="font-semibold underline">Try again</button>
+                    <button type="button" @click="roll(recipe?.id ?? null)" class="font-semibold underline">{{ __('Try again') }}</button>
                 </p>
 
                 <p x-show="empty && !loading && !error" x-cloak class="text-sm text-coffee-mocha">
-                    No recipes yet. Check back soon.
+                    {{ __('No recipes yet. Check back soon.') }}
                 </p>
 
                 <div x-show="recipe && !loading && !error" x-cloak>
@@ -194,38 +194,38 @@
 
                     <dl class="mt-4 grid grid-cols-2 gap-4 rounded-2xl bg-coffee-cream p-5">
                         <div>
-                            <dt class="text-xs font-semibold text-coffee-mocha">Bean Type</dt>
+                            <dt class="text-xs font-semibold text-coffee-mocha">{{ __('Bean Type') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-coffee-espresso">
                                 <span x-text="recipe?.bean?.name"></span>
                                 (<span x-text="recipe?.bean?.category"></span>)
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-semibold text-coffee-mocha">Method</dt>
+                            <dt class="text-xs font-semibold text-coffee-mocha">{{ __('Method') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-coffee-espresso" x-text="recipe?.method?.name"></dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-semibold text-coffee-mocha">Ratio</dt>
+                            <dt class="text-xs font-semibold text-coffee-mocha">{{ __('Ratio') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-coffee-espresso" x-text="recipe?.ratio"></dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-semibold text-coffee-mocha">Temp</dt>
+                            <dt class="text-xs font-semibold text-coffee-mocha">{{ __('Temp') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-coffee-espresso" x-text="recipe?.water_temp"></dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-semibold text-coffee-mocha">Time</dt>
+                            <dt class="text-xs font-semibold text-coffee-mocha">{{ __('Time') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-coffee-espresso">
-                                <span x-text="recipe?.brew_time_min ? recipe.brew_time_min + ' min' : '—'"></span>
+                                <span x-text="recipe?.brew_time_min ? recipe.brew_time_min + {{ \Illuminate\Support\Js::from(' ' . __('min')) }} : '—'"></span>
                             </dd>
                         </div>
                         <div class="col-span-2 sm:col-span-1">
-                            <dt class="text-xs font-semibold text-coffee-mocha">Grind Size</dt>
+                            <dt class="text-xs font-semibold text-coffee-mocha">{{ __('Grind Size') }}</dt>
                             <dd class="mt-1 text-sm font-semibold text-coffee-espresso" x-text="recipe?.grind_size"></dd>
                         </div>
                     </dl>
 
                     <div class="mt-4">
-                        <p class="text-sm font-semibold text-coffee-espresso">Step-by-Step Instructions:</p>
+                        <p class="text-sm font-semibold text-coffee-espresso">{{ __('Step-by-Step Instructions:') }}</p>
                         <ol class="mt-2 list-decimal list-inside space-y-1.5 text-sm text-coffee-mocha">
                             <template x-for="(step, i) in (recipe?.step_by_step ?? [])" :key="i">
                                 <li><span x-text="step"></span></li>
@@ -235,7 +235,7 @@
 
                     <a :href="recipe ? '/recipes/' + recipe.slug : '#'"
                        class="mt-5 inline-flex min-h-[44px] items-center justify-center rounded-xl border-2 border-coffee-espresso px-6 text-sm font-semibold text-coffee-espresso hover:bg-coffee-espresso hover:text-coffee-latte transition-colors">
-                        View full recipe
+                        {{ __('View full recipe') }}
                     </a>
                 </div>
             </article>

@@ -57,7 +57,7 @@ Alpine.data('surpriseSection', (options = {}) => ({
             const body = await response.json();
             this.recipe = body.data;
         } catch (e) {
-            this.error = 'Could not load a recipe. Try again.';
+            this.error = window.APP_I18N?.recipeLoadError ?? 'Could not load a recipe. Try again.';
         } finally {
             this.loading = false;
         }
@@ -162,7 +162,7 @@ Alpine.data('brewFinder', () => ({
             this.matchIndex = 0;
             this.finished = true;
         } catch (e) {
-            this.error = 'Could not find a match. Try again.';
+            this.error = window.APP_I18N?.matchError ?? 'Could not find a match. Try again.';
         } finally {
             this.loading = false;
         }

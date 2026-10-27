@@ -25,13 +25,13 @@
         </p>
 
         <div class="mt-auto flex items-center gap-2 pt-2 text-xs font-medium text-coffee-mocha">
-            <span>Acidity</span>
+            <span>{{ __('Acidity') }}</span>
             <span class="flex gap-1" aria-hidden="true">
                 @for ($i = 1; $i <= 5; $i++)
                     <i class="h-2.5 w-2.5 rounded-full border-2 border-coffee-mocha {{ $i <= $bean->acidity_level ? 'border-coffee-espresso bg-coffee-espresso' : '' }}"></i>
                 @endfor
             </span>
-            <span class="sr-only">Acidity {{ $bean->acidity_level }} of 5</span>
+            <span class="sr-only">{{ __('Acidity :level of 5', ['level' => $bean->acidity_level]) }}</span>
         </div>
 
         <div class="mt-1.5 text-sm font-semibold text-coffee-espresso">
@@ -49,7 +49,7 @@
                 class="block min-h-[44px] w-full rounded-[10px] bg-coffee-espresso text-sm font-semibold text-coffee-latte transition-colors duration-150 hover:bg-coffee-amber hover:text-coffee-espresso"
                 :class="open ? 'invisible opacity-0' : ''"
                 aria-expanded="false" :aria-expanded="open.toString()">
-            Details
+            {{ __('Details') }}
         </button>
     </div>
 
@@ -59,24 +59,24 @@
          x-cloak>
         <h3 class="font-display text-lg font-bold text-coffee-latte">{{ $bean->name }}</h3>
 
-        <p class="text-xs font-semibold uppercase tracking-wider text-coffee-cream/80">Flavor notes</p>
+        <p class="text-xs font-semibold uppercase tracking-wider text-coffee-cream/80">{{ __('Flavor notes') }}</p>
         <div class="flex flex-wrap gap-2">
             @forelse ($bean->flavor_notes ?? [] as $note)
                 <span class="rounded-full bg-coffee-cream px-3 py-0.5 text-sm text-coffee-espresso">{{ $note }}</span>
             @empty
-                <span class="text-sm text-coffee-cream/70">None listed</span>
+                <span class="text-sm text-coffee-cream/70">{{ __('None listed') }}</span>
             @endforelse
         </div>
 
-        <p class="text-sm"><b>Body</b> {{ $bean->body_level }} of 5</p>
-        <p class="text-sm"><b>Serve</b>
+        <p class="text-sm"><b>{{ __('Body') }}</b> {{ $bean->body_level }} {{ __('of 5') }}</p>
+        <p class="text-sm"><b>{{ __('Serve') }}</b>
             @php($serve = implode(', ', $bean->recommended_drinks ?? []))
             {{ $serve !== '' ? $serve : '—' }}
         </p>
 
         <a href="{{ route('beans.show', $bean->slug) }}"
            class="mt-1 inline-flex min-h-[40px] items-center justify-center rounded-[10px] bg-coffee-amber px-4 text-sm font-semibold text-coffee-espresso hover:bg-coffee-latte transition-colors">
-            View full details
+            {{ __('View full details') }}
         </a>
     </div>
 </article>

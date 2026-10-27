@@ -20,6 +20,6 @@
 
     <button type="submit"
             class="min-h-[44px] shrink-0 rounded-full bg-coffee-espresso px-5 text-sm font-semibold text-coffee-latte transition-colors hover:bg-coffee-roast">
-        Search
+        {{ __('Search') }}
     </button>
 </form>

@@ -21,17 +21,17 @@
 
     <div class="flex flex-1 flex-col gap-1.5 p-4">
         <h3 class="font-display text-lg font-bold leading-snug text-coffee-espresso">{{ $method->name }}</h3>
-        <p class="text-sm font-medium text-coffee-mocha line-clamp-2">{{ $method->description }}</p>
+        <p class="text-sm font-medium text-coffee-mocha line-clamp-2">{{ __($method->description) }}</p>
 
         <div class="mt-auto flex items-center gap-2 pt-2 text-xs font-medium text-coffee-mocha">
-            <span>Difficulty</span>
+            <span>{{ __('Difficulty') }}</span>
             <span class="flex gap-1" aria-hidden="true">
                 @php($level = ['easy' => 1, 'medium' => 2, 'hard' => 3][$method->difficulty_level] ?? 1)
                 @for ($i = 1; $i <= 3; $i++)
                     <i class="h-2.5 w-2.5 rounded-full border-2 border-coffee-mocha {{ $i <= $level ? 'border-coffee-espresso bg-coffee-espresso' : '' }}"></i>
                 @endfor
             </span>
-            <span class="sr-only">Difficulty {{ $method->difficulty_level }}</span>
+            <span class="sr-only">{{ __('Difficulty') }} {{ __(ucfirst($method->difficulty_level)) }}</span>
         </div>
     </div>
 
@@ -41,7 +41,7 @@
                 class="block min-h-[44px] w-full rounded-[10px] bg-coffee-espresso text-sm font-semibold text-coffee-latte transition-colors duration-150 hover:bg-coffee-amber hover:text-coffee-espresso"
                 :class="open ? 'invisible opacity-0' : ''"
                 aria-expanded="false" :aria-expanded="open.toString()">
-            Details
+            {{ __('Details') }}
         </button>
     </div>
 
@@ -51,21 +51,21 @@
          x-cloak>
         <h3 class="font-display text-lg font-bold text-coffee-latte">{{ $method->name }}</h3>
 
-        <p class="text-xs font-semibold uppercase tracking-wider text-coffee-cream/80">Equipment</p>
+        <p class="text-xs font-semibold uppercase tracking-wider text-coffee-cream/80">{{ __('Equipment') }}</p>
         <div class="flex flex-wrap gap-2">
             @forelse ($method->equipment_needed ?? [] as $item)
                 <span class="rounded-full bg-coffee-cream px-3 py-0.5 text-sm text-coffee-espresso">{{ $item }}</span>
             @empty
-                <span class="text-sm text-coffee-cream/70">None listed</span>
+                <span class="text-sm text-coffee-cream/70">{{ __('None listed') }}</span>
             @endforelse
         </div>
 
-        <p class="text-sm"><b>Level</b> {{ ucfirst($method->difficulty_level) }}</p>
-        <p class="text-sm"><b>Recipes</b> {{ $method->recipes_count ?? $method->recipes()->count() }}</p>
+        <p class="text-sm"><b>{{ __('Level') }}</b> {{ __(ucfirst($method->difficulty_level)) }}</p>
+        <p class="text-sm"><b>{{ __('Recipes') }}</b> {{ $method->recipes_count ?? $method->recipes()->count() }}</p>
 
         <a href="{{ route('methods.show', $method->slug) }}"
            class="mt-1 inline-flex min-h-[40px] items-center justify-center rounded-[10px] bg-coffee-amber px-4 text-sm font-semibold text-coffee-espresso hover:bg-coffee-latte transition-colors">
-            View full details
+            {{ __('View full details') }}
         </a>
     </div>
 </article>

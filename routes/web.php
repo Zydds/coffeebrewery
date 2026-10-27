@@ -9,11 +9,13 @@ use App\Http\Controllers\Api\RandomRecipeController;
 use App\Http\Controllers\Api\RecipeSuggestController;
 use App\Http\Controllers\BrewFinderController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecipePublicController;
 use Illuminate\Support\Facades\Route;
 
 // ── Public routes ──────────────────────────────────────────
+Route::get('/locale/{locale}', LocaleController::class)->name('locale.switch');
 Route::get('/', [CatalogController::class, 'welcome'])->name('home');
 Route::get('/cheap', [CatalogController::class, 'cheapIndex'])->name('cheap.index');
 Route::get('/custom', [BrewFinderController::class, 'index'])->name('custom.index');
