@@ -2,6 +2,13 @@
 
 @section('title', $bean->name . ' — Coffeebrewery')
 
+@section('meta_description', __(':name beans from :origin — flavor notes, acidity and body, price, and the recipes that use them.', [
+    'name' => $bean->name,
+    'origin' => $bean->origin_country ?: __('Unknown'),
+]))
+
+@section('og_image', $bean->image_url ?? '')
+
 @section('content')
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <a href="{{ route('home') }}#bean-catalog" class="text-sm font-semibold text-coffee-amber hover:underline">

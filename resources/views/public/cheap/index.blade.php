@@ -2,6 +2,8 @@
 
 @section('title', __('Cheap — Coffeebrewery'))
 
+@section('meta_description', __('Great coffee on a budget — wallet-friendly recipes and cheap bean picks in one place.'))
+
 @section('content')
     <div class="max-w-[1200px] mx-auto px-5 sm:px-8 pt-[88px]">
         <h1 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Cheap') }}</h1>

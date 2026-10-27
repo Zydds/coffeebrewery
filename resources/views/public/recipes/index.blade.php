@@ -2,6 +2,8 @@
 
 @section('title', __('Recipes — Coffeebrewery'))
 
+@section('meta_description', __('Browse coffee recipes step by step — filter, espresso, French press and more — with ratio, water temperature, and grind size.'))
+
 @section('content')
     <div class="max-w-[1200px] mx-auto px-5 sm:px-8 py-[88px]">
         <div class="flex flex-wrap items-end justify-between gap-6">

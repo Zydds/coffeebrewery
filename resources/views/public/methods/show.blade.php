@@ -2,6 +2,12 @@
 
 @section('title', $method->name . ' — Coffeebrewery')
 
+@section('meta_description', __(':name explained — how it works, the equipment you need, and its difficulty level, plus recipes brewed with it.', [
+    'name' => $method->name,
+]))
+
+@section('og_image', $method->image_url ?? '')
+
 @section('content')
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <a href="{{ route('home') }}#brew-methods" class="text-sm font-semibold text-coffee-amber hover:underline">

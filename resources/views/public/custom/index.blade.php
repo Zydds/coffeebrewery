@@ -2,6 +2,8 @@
 
 @section('title', __('Custom — Coffeebrewery'))
 
+@section('meta_description', __('Answer four quick questions about your ingredients, time, gear, and taste — we\'ll match you with a brew recipe that fits.'))
+
 @section('content')
     <div class="max-w-[1200px] mx-auto px-5 sm:px-8 py-[88px]" x-data="brewFinder()">
         <div class="max-w-2xl mx-auto text-center">
