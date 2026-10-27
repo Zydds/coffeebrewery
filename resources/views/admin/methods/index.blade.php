@@ -9,7 +9,7 @@
             <p class="mt-1 text-sm text-coffee-mocha">Manage brewing methods and their difficulty.</p>
         </div>
         <a href="{{ route('admin.methods.create') }}"
-           class="px-4 py-2 rounded bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
+           class="px-4 py-2 rounded-sm bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
             + Add Brew Method
         </a>
     </div>

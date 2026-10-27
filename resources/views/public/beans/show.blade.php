@@ -83,7 +83,7 @@
 
         <div class="mt-6 flex flex-wrap gap-3">
             <a href="{{ route('recipes.index') }}"
-               class="px-4 py-2 rounded bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
+               class="px-4 py-2 rounded-sm bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
                 {{ __('Browse Recipes') }}
             </a>
         </div>

@@ -22,7 +22,7 @@
             <div class="mt-4">
                 <x-input-label for="difficulty_level" value="Difficulty" />
                 <select id="difficulty_level" name="difficulty_level" required
-                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-coffee-amber focus:ring-coffee-amber text-sm">
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-xs focus:border-coffee-amber focus:ring-coffee-amber text-sm">
                     <option value="easy" @selected(old('difficulty_level') === 'easy')>Easy</option>
                     <option value="medium" @selected(old('difficulty_level') === 'medium')>Medium</option>
                     <option value="hard" @selected(old('difficulty_level') === 'hard')>Hard</option>
@@ -33,7 +33,7 @@
             <div class="mt-4">
                 <x-input-label for="description" value="Description" />
                 <textarea id="description" name="description" rows="5" required maxlength="2000"
-                          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-coffee-amber focus:ring-coffee-amber text-sm">{{ old('description') }}</textarea>
+                          class="mt-1 block w-full border-gray-300 rounded-md shadow-xs focus:border-coffee-amber focus:ring-coffee-amber text-sm">{{ old('description') }}</textarea>
                 <x-input-error :messages="$errors->get('description')" class="mt-2" />
             </div>
 
@@ -42,7 +42,7 @@
                 <label for="is_cheap" class="inline-flex items-center gap-2">
                     <input id="is_cheap" name="is_cheap" type="checkbox" value="1"
                            @checked(old('is_cheap'))
-                           class="rounded border-gray-300 text-coffee-amber focus:ring-coffee-amber">
+                           class="rounded-sm border-gray-300 text-coffee-amber focus:ring-coffee-amber">
                     <span class="text-sm font-medium text-gray-700">Show on the Cheap page</span>
                 </label>
                 <x-input-error :messages="$errors->get('is_cheap')" class="mt-2" />
@@ -54,7 +54,7 @@
                     <template x-for="(item, index) in items" :key="index">
                         <div class="flex gap-2 mt-2">
                             <input type="text" :name="'equipment_needed[' + index + ']'" x-model="items[index]" maxlength="100"
-                                   class="flex-1 rounded border-gray-300 text-sm focus:border-coffee-amber focus:ring-coffee-amber"
+                                   class="flex-1 rounded-sm border-gray-300 text-sm focus:border-coffee-amber focus:ring-coffee-amber"
                                    placeholder="e.g. gooseneck kettle">
                             <button type="button" @click="items.splice(index, 1)" class="text-sm text-red-600 hover:underline">Remove</button>
                         </div>
@@ -75,11 +75,11 @@
 
             <div class="mt-6 flex items-center gap-3">
                 <button type="submit"
-                        class="px-4 py-2 rounded bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
+                        class="px-4 py-2 rounded-sm bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
                     Save
                 </button>
                 <a href="{{ route('admin.methods.index') }}"
-                   class="px-4 py-2 rounded border border-coffee-mocha text-coffee-espresso text-sm font-semibold hover:bg-coffee-cream transition-colors">
+                   class="px-4 py-2 rounded-sm border border-coffee-mocha text-coffee-espresso text-sm font-semibold hover:bg-coffee-cream transition-colors">
                     Cancel
                 </a>
             </div>

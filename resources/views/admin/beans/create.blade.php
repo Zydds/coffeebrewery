@@ -15,7 +15,7 @@
             <div>
                 <x-input-label for="category_id" value="Category" />
                 <select id="category_id" name="category_id" required
-                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-coffee-amber focus:ring-coffee-amber text-sm">
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-xs focus:border-coffee-amber focus:ring-coffee-amber text-sm">
                     <option value="">Select a category</option>
                     @foreach ($categories as $category)
                         <option value="{{ $category->id }}" @selected(old('category_id') == $category->id)>{{ $category->name }}</option>
@@ -41,7 +41,7 @@
             <div class="mt-4">
                 <x-input-label for="acidity_level" value="Acidity Level" />
                 <select id="acidity_level" name="acidity_level" required
-                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-coffee-amber focus:ring-coffee-amber text-sm">
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-xs focus:border-coffee-amber focus:ring-coffee-amber text-sm">
                     @for ($i = 1; $i <= 5; $i++)
                         <option value="{{ $i }}" @selected(old('acidity_level') == $i)>{{ $i }} ({{ $i === 1 ? 'low' : ($i === 5 ? 'high' : 'medium') }})</option>
                     @endfor
@@ -52,7 +52,7 @@
             <div class="mt-4">
                 <x-input-label for="body_level" value="Body Level" />
                 <select id="body_level" name="body_level" required
-                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-coffee-amber focus:ring-coffee-amber text-sm">
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-xs focus:border-coffee-amber focus:ring-coffee-amber text-sm">
                     @for ($i = 1; $i <= 5; $i++)
                         <option value="{{ $i }}" @selected(old('body_level') == $i)>{{ $i }} ({{ $i === 1 ? 'low' : ($i === 5 ? 'high' : 'medium') }})</option>
                     @endfor
@@ -80,7 +80,7 @@
                 <label for="is_cheap" class="inline-flex items-center gap-2">
                     <input id="is_cheap" name="is_cheap" type="checkbox" value="1"
                            @checked(old('is_cheap'))
-                           class="rounded border-gray-300 text-coffee-amber focus:ring-coffee-amber">
+                           class="rounded-sm border-gray-300 text-coffee-amber focus:ring-coffee-amber">
                     <span class="text-sm font-medium text-gray-700">Show on the Cheap page (sachet / instant product)</span>
                 </label>
                 <x-input-error :messages="$errors->get('is_cheap')" class="mt-2" />
@@ -92,7 +92,7 @@
                     <template x-for="(item, index) in items" :key="index">
                         <div class="flex gap-2 mt-2">
                             <input type="text" :name="'flavor_notes[' + index + ']'" x-model="items[index]" maxlength="40"
-                                   class="flex-1 rounded border-gray-300 text-sm focus:border-coffee-amber focus:ring-coffee-amber"
+                                   class="flex-1 rounded-sm border-gray-300 text-sm focus:border-coffee-amber focus:ring-coffee-amber"
                                    placeholder="e.g. citrus, chocolate">
                             <button type="button" @click="items.splice(index, 1)" class="text-sm text-red-600 hover:underline">Remove</button>
                         </div>
@@ -108,7 +108,7 @@
                     <template x-for="(item, index) in items" :key="index">
                         <div class="flex gap-2 mt-2">
                             <input type="text" :name="'recommended_drinks[' + index + ']'" x-model="items[index]" maxlength="60"
-                                   class="flex-1 rounded border-gray-300 text-sm focus:border-coffee-amber focus:ring-coffee-amber"
+                                   class="flex-1 rounded-sm border-gray-300 text-sm focus:border-coffee-amber focus:ring-coffee-amber"
                                    placeholder="e.g. iced latte, espresso">
                             <button type="button" @click="items.splice(index, 1)" class="text-sm text-red-600 hover:underline">Remove</button>
                         </div>
@@ -129,11 +129,11 @@
 
             <div class="mt-6 flex items-center gap-3">
                 <button type="submit"
-                        class="px-4 py-2 rounded bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
+                        class="px-4 py-2 rounded-sm bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
                     Save
                 </button>
                 <a href="{{ route('admin.beans.index') }}"
-                   class="px-4 py-2 rounded border border-coffee-mocha text-coffee-espresso text-sm font-semibold hover:bg-coffee-cream transition-colors">
+                   class="px-4 py-2 rounded-sm border border-coffee-mocha text-coffee-espresso text-sm font-semibold hover:bg-coffee-cream transition-colors">
                     Cancel
                 </a>
             </div>

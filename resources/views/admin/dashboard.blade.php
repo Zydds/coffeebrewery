@@ -10,15 +10,15 @@
         </div>
         <div class="flex flex-wrap gap-2">
             <a href="{{ route('admin.beans.create') }}"
-               class="px-4 py-2 rounded bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
+               class="px-4 py-2 rounded-sm bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
                 + Add Bean
             </a>
             <a href="{{ route('admin.recipes.create') }}"
-               class="px-4 py-2 rounded bg-coffee-espresso text-coffee-latte text-sm font-semibold hover:bg-coffee-roast transition-colors">
+               class="px-4 py-2 rounded-sm bg-coffee-espresso text-coffee-latte text-sm font-semibold hover:bg-coffee-roast transition-colors">
                 + Add Recipe
             </a>
             <a href="{{ route('admin.methods.create') }}"
-               class="px-4 py-2 rounded border border-coffee-mocha text-coffee-espresso text-sm font-semibold hover:bg-coffee-cream transition-colors">
+               class="px-4 py-2 rounded-sm border border-coffee-mocha text-coffee-espresso text-sm font-semibold hover:bg-coffee-cream transition-colors">
                 + Add Method
             </a>
         </div>

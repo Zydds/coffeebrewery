@@ -30,35 +30,35 @@
 
             <nav class="px-3 py-4 space-y-1" :class="mobileOpen ? 'block' : 'hidden md:block'">
                 <a href="{{ route('dashboard') }}"
-                   class="flex items-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors {{ request()->routeIs('dashboard') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
+                   class="flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium transition-colors {{ request()->routeIs('dashboard') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
                     Overview
                 </a>
                 <a href="{{ route('admin.beans.index') }}"
-                   class="flex items-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors {{ request()->routeIs('admin.beans.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
+                   class="flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium transition-colors {{ request()->routeIs('admin.beans.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
                     Beans
                 </a>
                 <a href="{{ route('admin.recipes.index') }}"
-                   class="flex items-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors {{ request()->routeIs('admin.recipes.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
+                   class="flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium transition-colors {{ request()->routeIs('admin.recipes.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
                     Recipes
                 </a>
                 <a href="{{ route('admin.methods.index') }}"
-                   class="flex items-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors {{ request()->routeIs('admin.methods.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
+                   class="flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium transition-colors {{ request()->routeIs('admin.methods.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
                     Methods
                 </a>
                 <a href="{{ route('admin.categories.index') }}"
-                   class="flex items-center gap-2 px-3 py-2 rounded text-sm font-medium transition-colors {{ request()->routeIs('admin.categories.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
+                   class="flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium transition-colors {{ request()->routeIs('admin.categories.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
                     Categories
                 </a>
 
                 <div class="pt-4 mt-4 border-t border-coffee-roast">
                     <a href="{{ route('home') }}"
-                       class="flex items-center gap-2 px-3 py-2 rounded text-sm font-medium text-coffee-latte/70 hover:bg-coffee-roast transition-colors">
+                       class="flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium text-coffee-latte/70 hover:bg-coffee-roast transition-colors">
                         View Site
                     </a>
                     <form method="POST" action="{{ route('logout') }}" class="mt-1">
                         @csrf
                         <button type="submit"
-                                class="w-full text-left flex items-center gap-2 px-3 py-2 rounded text-sm font-medium text-coffee-latte/70 hover:bg-coffee-roast transition-colors">
+                                class="w-full text-left flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium text-coffee-latte/70 hover:bg-coffee-roast transition-colors">
                             ← Logout
                         </button>
                     </form>
@@ -70,14 +70,14 @@
         <div class="flex-1 min-w-0">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 @if (session('success'))
-                    <div class="mb-6 rounded border border-green-300 bg-green-50 px-4 py-3 text-sm text-green-800"
+                    <div class="mb-6 rounded-sm border border-green-300 bg-green-50 px-4 py-3 text-sm text-green-800"
                          role="status">
                         {{ session('success') }}
                     </div>
                 @endif
 
                 @if (session('error'))
-                    <div class="mb-6 rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800"
+                    <div class="mb-6 rounded-sm border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800"
                          role="alert">
                         {{ session('error') }}
                     </div>

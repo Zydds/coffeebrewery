@@ -29,7 +29,7 @@
                     <h2 class="text-sm font-semibold text-coffee-mocha uppercase tracking-wider">{{ __('Equipment Needed') }}</h2>
                     <ul class="mt-2 grid gap-2 sm:grid-cols-2">
                         @forelse ($method->equipment_needed ?? [] as $item)
-                            <li class="flex items-center gap-2 text-sm text-coffee-espresso bg-white border border-coffee-mocha/20 rounded px-3 py-2">
+                            <li class="flex items-center gap-2 text-sm text-coffee-espresso bg-white border border-coffee-mocha/20 rounded-sm px-3 py-2">
                                 <span class="text-coffee-amber" aria-hidden="true">✓</span>
                                 {{ $item }}
                             </li>
@@ -43,7 +43,7 @@
 
         <div class="mt-6 flex flex-wrap gap-3">
             <a href="{{ route('recipes.index') }}"
-               class="px-4 py-2 rounded bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
+               class="px-4 py-2 rounded-sm bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
                 {{ __('Browse Recipes') }}
             </a>
         </div>

@@ -23,7 +23,7 @@
             <div class="mt-4">
                 <x-input-label for="coffee_bean_id" value="Coffee Bean" />
                 <select id="coffee_bean_id" name="coffee_bean_id" required
-                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-coffee-amber focus:ring-coffee-amber text-sm">
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-xs focus:border-coffee-amber focus:ring-coffee-amber text-sm">
                     <option value="">Select a coffee bean</option>
                     @foreach ($beans as $bean)
                         <option value="{{ $bean->id }}" @selected(old('coffee_bean_id', $recipe->coffee_bean_id) == $bean->id)>{{ $bean->name }}</option>
@@ -35,7 +35,7 @@
             <div class="mt-4">
                 <x-input-label for="brew_method_id" value="Brew Method" />
                 <select id="brew_method_id" name="brew_method_id" required
-                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-coffee-amber focus:ring-coffee-amber text-sm">
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-xs focus:border-coffee-amber focus:ring-coffee-amber text-sm">
                     <option value="">Select a brew method</option>
                     @foreach ($methods as $method)
                         <option value="{{ $method->id }}" @selected(old('brew_method_id', $recipe->brew_method_id) == $method->id)>{{ $method->name }}</option>
@@ -79,7 +79,7 @@
                     <template x-for="(item, index) in items" :key="index">
                         <div class="flex gap-2 mt-2">
                             <textarea :name="'step_by_step[' + index + ']'" x-model="items[index]" rows="2" maxlength="500"
-                                      class="flex-1 rounded border-gray-300 text-sm focus:border-coffee-amber focus:ring-coffee-amber"
+                                      class="flex-1 rounded-sm border-gray-300 text-sm focus:border-coffee-amber focus:ring-coffee-amber"
                                       placeholder="Describe this step"></textarea>
                             <button type="button" @click="items.splice(index, 1)" class="text-sm text-red-600 hover:underline">Remove</button>
                         </div>
@@ -94,7 +94,7 @@
                 <label for="is_featured" class="inline-flex items-center gap-2">
                     <input id="is_featured" name="is_featured" type="checkbox" value="1"
                            @checked(old('is_featured', $recipe->is_featured))
-                           class="rounded border-gray-300 text-coffee-amber focus:ring-coffee-amber">
+                           class="rounded-sm border-gray-300 text-coffee-amber focus:ring-coffee-amber">
                     <span class="text-sm font-medium text-gray-700">Feature this recipe</span>
                 </label>
                 <x-input-error :messages="$errors->get('is_featured')" class="mt-2" />
@@ -105,7 +105,7 @@
                 <label for="cheap" class="inline-flex items-center gap-2">
                     <input id="cheap" name="cheap" type="checkbox" value="1"
                            @checked(old('cheap', $recipe->cheap))
-                           class="rounded border-gray-300 text-coffee-amber focus:ring-coffee-amber">
+                           class="rounded-sm border-gray-300 text-coffee-amber focus:ring-coffee-amber">
                     <span class="text-sm font-medium text-gray-700">Tag as cheap</span>
                 </label>
                 <x-input-error :messages="$errors->get('cheap')" class="mt-2" />
@@ -113,11 +113,11 @@
 
             <div class="mt-6 flex items-center gap-3">
                 <button type="submit"
-                        class="px-4 py-2 rounded bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
+                        class="px-4 py-2 rounded-sm bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
                     Save
                 </button>
                 <a href="{{ route('admin.recipes.index') }}"
-                   class="px-4 py-2 rounded border border-coffee-mocha text-coffee-espresso text-sm font-semibold hover:bg-coffee-cream transition-colors">
+                   class="px-4 py-2 rounded-sm border border-coffee-mocha text-coffee-espresso text-sm font-semibold hover:bg-coffee-cream transition-colors">
                     Cancel
                 </a>
             </div>

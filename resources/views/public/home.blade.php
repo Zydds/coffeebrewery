@@ -166,12 +166,12 @@
                 <div class="mt-4 flex flex-col items-start gap-2">
                     <label class="inline-flex items-center gap-2 text-sm text-coffee-cream cursor-pointer select-none">
                         <input type="checkbox" x-model="cheap" @change="roll()"
-                               class="h-4 w-4 rounded border-coffee-latte/40 bg-transparent text-coffee-amber focus:ring-coffee-amber">
+                               class="h-4 w-4 rounded-sm border-coffee-latte/40 bg-transparent text-coffee-amber focus:ring-coffee-amber">
                         {{ __('Cheap only') }}
                     </label>
                     <label class="inline-flex items-center gap-2 text-sm text-coffee-cream cursor-pointer select-none">
                         <input type="checkbox" x-model="quick" @change="roll()"
-                               class="h-4 w-4 rounded border-coffee-latte/40 bg-transparent text-coffee-amber focus:ring-coffee-amber">
+                               class="h-4 w-4 rounded-sm border-coffee-latte/40 bg-transparent text-coffee-amber focus:ring-coffee-amber">
                         {{ __('Quick only (≤5 min)') }}
                     </label>
                 </div>

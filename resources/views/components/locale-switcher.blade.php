@@ -15,7 +15,7 @@
            aria-label="{{ $code === 'en' ? __('Switch to English') : __('Switch to Indonesian') }}"
            @if ($current === $code) aria-current="true" @endif
            class="min-h-[36px] px-3 inline-flex items-center rounded-full text-xs font-bold tracking-wide transition-colors {{ $current === $code
-                ? 'bg-coffee-amber text-coffee-espresso shadow-sm'
+                ? 'bg-coffee-amber text-coffee-espresso shadow-xs'
                 : 'text-coffee-cream hover:text-coffee-amber' }}">
             {{ strtoupper($code) }}
         </a>

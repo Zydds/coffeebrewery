@@ -9,7 +9,7 @@
             <p class="mt-1 text-sm text-coffee-mocha">Organize coffee beans into categories.</p>
         </div>
         <a href="{{ route('admin.categories.create') }}"
-           class="px-4 py-2 rounded bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
+           class="px-4 py-2 rounded-sm bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
             + Add Category
         </a>
     </div>

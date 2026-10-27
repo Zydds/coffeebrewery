@@ -38,7 +38,7 @@
             {{-- Pairing --}}
             <div class="mt-4 flex flex-wrap gap-3 text-sm">
                 <a href="{{ $recipe->coffeeBean ? route('beans.show', $recipe->coffeeBean->slug) : route('home').'#bean-catalog' }}"
-                   class="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-coffee-mocha/40 text-coffee-espresso hover:border-coffee-amber transition-colors">
+                   class="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-coffee-mocha/40 text-coffee-espresso hover:border-coffee-amber transition-colors">
                     <span class="text-coffee-mocha text-xs">{{ __('Bean:') }}</span>
                     <span class="font-medium">{{ $recipe->coffeeBean->name ?? __('Unknown') }}</span>
                     @if ($recipe->coffeeBean?->category)
@@ -46,7 +46,7 @@
                     @endif
                 </a>
                 <a href="{{ $recipe->brewMethod ? route('methods.show', $recipe->brewMethod->slug) : route('home').'#brew-methods' }}"
-                   class="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-coffee-mocha/40 text-coffee-espresso hover:border-coffee-amber transition-colors">
+                   class="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-coffee-mocha/40 text-coffee-espresso hover:border-coffee-amber transition-colors">
                     <span class="text-coffee-mocha text-xs">{{ __('Method:') }}</span>
                     <span class="font-medium">{{ $recipe->brewMethod->name ?? __('Unknown') }}</span>
                 </a>
@@ -55,20 +55,20 @@
             {{-- Specs --}}
             <dl class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
                 @if ($recipe->brew_time_min)
-                    <div class="rounded bg-white border border-coffee-mocha/20 p-4 text-center">
+                    <div class="rounded-sm bg-white border border-coffee-mocha/20 p-4 text-center">
                         <dt class="text-xs uppercase tracking-wider text-coffee-mocha">{{ __('Total Time') }}</dt>
                         <dd class="mt-1 font-bold text-coffee-espresso">{{ $recipe->brew_time_min }} {{ __('min') }}</dd>
                     </div>
                 @endif
-                <div class="rounded bg-white border border-coffee-mocha/20 p-4 text-center">
+                <div class="rounded-sm bg-white border border-coffee-mocha/20 p-4 text-center">
                     <dt class="text-xs uppercase tracking-wider text-coffee-mocha">{{ __('Ratio') }}</dt>
                     <dd class="mt-1 font-bold text-coffee-espresso">{{ $recipe->ratio }}</dd>
                 </div>
-                <div class="rounded bg-white border border-coffee-mocha/20 p-4 text-center">
+                <div class="rounded-sm bg-white border border-coffee-mocha/20 p-4 text-center">
                     <dt class="text-xs uppercase tracking-wider text-coffee-mocha">{{ __('Water Temp') }}</dt>
                     <dd class="mt-1 font-bold text-coffee-espresso">{{ $recipe->water_temp_c }}°C</dd>
                 </div>
-                <div class="rounded bg-white border border-coffee-mocha/20 p-4 text-center">
+                <div class="rounded-sm bg-white border border-coffee-mocha/20 p-4 text-center">
                     <dt class="text-xs uppercase tracking-wider text-coffee-mocha">{{ __('Grind Size') }}</dt>
                     <dd class="mt-1 font-bold text-coffee-espresso">{{ $recipe->grind_size }}</dd>
                 </div>
@@ -76,7 +76,7 @@
 
             @php($scale = $recipe->scaleInfo())
             @if ($scale)
-                <div class="mt-4 rounded bg-white border border-coffee-mocha/20 p-4 flex flex-wrap items-center justify-between gap-4"
+                <div class="mt-4 rounded-sm bg-white border border-coffee-mocha/20 p-4 flex flex-wrap items-center justify-between gap-4"
                      x-data="servings({{ $scale['coffee_g'] }}, {{ $scale['water_ml'] }})">
                     <div>
                         <p class="text-xs uppercase tracking-wider text-coffee-mocha">
