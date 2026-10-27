@@ -46,7 +46,7 @@
         <x-search-bar :action="route('recipes.index')" :placeholder="__('Search recipes…')" :value="request('q')"
                       :preserves="['method' => request('method'), 'featured' => request('featured'), 'cheap' => request('cheap')]" />
 
-        <div data-reveal class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div data-reveal-stagger class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @forelse ($recipes as $recipe)
                 <a href="{{ route('recipes.show', $recipe->slug) }}"
                    class="group flex flex-col rounded-lg border border-coffee-mocha/30 bg-coffee-cream p-5 hover:border-coffee-amber transition-colors">

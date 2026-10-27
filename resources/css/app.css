@@ -42,13 +42,18 @@
 }
 
 /* ── Scroll reveal ─────────────────────────────────────── */
-html.js-motion [data-reveal] {
+/* Initial hidden state only: the tween itself runs in JS (anime.js,
+   resources/js/app.js) so grids can cascade with a stagger. The
+   .in-view class is the fallback path — reduced motion and browsers
+   without IntersectionObserver land on it directly (instant, no tween). */
+html.js-motion [data-reveal],
+html.js-motion [data-reveal-stagger] > * {
     opacity: 0;
     transform: translateY(24px);
-    transition: opacity .7s ease, transform .7s ease;
 }
 
-html.js-motion [data-reveal].in-view {
+html.js-motion [data-reveal].in-view,
+html.js-motion [data-reveal-stagger].in-view > * {
     opacity: 1;
     transform: none;
 }
@@ -154,10 +159,6 @@ html.js-motion [data-reveal].in-view {
     *::after {
         animation: none !important;
         transition: none !important;
-    }
-
-    html.js-motion [data-reveal] {
-        transition: opacity .7s ease, transform .7s ease !important;
     }
 
     /* Safety net: the opt-in above is already gated on

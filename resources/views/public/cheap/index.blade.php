@@ -13,7 +13,7 @@
     </div>
 
     {{-- Sachet coffee catalog --}}
-    <section id="bean-catalog" data-reveal class="max-w-[1200px] mx-auto px-5 sm:px-8 pt-[64px]">
+    <section id="bean-catalog" data-reveal-stagger class="max-w-[1200px] mx-auto px-5 sm:px-8 pt-[64px]">
         <div class="flex flex-wrap items-end justify-between gap-6">
             <h2 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Sachet & Instant Coffee') }}</h2>            <div class="flex flex-wrap gap-2" role="navigation" aria-label="{{ __('Filter sachet coffees by type') }}">
                 <a href="{{ route('cheap.index', array_filter(['q' => request('q')])) }}"
@@ -59,7 +59,7 @@
     </div>
 
     {{-- Cheap brew methods --}}
-    <section id="brew-methods" data-reveal class="max-w-[1200px] mx-auto px-5 sm:px-8 pt-[88px]">
+    <section id="brew-methods" data-reveal-stagger class="max-w-[1200px] mx-auto px-5 sm:px-8 pt-[88px]">
         <h2 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Brew Methods') }}</h2>
 
         <x-search-bar :action="route('cheap.index')" name="method_q" :placeholder="__('Search brew methods…')" :value="request('method_q')" />
@@ -125,7 +125,7 @@
                     {{ __('No recipes yet. Check back soon.') }}
                 </p>
 
-                <div x-show="recipe && !loading && !error" x-cloak>
+                <div x-ref="card" x-show="recipe && !loading && !error" x-cloak>
                     <h3 class="font-display text-2xl font-bold text-coffee-espresso" x-text="recipe?.title"></h3>
 
                     <dl class="mt-4 grid grid-cols-2 gap-4 rounded-2xl bg-coffee-cream p-5">

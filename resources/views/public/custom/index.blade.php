@@ -23,7 +23,7 @@
             </div>
 
             {{-- Question card --}}
-            <div x-show="!finished" x-cloak class="mt-4 rounded-[20px] border border-coffee-mocha/30 bg-coffee-cream p-6 sm:p-8">
+            <div x-show="!finished && !loading" x-ref="questions" x-cloak class="mt-4 rounded-[20px] border border-coffee-mocha/30 bg-coffee-cream p-6 sm:p-8">
                 {{-- Q1: ingredients --}}
                 <div x-show="current === 'ingredients'">
                     <h2 class="font-display text-2xl font-bold text-coffee-espresso">{{ __('What coffee do you have?') }}</h2>
@@ -184,60 +184,65 @@
             </div>
 
             {{-- Result --}}
-            <div x-show="finished && match && !loading" x-cloak aria-live="polite"
-                 class="mt-4 rounded-[20px] bg-coffee-roast p-6 sm:p-8 text-coffee-cream">
-                <p class="text-xs font-semibold uppercase tracking-wider text-coffee-latte/70">{{ __('We suggest') }}</p>
+            {{-- x-if (not x-show): the match.* expressions inside would otherwise
+                 be evaluated while match is still null (page load, after restart),
+                 spamming the console with TypeErrors. --}}
+            <template x-if="finished && match && !loading">
+                <div x-ref="results" aria-live="polite"
+                     class="mt-4 rounded-[20px] bg-coffee-roast p-6 sm:p-8 text-coffee-cream">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-coffee-latte/70">{{ __('We suggest') }}</p>
 
-                <div class="mt-2 flex flex-wrap items-start justify-between gap-3">
-                    <h2 class="font-display text-2xl sm:text-3xl font-bold text-coffee-latte" x-text="match.title"></h2>
-                    <div class="flex shrink-0 items-center gap-1.5">
-                        <span x-show="match.brew_time_min" class="text-xs font-semibold px-3 py-1 rounded-full bg-coffee-latte/15 text-coffee-latte"
-                              x-text="match.brew_time_min ? match.brew_time_min + {{ \Illuminate\Support\Js::from(' ' . __('min')) }} : ''"></span>
-                        <span x-show="match.cheap" class="text-xs font-semibold px-3 py-1 rounded-full bg-coffee-amber text-coffee-espresso">{{ __('Cheap') }}</span>
+                    <div class="mt-2 flex flex-wrap items-start justify-between gap-3">
+                        <h2 class="font-display text-2xl sm:text-3xl font-bold text-coffee-latte" x-text="match.title"></h2>
+                        <div class="flex shrink-0 items-center gap-1.5">
+                            <span x-show="match.brew_time_min" class="text-xs font-semibold px-3 py-1 rounded-full bg-coffee-latte/15 text-coffee-latte"
+                                  x-text="match.brew_time_min ? match.brew_time_min + {{ \Illuminate\Support\Js::from(' ' . __('min')) }} : ''"></span>
+                            <span x-show="match.cheap" class="text-xs font-semibold px-3 py-1 rounded-full bg-coffee-amber text-coffee-espresso">{{ __('Cheap') }}</span>
+                        </div>
+                    </div>
+
+                    <p class="mt-3 text-sm text-coffee-latte/80">
+                        <span x-text="match.bean?.name"></span>
+                        (<span x-text="match.bean?.category"></span>)
+                        &middot;
+                        <span x-text="match.method?.name"></span>
+                    </p>
+
+                    <dl class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+                        <div class="rounded-xl bg-coffee-latte/10 p-4 text-center">
+                            <dt class="text-xs text-coffee-latte/70">{{ __('Ratio') }}</dt>
+                            <dd class="mt-1 font-bold text-coffee-latte" x-text="match.ratio"></dd>
+                        </div>
+                        <div class="rounded-xl bg-coffee-latte/10 p-4 text-center">
+                            <dt class="text-xs text-coffee-latte/70">{{ __('Temp') }}</dt>
+                            <dd class="mt-1 font-bold text-coffee-latte" x-text="match.water_temp"></dd>
+                        </div>
+                        <div class="rounded-xl bg-coffee-latte/10 p-4 text-center">
+                            <dt class="text-xs text-coffee-latte/70">{{ __('Grind') }}</dt>
+                            <dd class="mt-1 font-bold text-coffee-latte" x-text="match.grind_size"></dd>
+                        </div>
+                        <div class="rounded-xl bg-coffee-latte/10 p-4 text-center">
+                            <dt class="text-xs text-coffee-latte/70">{{ __('Time') }}</dt>
+                            <dd class="mt-1 font-bold text-coffee-latte" x-text="match.brew_time_min ? match.brew_time_min + {{ \Illuminate\Support\Js::from(' ' . __('min')) }} : '—'"></dd>
+                        </div>
+                    </dl>
+
+                    <div class="mt-6 flex flex-wrap gap-3">
+                        <a :href="'/recipes/' + match.slug"
+                           class="min-h-[44px] px-6 inline-flex items-center rounded-xl bg-coffee-amber text-sm font-semibold text-coffee-espresso hover:bg-coffee-latte transition-colors">
+                            {{ __('View full recipe') }}
+                        </a>
+                        <button type="button" x-show="matches.length > matchIndex + 1" @click="matchIndex++"
+                                class="min-h-[44px] px-6 inline-flex items-center rounded-xl border-2 border-coffee-latte/40 text-sm font-semibold text-coffee-latte hover:bg-coffee-latte/10 transition-colors">
+                            {{ __('Show another match') }}
+                        </button>
+                        <button type="button" @click="restart()"
+                                class="min-h-[44px] px-6 inline-flex items-center rounded-xl border-2 border-coffee-latte/40 text-sm font-semibold text-coffee-latte hover:bg-coffee-latte/10 transition-colors">
+                            {{ __('Start over') }}
+                        </button>
                     </div>
                 </div>
-
-                <p class="mt-3 text-sm text-coffee-latte/80">
-                    <span x-text="match.bean?.name"></span>
-                    (<span x-text="match.bean?.category"></span>)
-                    &middot;
-                    <span x-text="match.method?.name"></span>
-                </p>
-
-                <dl class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-                    <div class="rounded-xl bg-coffee-latte/10 p-4 text-center">
-                        <dt class="text-xs text-coffee-latte/70">{{ __('Ratio') }}</dt>
-                        <dd class="mt-1 font-bold text-coffee-latte" x-text="match.ratio"></dd>
-                    </div>
-                    <div class="rounded-xl bg-coffee-latte/10 p-4 text-center">
-                        <dt class="text-xs text-coffee-latte/70">{{ __('Temp') }}</dt>
-                        <dd class="mt-1 font-bold text-coffee-latte" x-text="match.water_temp"></dd>
-                    </div>
-                    <div class="rounded-xl bg-coffee-latte/10 p-4 text-center">
-                        <dt class="text-xs text-coffee-latte/70">{{ __('Grind') }}</dt>
-                        <dd class="mt-1 font-bold text-coffee-latte" x-text="match.grind_size"></dd>
-                    </div>
-                    <div class="rounded-xl bg-coffee-latte/10 p-4 text-center">
-                        <dt class="text-xs text-coffee-latte/70">{{ __('Time') }}</dt>
-                        <dd class="mt-1 font-bold text-coffee-latte" x-text="match.brew_time_min ? match.brew_time_min + {{ \Illuminate\Support\Js::from(' ' . __('min')) }} : '—'"></dd>
-                    </div>
-                </dl>
-
-                <div class="mt-6 flex flex-wrap gap-3">
-                    <a :href="'/recipes/' + match.slug"
-                       class="min-h-[44px] px-6 inline-flex items-center rounded-xl bg-coffee-amber text-sm font-semibold text-coffee-espresso hover:bg-coffee-latte transition-colors">
-                        {{ __('View full recipe') }}
-                    </a>
-                    <button type="button" x-show="matches.length > matchIndex + 1" @click="matchIndex++"
-                            class="min-h-[44px] px-6 inline-flex items-center rounded-xl border-2 border-coffee-latte/40 text-sm font-semibold text-coffee-latte hover:bg-coffee-latte/10 transition-colors">
-                        {{ __('Show another match') }}
-                    </button>
-                    <button type="button" @click="restart()"
-                            class="min-h-[44px] px-6 inline-flex items-center rounded-xl border-2 border-coffee-latte/40 text-sm font-semibold text-coffee-latte hover:bg-coffee-latte/10 transition-colors">
-                        {{ __('Start over') }}
-                    </button>
-                </div>
-            </div>
+            </template>
         </div>
     </div>
 @endsection
