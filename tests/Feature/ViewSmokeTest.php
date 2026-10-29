@@ -46,6 +46,9 @@ class ViewSmokeTest extends TestCase
         $this->get('/cheap?q=nescafe')->assertOk();
         $this->get('/cheap?method_q=sachet')->assertOk();
         $this->get('/custom')->assertOk();
+        $this->get('/cafes')->assertOk();
+        $this->get('/cafes?region=31.74')->assertOk();
+        $this->getJson('/api/cafes?bounds=-6.3,106.7,-6.0,106.9')->assertOk();
         $this->getJson('/api/recipes/random')->assertOk();
         $this->getJson('/api/recipes/random?cheap=1')->assertOk();
         $this->getJson('/api/recipes/random?quick=1')->assertOk();
