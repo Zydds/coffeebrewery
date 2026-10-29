@@ -37,6 +37,10 @@
                class="min-h-[44px] px-4 inline-flex items-center font-medium text-coffee-cream hover:text-coffee-amber transition-colors {{ request()->routeIs('custom.*') ? 'text-coffee-latte shadow-[inset_0_-3px_0_#C87D55]' : '' }}">
                 {{ __('Custom') }}
             </a>
+            <a href="{{ route('cafes.index') }}"
+               class="min-h-[44px] px-4 inline-flex items-center font-medium text-coffee-cream hover:text-coffee-amber transition-colors {{ request()->routeIs('cafes.*') ? 'text-coffee-latte shadow-[inset_0_-3px_0_#C87D55]' : '' }}">
+                {{ __('Cafes') }}
+            </a>
 
             {{-- Language switcher --}}
             @include('components.locale-switcher')
@@ -50,6 +54,7 @@
         <a href="{{ route('recipes.index') }}" class="min-h-[44px] px-2 inline-flex items-center font-medium text-coffee-cream hover:text-coffee-amber transition-colors">{{ __('Recipes') }}</a>
         <a href="{{ route('cheap.index') }}" class="min-h-[44px] px-2 inline-flex items-center font-medium text-coffee-cream hover:text-coffee-amber transition-colors">{{ __('Cheap') }}</a>
         <a href="{{ route('custom.index') }}" class="min-h-[44px] px-2 inline-flex items-center font-medium text-coffee-cream hover:text-coffee-amber transition-colors">{{ __('Custom') }}</a>
+        <a href="{{ route('cafes.index') }}" class="min-h-[44px] px-2 inline-flex items-center font-medium text-coffee-cream hover:text-coffee-amber transition-colors">{{ __('Cafes') }}</a>
 
         <div class="mt-3 pt-3 border-t border-coffee-latte/10">
             @include('components.locale-switcher')

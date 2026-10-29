@@ -5,9 +5,11 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MethodController;
 use App\Http\Controllers\Admin\RecipeController;
+use App\Http\Controllers\Api\CafeMapController;
 use App\Http\Controllers\Api\RandomRecipeController;
 use App\Http\Controllers\Api\RecipeSuggestController;
 use App\Http\Controllers\BrewFinderController;
+use App\Http\Controllers\CafeController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
@@ -24,8 +26,12 @@ Route::get('/recipes', [RecipePublicController::class, 'index'])->name('recipes.
 Route::get('/recipes/random', [RecipePublicController::class, 'random'])->name('recipes.random');
 Route::get('/recipes/{slug}', [RecipePublicController::class, 'show'])->name('recipes.show');
 Route::get('/methods/{slug}', [CatalogController::class, 'methodShow'])->name('methods.show');
+Route::get('/cafes', [CafeController::class, 'index'])->name('cafes.index');
 
 // ── API routes ─────────────────────────────────────────────
+Route::get('/api/cafes', [CafeMapController::class, 'index'])
+    ->middleware('throttle:120,1')
+    ->name('api.cafes.index');
 Route::get('/api/recipes/random', [RandomRecipeController::class, 'show'])
     ->middleware('throttle:30,1')
     ->name('api.recipes.random');

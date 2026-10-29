@@ -153,6 +153,70 @@ html.js-motion [data-reveal-stagger].in-view > * {
     }
 }
 
+/* ── Cafe map popup ─────────────────────────────────────── */
+/* The card is deliberately short: name, address (when OSM has it),
+   route deep-link, and the OSM last-updated stamp. Hours land in
+   Phase 3 once the opening-hours parser exists. */
+.cafe-popup {
+    min-width: 190px;
+    max-width: 260px;
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.cafe-popup-name {
+    display: block;
+    font-weight: 600;
+    color: var(--color-coffee-espresso);
+    margin-bottom: 4px;
+}
+
+.cafe-popup-address {
+    color: var(--color-coffee-mocha);
+    margin-bottom: 8px;
+}
+
+.cafe-popup-route {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 14px;
+    border-radius: 8px;
+    background: var(--color-coffee-amber);
+    color: var(--color-coffee-espresso);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.cafe-popup-route:hover {
+    filter: brightness(0.95);
+}
+
+.cafe-popup-meta {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--color-coffee-mocha);
+}
+
+/* Leaflet's default white info-window chrome, warmed to the palette. */
+.leaflet-popup-content-wrapper {
+    border-radius: 12px;
+    background: var(--color-coffee-latte);
+    box-shadow: 0 8px 24px rgba(44, 26, 20, .18);
+}
+
+.leaflet-popup-tip {
+    background: var(--color-coffee-latte);
+}
+
+.leaflet-popup-content {
+    margin: 14px 16px;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+    color: var(--color-coffee-mocha);
+}
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
