@@ -6,7 +6,7 @@
 
 **Stack additions only:** `leaflet` + `leaflet.markercluster` (npm/Vite). No backend packages. No PostGIS (bbox queries work on SQLite tests and Postgres prod alike).
 
-**Status (2026-10-30):** Phase 1 ✅ (wilayah 552 rows; Selatan 336 cafés — inside the 255–723 checksum; independent Overpass recounts match imports for 31.71/31.72/31.73) · Phase 2 ✅ (map, cascade, URL sync, diff-by-id refresh, popup, EN/ID i18n, tests 52/52) · Phases 3–5 pending. Note: the audit's per-kota numbers (e.g. Utara 606) were **bbox** counts and bleed into neighbors; boundary-resolved truth is smaller (Utara ≈ 176) — Selatan's range remains the only checksum.
+**Status (2026-11-01):** Phase 1 ✅ (wilayah 552 rows; Selatan 336 cafés — inside the 255–723 checksum; independent Overpass recounts match imports for 31.71/31.72/31.73) · Phase 2 ✅ (map, cascade, URL sync, diff-by-id refresh, popup, EN/ID i18n, tests 52/52) · Fix round ✅ (rich popup card w/ area·hours, catalog styling, pageshow/visibility healing) · UI round ✅ (CARTO Positron tiles via client key, 10px rounded map frame, two-tier loading: top-edge bar + cup overlay, cream header panel; tests 52/52) · Phases 3–5 pending. Note: the audit's per-kota numbers (e.g. Utara 606) were **bbox** counts and bleed into neighbors; boundary-resolved truth is smaller (Utara ≈ 176) — Selatan's range remains the only checksum.
 
 ---
 
@@ -101,7 +101,7 @@ Everything downstream reads from a table this phase fills. The audit's numbers a
 
 | # | Decision | Lean |
 |---|---|---|
-| 1 | Tiles: OSM standard raster vs MapTiler free tier | OSM standard for pilot (zero setup); revisit if tile rate limits bite |
+| 1 | Tiles: OSM standard raster vs MapTiler free tier | **Settled (2026-11-01):** CARTO Positron raster (`rastertiles/light_all`) with the project's CARTO client key — declutters POI icons per user request; attribution `© OpenStreetMap © CARTO` in corner control + footer (both required by CARTO free tier). OpenFreeMap + MapLibre remains the fallback if the key is ever revoked (keyless, but replaces Leaflet) |
 | 2 | Hours: schedule text only, or computed "Buka sekarang" badge | Schedule text v1; badge only if parser confidence is high on the sample |
 | 3 | Which OSM tags become card chips | Fixed allowlist, decided against the imported Selatan data |
 | 4 | Area-assignment radius | 1 km → tune from first-import distribution |
@@ -119,3 +119,6 @@ Geolocation · distance · contact rows · owner claims · admin café CRUD · d
 - `yieldContent()`/`startSection()` pre-escape with `e()` — JSON-LD/meta blocks need `{!! !!}`
 - Blade `@json()` cuts its expression at the first `)` — multi-line `fn ($row)` payloads break the compiled view; build such arrays in the controller and pass one variable
 - Leaflet's default marker icons 404 under Vite (path detection fails) — import the three PNGs and `L.Icon.Default.mergeOptions(...)`
+- CARTO tiles without a key **still return 200 valid PNGs** — a watermark placeholder ("API KEY REQUIRED"); `naturalWidth > 0` passes, so tile health must be checked **visually**, not just by load status
+- CARTO's raster style alias `positron` does not exist (9-byte error body) — the clean style is `light_all` (your dashboard template shows `voyager`, which is busier than we want)
+- Leaflet popup/chrome CSS loses to `leaflet.css` on equal specificity (it loads after `app.css`) — scope popup rules under `.leaflet-container`

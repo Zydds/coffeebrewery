@@ -29,6 +29,7 @@ if (boot && document.getElementById('cafe-map')) {
 function initCafeMap(boot) {
     const i18n = boot.i18n;
     const emptyEl = document.getElementById('cafe-empty');
+    const barEl = document.getElementById('cafe-progress');
 
     const map = L.map('cafe-map', {
         center: [-6.2, 106.82],
@@ -36,11 +37,17 @@ function initCafeMap(boot) {
         zoomControl: true,
     });
 
-    // Standard OSM raster tiles. Leaflet's built-in attribution control
-    // renders the required "© OpenStreetMap contributors" corner for free.
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // CARTO Positron raster tiles (light_all): same OSM data, but the
+    // rendering drops the dense POI icon set (mosques, ATMs, shops) so
+    // only roads, place labels and our own café pins carry the map —
+    // the original complaint. The key is CARTO's client-side basemap
+    // key (designed to ship in frontend bundles; optionally domain-lock
+    // it in the CARTO dashboard). Free tier requires the © CARTO line,
+    // rendered in the corner control here and in the footer below the
+    // map.
+    L.tileLayer('https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=cb1_4zhm_1_bd5940b2878b3cd5f232c77c', {
         maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
     }).addTo(map);
 
     // Clustering from day one: city-level zoom has hundreds of pins.
@@ -72,6 +79,12 @@ function initCafeMap(boot) {
 
     async function refresh() {
         const seq = ++fetchSeq;
+
+        // Slim top-edge progress bar for EVERY fetch (first load and each
+        // pan/zoom refresh). Only the response that still owns the latest
+        // seq may clear it — a stale reply must not hide a newer in-flight
+        // request, so each exit path checks seq before touching the bar.
+        barEl?.classList.add('is-loading');
 
         // Honest overlay: "loading" until the first answer arrives, then
         // either the region's empty state or nothing at all.
@@ -141,10 +154,15 @@ function initCafeMap(boot) {
             const regionTotal = currentRegion ? (boot.counts?.[currentRegion] ?? 0) : null;
             overlayText().textContent = i18n.emptyRegion;
             emptyEl.hidden = regionTotal === null || regionTotal > 0;
+
+            if (seq === fetchSeq) {
+                barEl?.classList.remove('is-loading');
+            }
         } catch (e) {
             if (seq === fetchSeq) {
                 overlayText().textContent = i18n.loadError;
                 emptyEl.hidden = false;
+                barEl?.classList.remove('is-loading');
                 console.warn('Cafe fetch failed:', e);
             }
         }

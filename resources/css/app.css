@@ -153,6 +153,37 @@ html.js-motion [data-reveal-stagger].in-view > * {
     }
 }
 
+/* ── Cafe map progress bar ───────────────────────────────── */
+/* Slim top-edge shimmer shown while a viewport fetch is in flight
+   (first load and every pan/zoom refresh). Sits in the map's frame
+   wrapper, not inside .leaflet-container, so no Leaflet scoping. */
+.cafe-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--color-coffee-amber);
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform .3s ease, opacity .3s ease;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.cafe-progress.is-loading {
+    opacity: 1;
+    transform: scaleX(1);
+    animation: cafe-progress-sweep .9s ease-in-out infinite;
+}
+
+@keyframes cafe-progress-sweep {
+    0%   { clip-path: inset(0 100% 0 0); }
+    50%  { clip-path: inset(0 0 0 0); }
+    100% { clip-path: inset(0 0 0 100%); }
+}
+
 /* ── Cafe map popup card ────────────────────────────────── */
 /* Mirrors the catalog's bean cards: cream card with a mocha border,
    display-font name, espresso meta lines, full-width espresso action
