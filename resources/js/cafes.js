@@ -35,6 +35,9 @@ function initCafeMap(boot) {
         center: [-6.2, 106.82],
         zoom: 11,
         zoomControl: true,
+        // Read at drag start only (see fitRegion) — soft "rubber-band"
+        // containment for the region clamp.
+        maxBoundsViscosity: 0.7,
     });
 
     // CARTO Positron raster tiles (light_all): same OSM data, but the
@@ -69,11 +72,33 @@ function initCafeMap(boot) {
 
     const keyOf = (cafe) => cafe.id;
 
+    // Hybrid region clamp (decision C, 2026-11-01): for regions with a bbox
+    // the map gets maxBounds = bbox padded ~10% (panning contained with a
+    // little give — viscosity 0.7 rubber-bands drags, moveend snaps back)
+    // and minZoom = the zoom that still fits the padded box, so the view
+    // can't escape to "all of Java" while a city is selected. Regions
+    // without a bbox (non-pilot) clear the clamp entirely — free map,
+    // never a half-clamped one.
+    // Verified against leaflet-src: setMaxBounds(null) clears through the
+    // !isValid() branch; maxBoundsViscosity is read only when a drag
+    // starts, hence it lives in the L.map init options below.
     function fitRegion(kode) {
         const box = boot.bboxes?.[kode];
 
         if (box) {
-            map.fitBounds([[box.s, box.w], [box.n, box.e]], { padding: [30, 30] });
+            const raw = L.latLngBounds([[box.s, box.w], [box.n, box.e]]);
+            const padded = raw.pad(0.1);
+
+            // Read the floor BEFORE raising minZoom — getBoundsZoom clamps
+            // its result to the current min, so the order matters.
+            const minZoom = map.getBoundsZoom(padded, false);
+
+            map.setMaxBounds(padded);
+            map.setMinZoom(minZoom);
+            map.fitBounds(raw, { padding: [30, 30] });
+        } else {
+            map.setMaxBounds(null);
+            map.setMinZoom(0);
         }
     }
 
@@ -279,9 +304,9 @@ function initCafeMap(boot) {
 
         history.replaceState(null, '', url);
 
-        if (kode) {
-            fitRegion(kode);
-        }
+        // Always run fitRegion: a region without a bbox must CLEAR the
+        // previous clamp (free map) instead of inheriting it.
+        fitRegion(kode);
 
         // fitBounds triggers moveend -> refresh; but if the map was
         // already inside the target bounds, no moveend fires.

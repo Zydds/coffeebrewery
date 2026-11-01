@@ -6,7 +6,7 @@
 
 **Stack additions only:** `leaflet` + `leaflet.markercluster` (npm/Vite). No backend packages. No PostGIS (bbox queries work on SQLite tests and Postgres prod alike).
 
-**Status (2026-11-01):** Phase 1 ✅ (wilayah 552 rows; Selatan 336 cafés — inside the 255–723 checksum; independent Overpass recounts match imports for 31.71/31.72/31.73) · Phase 2 ✅ (map, cascade, URL sync, diff-by-id refresh, popup, EN/ID i18n, tests 52/52) · Fix round ✅ (rich popup card w/ area·hours, catalog styling, pageshow/visibility healing) · UI round ✅ (CARTO Positron tiles via client key, 10px rounded map frame, two-tier loading: top-edge bar + cup overlay, cream header panel; tests 52/52) · Phases 3–5 pending. Note: the audit's per-kota numbers (e.g. Utara 606) were **bbox** counts and bleed into neighbors; boundary-resolved truth is smaller (Utara ≈ 176) — Selatan's range remains the only checksum.
+**Status (2026-11-01):** Phase 1 ✅ (wilayah 552 rows; Selatan 336 cafés — inside the 255–723 checksum; independent Overpass recounts match imports for 31.71/31.72/31.73) · Phase 2 ✅ (map, cascade, URL sync, diff-by-id refresh, popup, EN/ID i18n, tests 52/52) · Fix round ✅ (rich popup card w/ area·hours, catalog styling, pageshow/visibility healing) · UI round ✅ (CARTO Positron tiles via client key, 10px rounded map frame, two-tier loading: top-edge bar + cup overlay, cream header panel) · Evaluation round ✅ (map aligned to card container + 24px top gap, `isolate` fixes navbar overlap, selects sized to worst-case option — kota 460px for the 402px Seribu entry, hybrid region clamp: bbox.pad(0.1) + viscosity 0.7 + minZoom floor, non-bbox regions clear the clamp; tests 52/52) · Phases 3–5 pending. Note: the audit's per-kota numbers (e.g. Utara 606) were **bbox** counts and bleed into neighbors; boundary-resolved truth is smaller (Utara ≈ 176) — Selatan's range remains the only checksum.
 
 ---
 
@@ -106,6 +106,7 @@ Everything downstream reads from a table this phase fills. The audit's numbers a
 | 3 | Which OSM tags become card chips | Fixed allowlist, decided against the imported Selatan data |
 | 4 | Area-assignment radius | 1 km → tune from first-import distribution |
 | 5 | Boundary ambiguity handling | Verify per region during pilot; warn loudly, never guess silently |
+| 6 | Map containment: hard lock vs boundary outline vs hybrid | **Settled (2026-11-01):** Hybrid — `maxBounds = bbox.pad(0.1)` + `maxBoundsViscosity: 0.7` (init option) + `minZoom = getBoundsZoom(padded, false)`; regions without a bbox (non-pilot) clear the clamp entirely (free map, never half-clamped). Verified: drag snaps back to bbox center exactly, zoom-out disables at the floor, non-pilot switch drops to z8 and back |
 
 ## Explicitly out of scope for v1 (unchanged)
 
@@ -122,3 +123,5 @@ Geolocation · distance · contact rows · owner claims · admin café CRUD · d
 - CARTO tiles without a key **still return 200 valid PNGs** — a watermark placeholder ("API KEY REQUIRED"); `naturalWidth > 0` passes, so tile health must be checked **visually**, not just by load status
 - CARTO's raster style alias `positron` does not exist (9-byte error body) — the clean style is `light_all` (your dashboard template shows `voyager`, which is busier than we want)
 - Leaflet popup/chrome CSS loses to `leaflet.css` on equal specificity (it loads after `app.css`) — scope popup rules under `.leaflet-container`
+- Leaflet paints panes at `z-index` 400–700 (controls 800) with **no stacking context on the container** — any wrapper without `isolation: isolate` lets those z-values escape and paint over a `z-40` sticky navbar; one `isolate` class on the wrapper is the fix (magic z-numbers like `z-[9999]` paper over it)
+- Native `<select>` clips option text with no ellipsis — size against the longest option (canvas `measureText` + ~44px chrome for padding/arrow): worst kota entry "Kabupaten Administrasi Kepulauan Seribu · not available yet" = 402px → `sm:w-[460px]`; mobile relies on OS pickers (Android/iOS render full option text)
