@@ -67,6 +67,7 @@ class CafeController extends Controller
                 'loadError' => __('Could not load cafes. Try again.'),
                 'directions' => __('Get directions'),
                 'updated' => __('Data last updated'),
+                'hours' => __('Hours'),
             ],
         ];
 

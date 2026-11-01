@@ -161,8 +161,18 @@ function initCafeMap(boot) {
         // Google Maps never lands on a same-named chain somewhere else.
         const routeUrl = `https://www.google.com/maps/dir/?api=1&destination=${cafe.lat},${cafe.lng}`;
 
-        const address = cafe.address
-            ? `<p class="cafe-popup-address">${esc(cafe.address)}</p>`
+        // Area (kecamatan/neighbourhood) and street address are independent
+        // signals — merge into one meta line when both exist, since most
+        // pins have only one or neither.
+        const place = [cafe.area, cafe.address].filter(Boolean).join(' · ');
+        const placeLine = place
+            ? `<p class="cafe-popup-place">${esc(place)}</p>`
+            : '';
+
+        // Raw OSM opening_hours, shown verbatim — no "open now" claims
+        // before the Phase 3 parser exists. Absent = simply not shown.
+        const hours = cafe.hours
+            ? `<p class="cafe-popup-hours">${esc(i18n.hours)}: ${esc(cafe.hours)}</p>`
             : '';
 
         const updated = cafe.updated
@@ -172,7 +182,8 @@ function initCafeMap(boot) {
         return `
             <div class="cafe-popup">
                 <strong class="cafe-popup-name">${esc(cafe.name)}</strong>
-                ${address}
+                ${placeLine}
+                ${hours}
                 <a class="cafe-popup-route" href="${routeUrl}" target="_blank" rel="noopener noreferrer">
                     ${esc(i18n.directions)}
                 </a>
@@ -258,6 +269,24 @@ function initCafeMap(boot) {
         // already inside the target bounds, no moveend fires.
         refresh();
     }
+
+    // ── Return-state healing ─────────────────────────────────
+    // Coming back to this tab (bfcache restore, tab switch, or the map
+    // container resizing while away) is the classic "map stuck on the
+    // last popup with markers missing" scenario: Leaflet needs a size
+    // re-check and the markers need re-diffing against the viewport.
+    window.addEventListener('pageshow', () => {
+        map.invalidateSize();
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(refresh, 300);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(refresh, 300);
+        }
+    });
 
     // ── First paint ─────────────────────────────────────────
     // The server rendered all 514 kota options; filter them down to the

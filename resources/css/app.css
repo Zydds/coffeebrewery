@@ -153,64 +153,102 @@ html.js-motion [data-reveal-stagger].in-view > * {
     }
 }
 
-/* ── Cafe map popup ─────────────────────────────────────── */
-/* The card is deliberately short: name, address (when OSM has it),
-   route deep-link, and the OSM last-updated stamp. Hours land in
-   Phase 3 once the opening-hours parser exists. */
+/* ── Cafe map popup card ────────────────────────────────── */
+/* Mirrors the catalog's bean cards: cream card with a mocha border,
+   display-font name, espresso meta lines, full-width espresso action
+   that flips to amber on hover (same as the bean card's buttons).
+
+   The `.leaflet-container a...` selectors are load-bearing: Leaflet
+   colors popup links #0078A8 via `.leaflet-container a` (specificity
+   0,1,1), which beats a bare `.cafe-popup-route` (0,1,0) — hence every
+   link rule below is scoped up to (0,2,1)+ so the palette wins. */
+.leaflet-container .cafe-popup a {
+    color: var(--color-coffee-espresso);
+    text-decoration: none;
+}
+
 .cafe-popup {
-    min-width: 190px;
-    max-width: 260px;
+    min-width: 210px;
+    max-width: 280px;
     font-size: 14px;
     line-height: 1.45;
+    color: var(--color-coffee-espresso);
 }
 
 .cafe-popup-name {
     display: block;
-    font-weight: 600;
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.3;
     color: var(--color-coffee-espresso);
-    margin-bottom: 4px;
+    margin-bottom: 5px;
+}
+
+.cafe-popup-place {
+    font-size: 13px;
+    color: var(--color-coffee-mocha);
+    margin-bottom: 3px;
 }
 
 .cafe-popup-address {
+    font-size: 13px;
     color: var(--color-coffee-mocha);
-    margin-bottom: 8px;
+    margin-bottom: 3px;
 }
 
-.cafe-popup-route {
+.cafe-popup-hours {
+    font-size: 13px;
+    color: var(--color-coffee-espresso);
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.leaflet-container .cafe-popup a.cafe-popup-route {
     display: inline-flex;
     align-items: center;
-    min-height: 36px;
-    padding: 0 14px;
-    border-radius: 8px;
-    background: var(--color-coffee-amber);
-    color: var(--color-coffee-espresso);
+    justify-content: center;
+    min-height: 40px;
+    width: 100%;
+    padding: 0 16px;
+    border-radius: 10px;
+    background: var(--color-coffee-espresso);
+    color: var(--color-coffee-latte);
     font-weight: 600;
     text-decoration: none;
+    transition: background-color .15s ease, color .15s ease;
 }
 
-.cafe-popup-route:hover {
-    filter: brightness(0.95);
+.leaflet-container .cafe-popup a.cafe-popup-route:hover,
+.leaflet-container .cafe-popup a.cafe-popup-route:focus-visible {
+    background: var(--color-coffee-amber);
+    color: var(--color-coffee-espresso);
 }
 
 .cafe-popup-meta {
-    margin-top: 8px;
+    margin-top: 9px;
     font-size: 12px;
     color: var(--color-coffee-mocha);
 }
 
-/* Leaflet's default white info-window chrome, warmed to the palette. */
-.leaflet-popup-content-wrapper {
-    border-radius: 12px;
-    background: var(--color-coffee-latte);
-    box-shadow: 0 8px 24px rgba(44, 26, 20, .18);
+/* Leaflet's default white info-window chrome, warmed into a bean-card.
+   Scoped under `.leaflet-container` (0,2,0) because leaflet.css loads
+   AFTER app.css (it's injected by the cafes entry), so equal-specificity
+   rules like `.leaflet-popup-content-wrapper { background: #fff }` would
+   otherwise win on load order alone. */
+.leaflet-container .leaflet-popup-content-wrapper {
+    border-radius: 16px;
+    border: 1px solid var(--color-coffee-mocha);
+    background: var(--color-coffee-cream);
+    box-shadow: 0 10px 24px rgba(44, 26, 20, .15);
 }
 
-.leaflet-popup-tip {
-    background: var(--color-coffee-latte);
+.leaflet-container .leaflet-popup-tip {
+    background: var(--color-coffee-cream);
 }
 
-.leaflet-popup-content {
-    margin: 14px 16px;
+.leaflet-container .leaflet-popup-content {
+    margin: 16px 18px;
 }
 
 .leaflet-container a.leaflet-popup-close-button {
