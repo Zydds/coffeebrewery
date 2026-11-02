@@ -30,11 +30,22 @@
      24 rounded-3xl — feature panels
      full          — pills, tags, filter chips */
 
-  /* Strong easings — overrides Tailwind's weak built-ins so every
-     existing `ease-out` class site-wide picks up the UI curve. */
-  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  /* Easings. --ease-out IS the single shared curve of the redesign:
+     cubic-bezier(0.22, 1, 0.36, 1). Every new transition/keyframe uses
+     `ease-out` (class or var) and nothing else. --ease-in-out /
+     --ease-drawer are legacy values for pre-existing features only. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Duration bands (ms) for the redesign. UI feedback 150–400,
+   section reveals 600–900. Plain :root because @theme variables are
+   tree-shaken until something references them. Only transform + opacity
+   ever use these. */
+:root {
+  --duration-ui: 200ms;
+  --duration-reveal: 700ms;
 }
 
 /* ── Phase 1 foundations ─────────────────────────────────── */
@@ -102,6 +113,24 @@ html.js-motion [data-reveal-stagger] > * {
 
 html.js-motion [data-reveal].in-view,
 html.js-motion [data-reveal-stagger].in-view > * {
+    opacity: 1;
+    transform: none;
+}
+
+/* ── Flowing-water reveal (x-reveal) ─────────────────────── */
+/* One-shot fade + 12px lift on first viewport entry, driven purely
+   by a class flip from the Alpine directive (app.js). Initial state
+   gates on html.js-motion — set inline in <head> before paint, so no
+   flash — and without JS the element just renders visible. Uses the
+   shared curve + reveal band tokens; transform + opacity only. */
+html.js-motion .reveal {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity var(--duration-reveal) var(--ease-out),
+        transform var(--duration-reveal) var(--ease-out);
+}
+
+html.js-motion .reveal.is-revealed {
     opacity: 1;
     transform: none;
 }
@@ -340,6 +369,18 @@ html.js-motion [data-reveal-stagger].in-view > * {
     *::after {
         animation: none !important;
         transition: none !important;
+    }
+
+    /* Flowing-water foundation: x-reveal is disabled outright — the
+       element renders in its end state (no fade, no 12px lift, no
+       waiting on a viewport flip). The duration/easing tokens are
+       inert values and the wave divider is static (its scaleX flip
+       is a state, not motion — keep it), so the * kill-switch above
+       already covers anything else they drive. Any future looping
+       wave — max one per page — must be killed right here too. */
+    html.js-motion .reveal {
+        opacity: 1 !important;
+        transform: none !important;
     }
 
     /* Safety net: the opt-in above is already gated on

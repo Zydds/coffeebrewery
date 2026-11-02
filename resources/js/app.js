@@ -312,6 +312,38 @@ Alpine.data('brewFinder', () => ({
     },
 }));
 
+// ── Flowing-water reveal (x-reveal) ───────────────────────
+// One-shot fade + 12px lift when an element first enters the
+// viewport. Pure CSS transition (app.css) — the directive only
+// flips .is-revealed: no anime.js, no inline styles. The hidden
+// state lives on a server-rendered `class="reveal"` (so nothing
+// flashes) and gates on html.js-motion, set inline in <head>.
+// One shared observer mirrors the data-reveal system below, and
+// unobserves after the first intersection so the reveal never
+// replays. Without IntersectionObserver the element keeps its
+// end state and simply renders visible.
+const revealObserver = 'IntersectionObserver' in window
+    ? new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (!entry.isIntersecting) {
+                return;
+            }
+
+            entry.target.classList.add('is-revealed');
+            revealObserver.unobserve(entry.target);
+        });
+    }, { threshold: 0, rootMargin: '0px 0px -60px 0px' })
+    : null;
+
+Alpine.directive('reveal', (el) => {
+    if (!revealObserver) {
+        el.classList.add('is-revealed');
+        return;
+    }
+
+    revealObserver.observe(el);
+});
+
 Alpine.start();
 
 // Scroll to the catalog section that a search/filter belongs to.
