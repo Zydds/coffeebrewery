@@ -11,6 +11,50 @@ import { animate, stagger } from 'animejs';
 // animations — the guard has to live in JS).
 const prefersReduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// Mirrors --ease-out in app.css (cubic-bezier(0.22, 1, 0.36, 1)) for
+// the one count-up below. JS has no access to the CSS curve, so this
+// solves x-for-t and returns y. Keep the four numbers in sync by hand.
+const easeOutShared = (x) => {
+    const solve = (t, a, b) => 3 * (1 - t) ** 2 * t * a + 3 * (1 - t) * t ** 2 * b + t ** 3;
+    let low = 0;
+    let high = 1;
+
+    for (let i = 0; i < 12; i++) {
+        const mid = (low + high) / 2;
+
+        if (solve(mid, 0.22, 0.36) < x) {
+            low = mid;
+        } else {
+            high = mid;
+        }
+    }
+
+    return solve((low + high) / 2, 1, 1);
+};
+
+const countUp = (el) => {
+    const target = Number(el.dataset.countUp);
+
+    if (!Number.isFinite(target)) {
+        return;
+    }
+
+    const duration = 900;
+    const start = performance.now();
+
+    const frame = (now) => {
+        const t = Math.min((now - start) / duration, 1);
+
+        el.textContent = Math.round(target * easeOutShared(t));
+
+        if (t < 1) {
+            requestAnimationFrame(frame);
+        }
+    };
+
+    requestAnimationFrame(frame);
+};
+
 const play = (targets, params) => {
     if (!targets || prefersReduced()) {
         return null;
@@ -421,5 +465,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         loopEls.forEach((el) => loopObserver.observe(el));
+    }
+
+    // Stats strip: count the totals up from zero once, on entry.
+    // Server-rendered numbers stay the no-JS / reduced-motion state, and
+    // the strip's data-reveal-stagger wrapper is hidden until it enters,
+    // so zeroing here never flashes. tabular-nums holds the width steady.
+    const countEls = document.querySelectorAll('[data-count-up]');
+
+    if ('IntersectionObserver' in window && countEls.length && !prefersReduced()) {
+        const countObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) {
+                    return;
+                }
+
+                countObserver.unobserve(entry.target);
+                countUp(entry.target);
+            });
+        });
+
+        countEls.forEach((el) => {
+            el.textContent = '0';
+            countObserver.observe(el);
+        });
     }
 });
