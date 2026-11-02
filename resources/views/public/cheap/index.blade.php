@@ -42,28 +42,30 @@
         <x-page-arrows :paginator="$beans" />
     </section>
 
-    {{-- Cheap brew methods --}}
-    <section id="brew-methods" data-reveal-stagger class="max-w-[1200px] mx-auto px-5 sm:px-8 section-top">
-        <h2 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Brew Methods') }}</h2>
+    {{-- Cheap brew methods — cream band, matching the home page --}}
+    <div class="bg-coffee-cream">
+        <section id="brew-methods" data-reveal-stagger class="max-w-[1200px] mx-auto px-5 sm:px-8 section-top pb-22">
+            <h2 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Brew Methods') }}</h2>
 
-        <x-search-bar :action="route('cheap.index')" name="method_q" :placeholder="__('Search brew methods…')" :value="request('method_q')" />
+            <x-search-bar :action="route('cheap.index')" name="method_q" :placeholder="__('Search brew methods…')" :value="request('method_q')" />
 
-        <div class="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            @forelse ($methods as $method)
-                <x-method-card :method="$method" />
-            @empty
-                <x-empty-state :action="request('method_q') ? __('Clear search') : null"
-                               :href="route('cheap.index') . '#brew-methods'">
-                    {{ __('No brew methods found.') }}
-                </x-empty-state>
-            @endforelse
-        </div>
+            <div class="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                @forelse ($methods as $method)
+                    <x-method-card :method="$method" />
+                @empty
+                    <x-empty-state :action="request('method_q') ? __('Clear search') : null"
+                                   :href="route('cheap.index') . '#brew-methods'">
+                        {{ __('No brew methods found.') }}
+                    </x-empty-state>
+                @endforelse
+            </div>
 
-        <x-page-arrows :paginator="$methods" />
-    </section>
+            <x-page-arrows :paginator="$methods" />
+        </section>
+    </div>
 
     {{-- Surprise me --}}
-    <section id="surprise" data-reveal class="mt-[88px] bg-coffee-roast py-[88px] text-coffee-cream" x-data="surpriseSection({ cheap: true })">
+    <section id="surprise" data-reveal-stagger class="bg-coffee-roast py-[88px] text-coffee-cream" x-data="surpriseSection({ cheap: true })">
         <div class="max-w-[1200px] mx-auto px-5 sm:px-8 grid gap-10 lg:grid-cols-[.85fr_1.15fr] items-center">
             <div>
                 <h2 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)] text-coffee-latte">{{ __('Can\'t decide what to brew?') }}</h2>

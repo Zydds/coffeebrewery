@@ -6,8 +6,9 @@
     {{-- Hero --}}
     <section class="bg-coffee-cream">
         <div class="max-w-[1200px] mx-auto px-5 sm:px-8 py-16 lg:py-[72px] grid gap-10 lg:grid-cols-[1.1fr_.9fr] items-center">
-            <div>
-                <h1 class="font-display font-extrabold leading-[1.1] tracking-tight text-[clamp(2.6rem,6vw,4.5rem)]">
+            <div data-reveal-stagger>
+                <p class="eyebrow">{{ __('Coffee, explained') }}</p>
+                <h1 class="mt-3 font-display font-extrabold leading-[1.1] tracking-tight text-[clamp(2.6rem,6vw,4.5rem)]">
                     {{ __('Find your bean.') }}
                     <mark class="rounded-xl bg-coffee-amber px-[0.16em] text-coffee-espresso [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">{{ __('Nail your brew.') }}</mark>
                 </h1>
@@ -28,7 +29,7 @@
                 </div>
             </div>
 
-            <div class="w-full max-w-[460px] justify-self-center">
+            <div data-reveal class="w-full max-w-[460px] justify-self-center">
                 <svg class="hero-art" viewBox="0 0 440 480" role="img" aria-label="{{ __('Paper coffee cup surrounded by floating coffee beans') }}">
                     <defs>
                         <symbol id="bean" viewBox="0 0 40 56">
@@ -58,6 +59,33 @@
         </div>
     </section>
 
+    {{-- Proof strip — full-bleed espresso band; site-wide totals, not the
+         filtered paginator counts. Cascade: stats → cafe-map link. --}}
+    <section class="bg-coffee-espresso text-coffee-cream">
+        <div data-reveal-stagger class="max-w-[1200px] mx-auto px-5 sm:px-8 py-8 lg:py-10 flex flex-wrap items-center justify-between gap-x-10 gap-y-6">
+            <div class="flex flex-col">
+                <span class="font-display text-3xl lg:text-4xl font-extrabold leading-none text-coffee-latte tabular-nums">{{ $proof['beans'] }}</span>
+                <span class="mt-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-coffee-cream/70">{{ __('Coffee beans') }}</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="font-display text-3xl lg:text-4xl font-extrabold leading-none text-coffee-latte tabular-nums">{{ $proof['recipes'] }}</span>
+                <span class="mt-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-coffee-cream/70">{{ __('Recipes') }}</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="font-display text-3xl lg:text-4xl font-extrabold leading-none text-coffee-latte tabular-nums">{{ $proof['methods'] }}</span>
+                <span class="mt-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-coffee-cream/70">{{ __('Brew Methods') }}</span>
+            </div>
+
+            <a href="{{ route('cafes.index') }}"
+               class="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-coffee-cream/40 px-5 text-sm font-semibold text-coffee-cream transition-colors duration-150 ease-out hover-fine:bg-coffee-cream hover-fine:text-coffee-espresso motion-safe:active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-latte">
+                {{ __('Cafe map') }}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12h14M13 6l6 6-6 6"/>
+                </svg>
+            </a>
+        </div>
+    </section>
+
     {{-- Bean catalog --}}
     <section id="bean-catalog" data-reveal-stagger class="max-w-[1200px] mx-auto px-5 sm:px-8 section-top">
         <div class="flex flex-wrap items-end justify-between gap-6">
@@ -77,6 +105,34 @@
 
         <x-search-bar :action="route('home')" :placeholder="__('Search beans…')" :value="request('q')" :preserves="['category' => request('category')]" />
 
+        {{-- Result count + applied-filter summary --}}
+        @if ($featuredBeans->total() > 0 || request()->filled('q') || request()->filled('category'))
+            <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-coffee-mocha">
+                <span class="font-semibold text-coffee-espresso">
+                    {{ __('Showing :from–:to of :total', [
+                        'from' => $featuredBeans->firstItem() ?? 0,
+                        'to' => $featuredBeans->lastItem() ?? 0,
+                        'total' => $featuredBeans->total(),
+                    ]) }}
+                </span>
+                @if (request('q'))
+                    <span aria-hidden="true">·</span>
+                    <span>&ldquo;{{ request('q') }}&rdquo;</span>
+                @endif
+                @if (request('category'))
+                    <span aria-hidden="true">·</span>
+                    <span>{{ $categories->firstWhere('slug', request('category'))?->name ?? request('category') }}</span>
+                @endif
+                @if (request()->filled('q') || request()->filled('category'))
+                    <span aria-hidden="true">·</span>
+                    <a href="{{ route('home') }}"
+                       class="font-semibold text-coffee-amber-ink hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink rounded-sm">
+                        {{ __('Clear search & filters') }}
+                    </a>
+                @endif
+            </div>
+        @endif
+
         <div class="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             @forelse ($featuredBeans as $bean)
                 <x-bean-card :bean="$bean" />
@@ -91,28 +147,32 @@
         <x-page-arrows :paginator="$featuredBeans" />
     </section>
 
-    {{-- Brew methods --}}
-    <section id="brew-methods" data-reveal-stagger class="max-w-[1200px] mx-auto px-5 sm:px-8 section-top">
-        <h2 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Brew Methods') }}</h2>
+    {{-- Brew methods — full-bleed cream band; white method-cards pop
+         against it (bean-cards stay cream on the latte catalog above). --}}
+    <div class="bg-coffee-cream">
+        <section id="brew-methods" data-reveal-stagger class="max-w-[1200px] mx-auto px-5 sm:px-8 section-top pb-22">
+            <h2 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Brew Methods') }}</h2>
 
-        <x-search-bar :action="route('home')" name="method_q" :placeholder="__('Search brew methods…')" :value="request('method_q')" />
+            <x-search-bar :action="route('home')" name="method_q" :placeholder="__('Search brew methods…')" :value="request('method_q')" />
 
-        <div class="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            @forelse ($methods as $method)
-                <x-method-card :method="$method" />
-            @empty
-                <x-empty-state :action="request('method_q') ? __('Clear search') : null"
-                               :href="route('home') . '#brew-methods'">
-                    {{ __('No brew methods found.') }}
-                </x-empty-state>
-            @endforelse
-        </div>
+            <div class="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                @forelse ($methods as $method)
+                    <x-method-card :method="$method" />
+                @empty
+                    <x-empty-state :action="request('method_q') ? __('Clear search') : null"
+                                   :href="route('home') . '#brew-methods'">
+                        {{ __('No brew methods found.') }}
+                    </x-empty-state>
+                @endforelse
+            </div>
 
-        <x-page-arrows :paginator="$methods" />
-    </section>
+            <x-page-arrows :paginator="$methods" />
+        </section>
+    </div>
 
-    {{-- Surprise me --}}
-    <section id="surprise" data-reveal class="mt-[88px] bg-coffee-roast py-[88px] text-coffee-cream" x-data="surpriseSection()">
+    {{-- Surprise me — flush against the cream band (no gap); the two
+         columns cascade copy → card. --}}
+    <section id="surprise" data-reveal-stagger class="bg-coffee-roast py-[88px] text-coffee-cream" x-data="surpriseSection()">
         <div class="max-w-[1200px] mx-auto px-5 sm:px-8 grid gap-10 lg:grid-cols-[.85fr_1.15fr] items-center">
             <div>
                 <h2 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)] text-coffee-latte">{{ __('Can\'t decide what to brew?') }}</h2>

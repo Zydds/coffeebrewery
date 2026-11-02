@@ -13,7 +13,7 @@
         </a>
 
         <button type="button" @click="mobileOpen = !mobileOpen"
-                class="menu-btn hidden max-md:inline-flex h-11 w-11 items-center justify-center rounded-[10px] text-coffee-latte"
+                class="menu-btn hidden max-md:inline-flex h-11 w-11 items-center justify-center rounded-xl text-coffee-latte"
                 aria-label="{{ __('Toggle navigation menu') }}" aria-expanded="false" :aria-expanded="mobileOpen.toString()">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
                 <path :d="mobileOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 7h16M4 12h16M4 17h16'" />

@@ -46,7 +46,7 @@
     <div class="px-4 pb-4">
         <button type="button"
                 @click.stop="open = !open"
-                class="block min-h-[44px] w-full rounded-[10px] bg-coffee-espresso text-sm font-semibold text-coffee-latte transition-colors duration-150 hover:bg-coffee-amber hover:text-coffee-espresso"
+                class="block min-h-[44px] w-full rounded-xl bg-coffee-espresso text-sm font-semibold text-coffee-latte transition-colors duration-150 hover:bg-coffee-amber hover:text-coffee-espresso"
                 :class="open ? 'invisible opacity-0' : ''"
                 aria-expanded="false" :aria-expanded="open.toString()">
             {{ __('Details') }}
@@ -75,7 +75,7 @@
         </p>
 
         <a href="{{ route('beans.show', $bean->slug) }}"
-           class="mt-1 inline-flex min-h-[40px] items-center justify-center rounded-[10px] bg-coffee-amber px-4 text-sm font-semibold text-coffee-espresso hover:bg-coffee-latte transition-colors">
+           class="mt-1 inline-flex min-h-[40px] items-center justify-center rounded-xl bg-coffee-amber px-4 text-sm font-semibold text-coffee-espresso hover:bg-coffee-latte transition-colors">
             {{ __('View full details') }}
         </a>
     </div>

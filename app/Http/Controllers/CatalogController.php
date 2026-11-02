@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BrewMethod;
 use App\Models\Category;
 use App\Models\CoffeeBean;
+use App\Models\Recipe;
 use Illuminate\Http\Request;
 
 class CatalogController extends Controller
@@ -15,7 +16,15 @@ class CatalogController extends Controller
         $featuredBeans = $this->beanQuery($request)->latest()->paginate(8)->withQueryString();
         $methods = $this->methodQuery($request)->paginate(8)->withQueryString();
 
-        return view('public.home', compact('featuredBeans', 'categories', 'methods'));
+        // Site-wide totals for the home proof strip — deliberately NOT the
+        // paginator totals, which shrink as filters are applied.
+        $proof = [
+            'beans' => CoffeeBean::count(),
+            'recipes' => Recipe::count(),
+            'methods' => BrewMethod::count(),
+        ];
+
+        return view('public.home', compact('featuredBeans', 'categories', 'methods', 'proof'));
     }
 
     public function cheapIndex(Request $request)
