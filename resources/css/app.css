@@ -135,45 +135,57 @@ html.js-motion .reveal.is-revealed {
     transform: none;
 }
 
-/* ── Hero: levitating cup & beans (max 3px) ────────────── */
-.fl,
-.cup-float {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: levitate 4s ease-in-out infinite;
+/* ── Hero: drifting waves — the home page's ONE loop ────── */
+/* Two bands behind the cup, linear (constant drift), 40s back /
+   30s front so they never move in lockstep. The path repeats every
+   220 units in the 440-wide viewBox, so translateX(-440px) = two
+   full periods = a seamless loop. data-loop (home markup, observer
+   in app.js) pauses both while the art is offscreen; the global
+   prefers-reduced-motion rule kills the animation outright. */
+.wave-drift {
+    animation: wave-drift 40s linear infinite;
 }
 
-.cup-float {
-    animation-duration: 4.6s;
+.wave-front {
+    animation-duration: 30s;
+    animation-delay: -14s;
 }
 
-@keyframes levitate {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-3px);
+[data-loop].is-paused .wave-drift {
+    animation-play-state: paused;
+}
+
+@keyframes wave-drift {
+    to {
+        transform: translateX(-440px);
     }
 }
 
-/* ── Hero: shake on hover ──────────────────────────────── */
-.hero-art:hover .fl,
-.hero-art:hover .cup-float {
-    animation: shake .45s ease-in-out infinite;
+/* ── Hero: one-time entrances (no loops) ─────────────────── */
+/* Beans: opacity + 16px rise, 80ms stagger via --i set per bean in
+   the markup. Cup: 4px settle (drops into place) — both replace the
+   old levitate bob + hover shake, so the wave drift above stays the
+   page's only looping animation. Reduced motion: animation:none in
+   the global rule leaves both at their static end state (visible). */
+.bean {
+    animation: bean-rise 700ms var(--ease-out) both;
+    animation-delay: calc(var(--i, 0) * 80ms);
 }
 
-@keyframes shake {
-    0%, 100% {
-        transform: translateX(0) rotate(0deg);
+@keyframes bean-rise {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
     }
-    25% {
-        transform: translateX(-2px) rotate(-1.5deg);
-    }
-    50% {
-        transform: translateX(2px) rotate(1.5deg);
-    }
-    75% {
-        transform: translateX(-1px) rotate(-1deg);
+}
+
+.cup-settle {
+    animation: cup-settle 700ms var(--ease-out) both;
+}
+
+@keyframes cup-settle {
+    from {
+        transform: translateY(-4px);
     }
 }
 

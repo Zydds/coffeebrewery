@@ -407,4 +407,19 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         revealEls.forEach((el) => el.classList.add('in-view'));
     }
+
+    // Pause the page's one looping animation (the hero waves) while
+    // its container is offscreen, resume on re-entry. Reduced motion
+    // is handled globally in app.css (animation: none), not here.
+    const loopEls = document.querySelectorAll('[data-loop]');
+
+    if ('IntersectionObserver' in window && loopEls.length) {
+        const loopObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                entry.target.classList.toggle('is-paused', !entry.isIntersecting);
+            });
+        });
+
+        loopEls.forEach((el) => loopObserver.observe(el));
+    }
 });

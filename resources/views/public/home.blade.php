@@ -18,18 +18,18 @@
 
                 <div class="mt-8 flex flex-wrap gap-3">
                     <a href="#surprise"
-                       class="min-h-[52px] px-7 inline-flex items-center gap-2.5 rounded-xl bg-coffee-espresso font-semibold text-coffee-latte transition-colors duration-150 ease-out hover:bg-coffee-amber hover:text-coffee-espresso motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink">
-                        <x-dice-icon />
+                       class="group min-h-[52px] px-7 inline-flex items-center gap-2.5 rounded-xl bg-coffee-espresso font-semibold text-coffee-latte transition duration-150 ease-out hover:bg-coffee-amber hover:text-coffee-espresso motion-safe:active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink">
+                        <x-dice-icon class="transition-transform duration-150 ease-out motion-safe:group-active:rotate-90" />
                         {{ __('Surprise me') }}
                     </a>
                     <a href="{{ route('recipes.index', ['quick' => 1]) }}"
-                       class="min-h-[52px] px-7 inline-flex items-center rounded-xl border-2 border-coffee-espresso font-semibold text-coffee-espresso transition-colors duration-150 ease-out hover:bg-coffee-espresso hover:text-coffee-latte motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink">
+                       class="min-h-[52px] px-7 inline-flex items-center rounded-xl border-2 border-coffee-espresso font-semibold text-coffee-espresso transition duration-150 ease-out hover:bg-coffee-espresso hover:text-coffee-latte motion-safe:active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink">
                         {{ __('Quick recipes ≤5 min') }}
                     </a>
                 </div>
             </div>
 
-            <div data-reveal class="w-full max-w-[460px] justify-self-center">
+            <div data-loop class="w-full max-w-[460px] justify-self-center">
                 <svg class="hero-art" viewBox="0 0 440 480" role="img" aria-label="{{ __('Paper coffee cup surrounded by floating coffee beans') }}">
                     <defs>
                         <symbol id="bean" viewBox="0 0 40 56">
@@ -37,8 +37,18 @@
                             <path d="M21 5c-11 15 9 31-1 46" fill="none" stroke="#6F4E37" stroke-width="3.5" stroke-linecap="round"/>
                         </symbol>
                     </defs>
+                    {{-- Two wave bands drift behind the cup — the home
+                         page's single looping animation (app.css holds
+                         the timing; data-loop on the wrapper pauses it
+                         offscreen). Palette tones only. --}}
+                    <g class="wave-drift wave-back">
+                        <path d="M0,368 c55,-14 165,14 220,0 c55,-14 165,14 220,0 c55,-14 165,14 220,0 c55,-14 165,14 220,0 L880,480 L0,480 Z" fill="#6F4E37" opacity=".12"/>
+                    </g>
+                    <g class="wave-drift wave-front">
+                        <path d="M0,404 c55,-12 165,12 220,0 c55,-12 165,12 220,0 c55,-12 165,12 220,0 c55,-12 165,12 220,0 L880,480 L0,480 Z" fill="#4A2C21" opacity=".14"/>
+                    </g>
                     <ellipse cx="225" cy="448" rx="115" ry="14" fill="#2C1A14" opacity=".14"/>
-                    <g class="cup-float">
+                    <g class="cup-settle">
                         <g transform="rotate(-12 225 270)">
                         <path d="M130 140h190l-26 285q-69 14-138 0z" fill="#FDFBF7"/>
                         <path d="M286 140h34l-26 285q-6 1.5-12 2.5z" fill="#6F4E37" opacity=".14"/>
@@ -49,15 +59,17 @@
                         <rect x="122" y="118" width="206" height="28" rx="14" fill="#6F4E37"/>
                         </g>
                     </g>
-                    <g class="fl"><use href="#bean" x="50" y="150" width="46" height="64" transform="rotate(-30 73 182)"/></g>
-                    <g class="fl" style="animation-delay:-2s"><use href="#bean" x="355" y="120" width="54" height="76" transform="rotate(25 382 158)"/></g>
-                    <g class="fl" style="animation-delay:-4s"><use href="#bean" x="372" y="300" width="44" height="62" transform="rotate(-40 394 331)"/></g>
-                    <g class="fl" style="animation-delay:-1s"><use href="#bean" x="58" y="330" width="40" height="56" transform="rotate(40 78 358)"/></g>
-                    <g class="fl" style="animation-delay:-3s"><use href="#bean" x="190" y="24" width="34" height="48" transform="rotate(70 207 48)"/></g>
+                    <g class="bean" style="--i:0"><use href="#bean" x="50" y="150" width="46" height="64" transform="rotate(-30 73 182)"/></g>
+                    <g class="bean" style="--i:1"><use href="#bean" x="355" y="120" width="54" height="76" transform="rotate(25 382 158)"/></g>
+                    <g class="bean" style="--i:2"><use href="#bean" x="372" y="300" width="44" height="62" transform="rotate(-40 394 331)"/></g>
+                    <g class="bean" style="--i:3"><use href="#bean" x="58" y="330" width="40" height="56" transform="rotate(40 78 358)"/></g>
+                    <g class="bean" style="--i:4"><use href="#bean" x="190" y="24" width="34" height="48" transform="rotate(70 207 48)"/></g>
                 </svg>
             </div>
         </div>
     </section>
+
+    <x-wave-divider from-color="cream" to-color="espresso" />
 
     {{-- Proof strip — full-bleed espresso band; site-wide totals, not the
          filtered paginator counts. Cascade: stats → cafe-map link. --}}
