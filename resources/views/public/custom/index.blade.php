@@ -25,7 +25,7 @@
             </div>
 
             {{-- Question card --}}
-            <div x-show="!finished && !loading" x-ref="questions" x-cloak class="mt-4 rounded-[20px] border border-coffee-mocha/30 bg-coffee-cream p-6 sm:p-8">
+            <div x-show="!finished && !loading" x-ref="questions" x-cloak class="mt-4 rounded-3xl border border-coffee-mocha/30 bg-coffee-cream p-6 sm:p-8">
                 {{-- Q1: ingredients --}}
                 <div x-show="current === 'ingredients'">
                     <h2 class="font-display text-2xl font-bold text-coffee-espresso">{{ __('What coffee do you have?') }}</h2>
@@ -173,12 +173,12 @@
             </div>
 
             {{-- Loading --}}
-            <div x-show="loading" x-cloak class="mt-4 rounded-[20px] border border-coffee-mocha/30 bg-coffee-cream p-10 text-center">
+            <div x-show="loading" x-cloak class="mt-4 rounded-3xl border border-coffee-mocha/30 bg-coffee-cream p-10 text-center">
                 <p class="text-sm text-coffee-mocha">{{ __('Finding your brew…') }}</p>
             </div>
 
             {{-- Error --}}
-            <div x-show="error && !loading" x-cloak class="mt-4 rounded-[20px] border border-red-300 bg-red-50 p-6 text-center">
+            <div x-show="error && !loading" x-cloak class="mt-4 rounded-3xl border border-red-300 bg-red-50 p-6 text-center">
                 <p class="text-sm text-red-700">
                     <span x-text="error"></span>
                     <button type="button" @click="submit()" class="ml-1 font-semibold underline">{{ __('Try again') }}</button>
@@ -191,7 +191,7 @@
                  spamming the console with TypeErrors. --}}
             <template x-if="finished && match && !loading">
                 <div x-ref="results" aria-live="polite"
-                     class="mt-4 rounded-[20px] bg-coffee-roast p-6 sm:p-8 text-coffee-cream">
+                     class="mt-4 rounded-3xl bg-coffee-roast p-6 sm:p-8 text-coffee-cream">
                     <p class="text-xs font-semibold uppercase tracking-wider text-coffee-latte/70">{{ __('We suggest') }}</p>
 
                     <div class="mt-2 flex flex-wrap items-start justify-between gap-3">

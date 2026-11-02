@@ -11,12 +11,60 @@
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   --font-display: Outfit, system-ui, sans-serif;
 
+  /* Role split: espresso = structure, mocha = body text, amber = fills /
+     marks / borders ONLY, amber-ink = accent TEXT on light surfaces
+     (amber on latte is 3.1:1 — fails AA; amber-ink is 6.3:1 on latte,
+     5.6:1 on cream). Amber stays correct as text on espresso/roast. */
   --color-coffee-espresso: #2c1a14;
   --color-coffee-mocha: #6f4e37;
   --color-coffee-latte: #fdfbf7;
   --color-coffee-amber: #c87d55;
+  --color-coffee-amber-ink: #a05a32;
   --color-coffee-cream: #f4ebe1;
   --color-coffee-roast: #4a2c21;
+
+  /* Radius scale (no rounded-lg=8, no arbitrary px):
+     4 rounded-sm  — checkboxes, meters, tiny marks
+     12 rounded-xl — buttons, inputs, small tiles
+     16 rounded-2xl — cards
+     24 rounded-3xl — feature panels
+     full          — pills, tags, filter chips */
+
+  /* Strong easings — overrides Tailwind's weak built-ins so every
+     existing `ease-out` class site-wide picks up the UI curve. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* ── Phase 1 foundations ─────────────────────────────────── */
+
+/* Hover MOTION (and sticky hover-invert) only through this gate —
+   bare hover: also fires on touch. Color-only hovers may stay bare. */
+@custom-variant hover-fine {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @slot;
+    }
+  }
+}
+
+/* One section rhythm: 88px, replacing every pt-[88px] literal.
+   scroll-margin keeps #anchor jumps clear of the sticky navbar. */
+@utility section-top {
+  padding-top: 5.5rem;
+  scroll-margin-top: 5.5rem;
+}
+
+/* Editorial eyebrow — second hierarchy level without a serif. */
+@utility eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-coffee-amber-ink);
 }
 
 /*

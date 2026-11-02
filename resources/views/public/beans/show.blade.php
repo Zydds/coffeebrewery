@@ -11,18 +11,18 @@
 
 @section('content')
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <a href="{{ route('home') }}#bean-catalog" class="text-sm font-semibold text-coffee-amber hover:underline">
+        <a href="{{ route('home') }}#bean-catalog" class="text-sm font-semibold text-coffee-amber-ink hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink rounded-sm">
             &larr; {{ __('All beans') }}
         </a>
 
-        <div class="mt-4 rounded-lg border border-coffee-mocha/30 bg-coffee-cream overflow-hidden">
+        <div class="mt-4 rounded-2xl border border-coffee-mocha/30 bg-coffee-cream overflow-hidden">
             @if ($bean->image_url)
                 <img src="{{ $bean->image_url }}" alt="{{ $bean->name }}" class="w-full h-64 object-cover">
             @endif
 
             <div class="p-6 sm:p-8">
                 <div class="flex flex-wrap items-start justify-between gap-3">
-                    <h1 class="text-3xl font-bold text-coffee-espresso">{{ $bean->name }}</h1>
+                    <h1 class="font-display text-[clamp(2rem,4vw,3rem)] font-extrabold leading-[1.1] tracking-tight text-coffee-espresso">{{ $bean->name }}</h1>
                     <span class="text-sm font-medium px-3 py-1 rounded-full bg-coffee-mocha/15 text-coffee-mocha">
                         {{ $bean->category->name ?? __('Uncategorized') }}
                     </span>
@@ -76,7 +76,7 @@
                 </dl>
 
                 <div class="mt-6">
-                    <h2 class="text-sm font-semibold text-coffee-mocha uppercase tracking-wider">{{ __('Flavor Notes') }}</h2>
+                    <h2 class="eyebrow">{{ __('Flavor Notes') }}</h2>
                     <div class="mt-2 flex flex-wrap gap-2">
                         @forelse ($bean->flavor_notes ?? [] as $note)
                             <span class="text-sm px-3 py-1 rounded-full bg-coffee-amber/20 text-coffee-espresso border border-coffee-amber/40">{{ $note }}</span>
@@ -90,7 +90,7 @@
 
         <div class="mt-6 flex flex-wrap gap-3">
             <a href="{{ route('recipes.index') }}"
-               class="px-4 py-2 rounded-sm bg-coffee-amber text-coffee-espresso text-sm font-semibold hover:bg-coffee-amber/90 transition-colors">
+               class="min-h-[44px] px-6 inline-flex items-center rounded-xl bg-coffee-espresso text-sm font-semibold text-coffee-latte transition-colors duration-150 ease-out hover:bg-coffee-amber hover:text-coffee-espresso motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink">
                 {{ __('Browse Recipes') }}
             </a>
         </div>

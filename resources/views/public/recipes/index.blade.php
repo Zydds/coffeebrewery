@@ -10,37 +10,27 @@
             <h1 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Recipes') }}</h1>
 
             <div class="flex flex-wrap gap-2" role="navigation" aria-label="{{ __('Filter recipes') }}">
-                <a href="{{ route('recipes.index', array_filter(['q' => request('q')])) }}"
-                   class="min-h-[44px] px-5 inline-flex items-center rounded-full font-semibold text-[15px] transition-colors {{ request('method') === null && !request('featured') && !request('cheap')
-                        ? 'bg-coffee-espresso text-coffee-latte'
-                        : 'bg-coffee-cream text-coffee-espresso hover:bg-coffee-espresso hover:text-coffee-latte' }}">
+                <x-chip :href="route('recipes.index', array_filter(['q' => request('q')]))"
+                        :active="request('method') === null && !request('featured') && !request('cheap')">
                     {{ __('All') }}
-                </a>
-                <a href="{{ route('recipes.index', array_filter(['q' => request('q'), 'method' => request('method'), 'cheap' => request('cheap') ?: null, 'featured' => request('featured') ?: null, 'quick' => 1])) }}"
-                   class="min-h-[44px] px-5 inline-flex items-center rounded-full font-semibold text-[15px] transition-colors {{ request('quick')
-                        ? 'bg-coffee-espresso text-coffee-latte'
-                        : 'bg-coffee-cream text-coffee-espresso hover:bg-coffee-espresso hover:text-coffee-latte' }}">
+                </x-chip>
+                <x-chip :href="route('recipes.index', array_filter(['q' => request('q'), 'method' => request('method'), 'cheap' => request('cheap') ?: null, 'featured' => request('featured') ?: null, 'quick' => 1]))"
+                        :active="(bool) request('quick')">
                     {{ __('Quick ≤5 min') }}
-                </a>
-                <a href="{{ route('recipes.index', array_filter(['q' => request('q'), 'method' => request('method'), 'featured' => request('featured') ?: null, 'cheap' => 1])) }}"
-                   class="min-h-[44px] px-5 inline-flex items-center rounded-full font-semibold text-[15px] transition-colors {{ request('cheap')
-                        ? 'bg-coffee-espresso text-coffee-latte'
-                        : 'bg-coffee-cream text-coffee-espresso hover:bg-coffee-espresso hover:text-coffee-latte' }}">
+                </x-chip>
+                <x-chip :href="route('recipes.index', array_filter(['q' => request('q'), 'method' => request('method'), 'featured' => request('featured') ?: null, 'cheap' => 1]))"
+                        :active="(bool) request('cheap')">
                     {{ __('Cheap') }}
-                </a>
-                <a href="{{ route('recipes.index', array_filter(['q' => request('q'), 'method' => request('method'), 'cheap' => request('cheap') ?: null, 'featured' => 1])) }}"
-                   class="min-h-[44px] px-5 inline-flex items-center rounded-full font-semibold text-[15px] transition-colors {{ request('featured')
-                        ? 'bg-coffee-espresso text-coffee-latte'
-                        : 'bg-coffee-cream text-coffee-espresso hover:bg-coffee-espresso hover:text-coffee-latte' }}">
+                </x-chip>
+                <x-chip :href="route('recipes.index', array_filter(['q' => request('q'), 'method' => request('method'), 'cheap' => request('cheap') ?: null, 'featured' => 1]))"
+                        :active="(bool) request('featured')">
                     {{ __('Featured') }}
-                </a>
+                </x-chip>
                 @foreach ($methods as $method)
-                    <a href="{{ route('recipes.index', array_filter(['q' => request('q'), 'method' => $method->slug, 'cheap' => request('cheap') ?: null, 'featured' => request('featured') ?: null])) }}"
-                       class="min-h-[44px] px-5 inline-flex items-center rounded-full font-semibold text-[15px] transition-colors {{ request('method') === $method->slug
-                            ? 'bg-coffee-espresso text-coffee-latte'
-                            : 'bg-coffee-cream text-coffee-espresso hover:bg-coffee-espresso hover:text-coffee-latte' }}">
+                    <x-chip :href="route('recipes.index', array_filter(['q' => request('q'), 'method' => $method->slug, 'cheap' => request('cheap') ?: null, 'featured' => request('featured') ?: null]))"
+                            :active="request('method') === $method->slug">
                         {{ $method->name }}
-                    </a>
+                    </x-chip>
                 @endforeach
             </div>
         </div>
@@ -51,9 +41,9 @@
         <div data-reveal-stagger class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @forelse ($recipes as $recipe)
                 <a href="{{ route('recipes.show', $recipe->slug) }}"
-                   class="group flex flex-col rounded-lg border border-coffee-mocha/30 bg-coffee-cream p-5 hover:border-coffee-amber transition-colors">
+                   class="group flex flex-col rounded-2xl border border-coffee-mocha/30 bg-coffee-cream p-5 hover:border-coffee-amber transition-colors">
                     <div class="flex items-start justify-between gap-3">
-                        <h2 class="font-semibold text-coffee-espresso group-hover:text-coffee-amber transition-colors leading-snug">
+                        <h2 class="font-semibold text-coffee-espresso group-hover:text-coffee-amber-ink transition-colors leading-snug">
                             {{ $recipe->title }}
                         </h2>
                         <div class="flex shrink-0 items-center gap-1.5">
@@ -98,20 +88,14 @@
                     </dl>
                 </a>
             @empty
-                <div class="col-span-full rounded-lg border border-dashed border-coffee-mocha/40 p-10 text-center">
-                    <p class="text-sm text-coffee-mocha">
-                        @if (request('q') || request('method') || request('featured') || request('cheap') || request('quick'))
-                            {{ __('No recipes found matching your search') }}.
-                        @else
-                            {{ __('No recipes found yet') }}.
-                        @endif
-                    </p>
+                <x-empty-state :action="(request('q') || request('method') || request('featured') || request('cheap') || request('quick')) ? __('Clear search & filters') : null"
+                               :href="route('recipes.index')">
                     @if (request('q') || request('method') || request('featured') || request('cheap') || request('quick'))
-                        <a href="{{ route('recipes.index') }}" class="mt-3 inline-block text-sm font-semibold text-coffee-amber hover:underline">
-                            {{ __('Clear search & filters') }}
-                        </a>
+                        {{ __('No recipes found matching your search') }}.
+                    @else
+                        {{ __('No recipes found yet') }}.
                     @endif
-                </div>
+                </x-empty-state>
             @endforelse
         </div>
 

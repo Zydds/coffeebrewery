@@ -9,7 +9,7 @@
             <div>
                 <h1 class="font-display font-extrabold leading-[1.1] tracking-tight text-[clamp(2.6rem,6vw,4.5rem)]">
                     {{ __('Find your bean.') }}
-                    <mark class="rounded-[10px] bg-coffee-amber px-[0.16em] text-coffee-espresso [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">{{ __('Nail your brew.') }}</mark>
+                    <mark class="rounded-xl bg-coffee-amber px-[0.16em] text-coffee-espresso [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">{{ __('Nail your brew.') }}</mark>
                 </h1>
                 <p class="mt-6 max-w-[480px] text-lg text-coffee-mocha">
                     {{ __('Browse beans by origin, learn how each brew method works, and get a recipe when you cannot decide.') }}
@@ -17,17 +17,12 @@
 
                 <div class="mt-8 flex flex-wrap gap-3">
                     <a href="#surprise"
-                       class="min-h-[52px] px-7 inline-flex items-center gap-2.5 rounded-xl bg-coffee-espresso font-semibold text-coffee-latte hover:bg-coffee-amber hover:text-coffee-espresso transition-colors">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <rect x="3.5" y="3.5" width="17" height="17" rx="3"/>
-                            <circle cx="8.5" cy="8.5" r="1" fill="currentColor"/>
-                            <circle cx="15.5" cy="15.5" r="1" fill="currentColor"/>
-                            <circle cx="12" cy="12" r="1" fill="currentColor"/>
-                        </svg>
+                       class="min-h-[52px] px-7 inline-flex items-center gap-2.5 rounded-xl bg-coffee-espresso font-semibold text-coffee-latte transition-colors duration-150 ease-out hover:bg-coffee-amber hover:text-coffee-espresso motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink">
+                        <x-dice-icon />
                         {{ __('Surprise me') }}
                     </a>
                     <a href="{{ route('recipes.index', ['quick' => 1]) }}"
-                       class="min-h-[52px] px-7 inline-flex items-center rounded-xl border-2 border-coffee-espresso font-semibold text-coffee-espresso hover:bg-coffee-espresso hover:text-coffee-latte transition-colors">
+                       class="min-h-[52px] px-7 inline-flex items-center rounded-xl border-2 border-coffee-espresso font-semibold text-coffee-espresso transition-colors duration-150 ease-out hover:bg-coffee-espresso hover:text-coffee-latte motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink">
                         {{ __('Quick recipes ≤5 min') }}
                     </a>
                 </div>
@@ -63,29 +58,19 @@
         </div>
     </section>
 
-    {{-- Section divider --}}
-    <div class="max-w-[1200px] mx-auto px-5 sm:px-8">
-        <hr class="border-t border-coffee-mocha/25">
-    </div>
-
     {{-- Bean catalog --}}
-    <section id="bean-catalog" data-reveal-stagger class="max-w-[1200px] mx-auto px-5 sm:px-8 pt-[88px]">
+    <section id="bean-catalog" data-reveal-stagger class="max-w-[1200px] mx-auto px-5 sm:px-8 section-top">
         <div class="flex flex-wrap items-end justify-between gap-6">
             <h2 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Bean Catalog') }}</h2>
             <div class="flex flex-wrap gap-2" role="navigation" aria-label="{{ __('Filter beans by type') }}">
-                <a href="{{ route('home', array_filter(['q' => request('q')])) }}"
-                   class="min-h-[44px] px-5 inline-flex items-center rounded-full font-semibold text-[15px] transition-colors {{ request('category') === null
-                        ? 'bg-coffee-espresso text-coffee-latte'
-                        : 'bg-coffee-cream text-coffee-espresso hover:bg-coffee-espresso hover:text-coffee-latte' }}">
+                <x-chip :href="route('home', array_filter(['q' => request('q')]))" :active="request('category') === null">
                     {{ __('All') }}
-                </a>
+                </x-chip>
                 @foreach ($categories as $category)
-                    <a href="{{ route('home', array_filter(['q' => request('q'), 'category' => $category->slug])) }}"
-                       class="min-h-[44px] px-5 inline-flex items-center rounded-full font-semibold text-[15px] transition-colors {{ request('category') === $category->slug
-                            ? 'bg-coffee-espresso text-coffee-latte'
-                            : 'bg-coffee-cream text-coffee-espresso hover:bg-coffee-espresso hover:text-coffee-latte' }}">
+                    <x-chip :href="route('home', array_filter(['q' => request('q'), 'category' => $category->slug]))"
+                            :active="request('category') === $category->slug">
                         {{ $category->name }}
-                    </a>
+                    </x-chip>
                 @endforeach
             </div>
         </div>
@@ -96,27 +81,18 @@
             @forelse ($featuredBeans as $bean)
                 <x-bean-card :bean="$bean" />
             @empty
-                <div class="col-span-full rounded-2xl border border-dashed border-coffee-mocha/50 p-10 text-center">
-                    <p class="text-sm text-coffee-mocha">{{ __('No beans found.') }}</p>
-                    @if (request('category') || request('q'))
-                        <a href="{{ route('home') }}#bean-catalog" class="mt-3 inline-block text-sm font-semibold text-coffee-amber hover:underline">
-                            {{ __('Clear search & filters') }}
-                        </a>
-                    @endif
-                </div>
+                <x-empty-state :action="(request('category') || request('q')) ? __('Clear search & filters') : null"
+                               :href="route('home') . '#bean-catalog'">
+                    {{ __('No beans found.') }}
+                </x-empty-state>
             @endforelse
         </div>
 
         <x-page-arrows :paginator="$featuredBeans" />
     </section>
 
-    {{-- Section divider --}}
-    <div class="max-w-[1200px] mx-auto px-5 sm:px-8 pt-[88px]">
-        <hr class="border-t border-coffee-mocha/25">
-    </div>
-
     {{-- Brew methods --}}
-    <section id="brew-methods" data-reveal-stagger class="max-w-[1200px] mx-auto px-5 sm:px-8 pt-[88px]">
+    <section id="brew-methods" data-reveal-stagger class="max-w-[1200px] mx-auto px-5 sm:px-8 section-top">
         <h2 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Brew Methods') }}</h2>
 
         <x-search-bar :action="route('home')" name="method_q" :placeholder="__('Search brew methods…')" :value="request('method_q')" />
@@ -125,24 +101,15 @@
             @forelse ($methods as $method)
                 <x-method-card :method="$method" />
             @empty
-                <div class="col-span-full rounded-2xl border border-dashed border-coffee-mocha/50 p-10 text-center">
-                    <p class="text-sm text-coffee-mocha">{{ __('No brew methods found.') }}</p>
-                    @if (request('method_q'))
-                        <a href="{{ route('home') }}#brew-methods" class="mt-3 inline-block text-sm font-semibold text-coffee-amber hover:underline">
-                            {{ __('Clear search') }}
-                        </a>
-                    @endif
-                </div>
+                <x-empty-state :action="request('method_q') ? __('Clear search') : null"
+                               :href="route('home') . '#brew-methods'">
+                    {{ __('No brew methods found.') }}
+                </x-empty-state>
             @endforelse
         </div>
 
         <x-page-arrows :paginator="$methods" />
     </section>
-
-    {{-- Section divider --}}
-    <div class="max-w-[1200px] mx-auto px-5 sm:px-8 pt-[88px]">
-        <hr class="border-t border-coffee-mocha/25">
-    </div>
 
     {{-- Surprise me --}}
     <section id="surprise" data-reveal class="mt-[88px] bg-coffee-roast py-[88px] text-coffee-cream" x-data="surpriseSection()">
@@ -153,13 +120,8 @@
                 <button type="button"
                         @click="rollNext()"
                         :disabled="loading"
-                        class="mt-8 min-h-[52px] px-7 inline-flex items-center gap-2.5 rounded-xl bg-coffee-amber font-semibold text-coffee-espresso hover:bg-coffee-latte transition-colors disabled:opacity-60">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <rect x="3.5" y="3.5" width="17" height="17" rx="3"/>
-                        <circle cx="8.5" cy="8.5" r="1" fill="currentColor"/>
-                        <circle cx="15.5" cy="15.5" r="1" fill="currentColor"/>
-                        <circle cx="12" cy="12" r="1" fill="currentColor"/>
-                    </svg>
+                        class="mt-8 min-h-[52px] px-7 inline-flex items-center gap-2.5 rounded-xl bg-coffee-amber font-semibold text-coffee-espresso transition-colors duration-150 ease-out hover:bg-coffee-latte motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-latte disabled:opacity-60">
+                    <x-dice-icon :size="22" />
                     <span x-text="rolled ? {{ \Illuminate\Support\Js::from(__('Roll another')) }} : {{ \Illuminate\Support\Js::from(__('Surprise me')) }}"></span>
                 </button>
 
@@ -177,7 +139,7 @@
                 </div>
             </div>
 
-            <article class="flex flex-col gap-5 rounded-[20px] bg-coffee-latte p-6 sm:p-8 text-coffee-espresso" aria-live="polite">
+            <article class="flex flex-col gap-5 rounded-3xl bg-coffee-latte p-6 sm:p-8 text-coffee-espresso" aria-live="polite">
                 <p x-show="loading" x-cloak class="text-sm text-coffee-mocha">{{ __('Brewing a suggestion…') }}</p>
 
                 <p x-show="error" x-cloak class="text-sm text-red-700">
@@ -234,7 +196,7 @@
                     </div>
 
                     <a :href="recipe ? '/recipes/' + recipe.slug : '#'"
-                       class="mt-5 inline-flex min-h-[44px] items-center justify-center rounded-xl border-2 border-coffee-espresso px-6 text-sm font-semibold text-coffee-espresso hover:bg-coffee-espresso hover:text-coffee-latte transition-colors">
+                       class="mt-5 inline-flex min-h-[44px] items-center justify-center rounded-xl border-2 border-coffee-espresso px-6 text-sm font-semibold text-coffee-espresso transition-colors duration-150 ease-out hover:bg-coffee-espresso hover:text-coffee-latte motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink">
                         {{ __('View full recipe') }}
                     </a>
                 </div>

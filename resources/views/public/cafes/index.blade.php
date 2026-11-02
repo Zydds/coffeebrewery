@@ -35,7 +35,7 @@
                 <label class="flex w-full flex-col gap-1 text-sm font-medium text-coffee-mocha sm:w-auto">
                     {{ __('Province') }}
                     <select id="cafe-provinsi"
-                            class="min-h-[44px] w-full rounded-lg border-coffee-mocha/40 bg-coffee-latte text-sm text-coffee-espresso sm:w-[300px]">
+                            class="min-h-[44px] w-full rounded-xl border-coffee-mocha/40 bg-coffee-latte text-sm text-coffee-espresso sm:w-[300px]">
                         @foreach ($provinsi as $p)
                             <option value="{{ $p->kode }}"
                                 {{ $region && $region->parent_kode === $p->kode ? 'selected' : '' }}>
@@ -48,7 +48,7 @@
                 <label class="flex w-full flex-col gap-1 text-sm font-medium text-coffee-mocha sm:w-auto">
                     {{ __('City / Regency') }}
                     <select id="cafe-kota"
-                            class="min-h-[44px] w-full rounded-lg border-coffee-mocha/40 bg-coffee-latte text-sm text-coffee-espresso sm:w-[460px]">
+                            class="min-h-[44px] w-full rounded-xl border-coffee-mocha/40 bg-coffee-latte text-sm text-coffee-espresso sm:w-[460px]">
                         {{-- All 514 kabupaten/kota are rendered once (data-parent
                              filters them client-side) so every province shows
                              real names + counts, not just the initial one. --}}
