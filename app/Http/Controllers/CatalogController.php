@@ -70,7 +70,9 @@ class CatalogController extends Controller
 
     public function beanShow(string $slug)
     {
-        $bean = CoffeeBean::with('category')->where('slug', $slug)->firstOrFail();
+        // recipes.brewMethod eager-loaded for the "Recipes with this
+        // bean" section (avoids N+1 on the recipe method chips).
+        $bean = CoffeeBean::with(['category', 'recipes.brewMethod'])->where('slug', $slug)->firstOrFail();
 
         return view('public.beans.show', compact('bean'));
     }
