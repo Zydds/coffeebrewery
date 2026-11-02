@@ -13,14 +13,14 @@
         </a>
 
         <button type="button" @click="mobileOpen = !mobileOpen"
-                class="menu-btn hidden max-md:inline-flex h-11 w-11 items-center justify-center rounded-xl text-coffee-latte"
+                class="menu-btn hidden max-lg:inline-flex h-11 w-11 items-center justify-center rounded-xl text-coffee-latte"
                 aria-label="{{ __('Toggle navigation menu') }}" aria-expanded="false" :aria-expanded="mobileOpen.toString()">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
                 <path :d="mobileOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 7h16M4 12h16M4 17h16'" />
             </svg>
         </button>
 
-        <div class="hidden md:flex items-center gap-1">
+        <div class="hidden lg:flex items-center gap-1">
             <a href="{{ route('home') }}"
                class="min-h-[44px] px-4 inline-flex items-center font-medium text-coffee-cream hover:text-coffee-amber transition-colors {{ request()->routeIs('home') ? 'text-coffee-latte shadow-[inset_0_-3px_0_#C87D55]' : '' }}">
                 {{ __('Home') }}
@@ -48,7 +48,7 @@
     </div>
 
     {{-- Mobile dropdown --}}
-    <div class="md:hidden border-t border-coffee-latte/10 bg-coffee-espresso px-5 pb-5 pt-1 flex flex-col"
+    <div class="lg:hidden border-t border-coffee-latte/10 bg-coffee-espresso px-5 pb-5 pt-1 flex flex-col"
          x-show="mobileOpen" x-cloak>
         <a href="{{ route('home') }}" class="min-h-[44px] px-2 inline-flex items-center font-medium text-coffee-cream hover:text-coffee-amber transition-colors">{{ __('Home') }}</a>
         <a href="{{ route('recipes.index') }}" class="min-h-[44px] px-2 inline-flex items-center font-medium text-coffee-cream hover:text-coffee-amber transition-colors">{{ __('Recipes') }}</a>
