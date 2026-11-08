@@ -49,11 +49,42 @@
      x-data="{
         open: false,
         touch: matchMedia('(hover: none)').matches,
+        frozen: [],
+        releaseTimer: null,
         toggle() {
-            this.open = !this.open;
+            clearTimeout(this.releaseTimer);
+
+            if (this.open) {
+                this.close();
+                return;
+            }
+
+            // Pin every sibling at its resting height before the row grows,
+            // so the open card is the only one that changes size.
+            this.frozen.forEach((el) => {
+                el.style.height = '';
+            });
+
+            this.frozen = [...this.$root.parentElement.children]
+                .filter((el) => el !== this.$root && el.tagName === 'ARTICLE');
+
+            this.frozen.forEach((el) => {
+                el.style.height = el.getBoundingClientRect().height + 'px';
+            });
+
+            this.open = true;
         },
         close() {
+            if (!this.open) {
+                return;
+            }
+
             this.open = false;
+            clearTimeout(this.releaseTimer);
+            this.releaseTimer = setTimeout(() => {
+                this.frozen.forEach((el) => el.style.height = '');
+                this.frozen = [];
+            }, 340);
         },
      }"
      :class="open ? 'is-open' : ''"

@@ -141,13 +141,23 @@
 
         <x-search-bar :action="route('home')" :placeholder="__('Search beans…')" :value="request('q')" :preserves="['category' => request('category')]" />
 
+        @php
+            // A full block tiles exactly: the featured 2x2 plus four small
+            // cards. Anything after that scrolls in the rail, so no row is
+            // ever left with a single orphan. Under five results the block
+            // cannot tile, so everything goes to the rail instead.
+            $beansOnPage = $featuredBeans->getCollection();
+            $blockBeans = $beansOnPage->count() >= 5 ? $beansOnPage->take(5) : collect();
+            $railBeans = $beansOnPage->count() >= 5 ? $beansOnPage->slice(5) : $beansOnPage;
+            $shownCount = $blockBeans->count() + $railBeans->count();
+        @endphp
+
         {{-- Result count + applied-filter summary --}}
         @if ($featuredBeans->total() > 0 || request()->filled('q') || request()->filled('category'))
             <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-coffee-mocha">
                 <span class="font-semibold text-coffee-espresso">
-                    {{ __('Showing :from–:to of :total beans', [
-                        'from' => $featuredBeans->firstItem() ?? 0,
-                        'to' => $featuredBeans->lastItem() ?? 0,
+                    {{ __('Showing :shown of :total beans', [
+                        'shown' => $shownCount,
                         'total' => $featuredBeans->total(),
                     ]) }}
                 </span>
@@ -176,27 +186,74 @@
             </div>
         @endif
 
-        {{-- Mobile: a snap carousel two cards wide; from md all six fit in a
-             grid, so no scroll and no edge fade. The grid is a named view
-             transition element — filtering cross-fades results (150ms). --}}
-        <div class="-mx-5 mt-8 flex snap-x snap-mandatory items-start gap-6 overflow-x-auto scroll-pl-5 px-5 pb-2 sm:-mx-8 sm:px-8 sm:scroll-pl-8 md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:pb-0 md:scroll-pl-0 lg:grid-cols-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink focus-visible:ring-offset-4 focus-visible:ring-offset-coffee-latte [view-transition-name:bean-results]"
-             data-scroll-fade
-             role="group"
-             aria-label="{{ __('Featured beans') }}">
-            @forelse ($featuredBeans as $bean)
-                @php($isFeatured = $loop->first && $featuredBeans->count() > 1)
-                <x-bean-card :bean="$bean" :featured="$isFeatured"
-                             x-reveal
-                             class="reveal shrink-0 snap-start {{ $isFeatured ? 'w-full md:col-span-2 md:row-span-2' : 'w-[calc(50%_-_0.75rem)] md:w-auto' }}"
-                             style="--reveal-delay: {{ $loop->index * 60 }}ms" />
-            @empty
-                <x-empty-state :action="(request('category') || request('q')) ? __('Clear search & filters') : null"
-                               :href="route('home') . '#bean-catalog'"
-                               class="w-full">
-                    {{ __('No beans found.') }}
-                </x-empty-state>
-            @endforelse
-        </div>
+        @if ($shownCount === 0)
+            <x-empty-state :action="(request('category') || request('q')) ? __('Clear search & filters') : null"
+                           :href="route('home') . '#bean-catalog'"
+                           class="mt-8 w-full">
+                {{ __('No beans found.') }}
+            </x-empty-state>
+        @else
+            {{-- One named wrapper keeps the cross-document transition stable
+                 whether the results render as a block, a rail, or both. --}}
+            <div class="[view-transition-name:bean-results]">
+                {{-- A full block tiles exactly: featured 2 columns x 2 rows
+                     plus four small cards. The grid stretches every card in a
+                     row to the same resting height. --}}
+                @if ($blockBeans->isNotEmpty())
+                    <div class="catalog-grid mt-8 grid grid-cols-2 gap-6 lg:grid-cols-4">
+                        @foreach ($blockBeans as $bean)
+                            <x-bean-card :bean="$bean" :featured="$loop->first"
+                                         x-reveal
+                                         class="reveal {{ $loop->first ? 'col-span-2 lg:row-span-2' : '' }}"
+                                         style="--reveal-delay: {{ $loop->index * 60 }}ms" />
+                        @endforeach
+                    </div>
+                @endif
+
+                {{-- Everything after the block stays on one horizontal line,
+                     so a count that does not divide by four can never orphan
+                     a card. Arrow buttons are a convenience; the rail still
+                     scrolls natively, including by keyboard. --}}
+                @if ($railBeans->isNotEmpty())
+                    <div class="mt-10" x-data="catalogRail">
+                        <div class="flex items-end justify-between gap-4">
+                            <h3 class="font-display text-2xl font-bold text-coffee-espresso">{{ __('More beans') }}</h3>
+                            <div x-cloak class="flex gap-2">
+                                <button type="button" @click="scroll(-1)" :disabled="atStart"
+                                        aria-label="{{ __('Scroll beans left') }}"
+                                        class="grid h-11 w-11 place-items-center rounded-full border border-coffee-mocha bg-coffee-cream text-coffee-espresso transition-[background-color,color,opacity] duration-150 ease-out hover:bg-coffee-espresso hover:text-coffee-latte disabled:opacity-40 disabled:hover:bg-coffee-cream disabled:hover:text-coffee-espresso focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink motion-safe:active:scale-[0.97]">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
+                                    </svg>
+                                </button>
+                                <button type="button" @click="scroll(1)" :disabled="atEnd"
+                                        aria-label="{{ __('Scroll beans right') }}"
+                                        class="grid h-11 w-11 place-items-center rounded-full border border-coffee-mocha bg-coffee-cream text-coffee-espresso transition-[background-color,color,opacity] duration-150 ease-out hover:bg-coffee-espresso hover:text-coffee-latte disabled:opacity-40 disabled:hover:bg-coffee-cream disabled:hover:text-coffee-espresso focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink motion-safe:active:scale-[0.97]">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div x-ref="rail"
+                             @scroll.debounce.80ms="update()"
+                             @resize.window="update()"
+                             :tabindex="canScroll ? 0 : -1"
+                             class="mt-4 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink focus-visible:ring-offset-4 focus-visible:ring-offset-coffee-latte"
+                             role="group"
+                             aria-label="{{ __('More beans') }}">
+                            @foreach ($railBeans as $bean)
+                                <x-bean-card :bean="$bean"
+                                             x-reveal
+                                             class="reveal w-[calc(50%_-_0.75rem)] shrink-0 snap-start sm:w-[300px]"
+                                             style="--reveal-delay: {{ $loop->index * 60 }}ms" />
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+            </div>
+        @endif
 
         <x-page-arrows :paginator="$featuredBeans" />
     </section>

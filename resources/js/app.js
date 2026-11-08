@@ -78,6 +78,49 @@ Alpine.data('servings', (coffee, water) => ({
     water,
 }));
 
+// Horizontal catalog rail: arrows page by one card and disable at the
+// ends. Native scrolling stays the source of truth, so trackpad and
+// keyboard users need nothing from this component.
+Alpine.data('catalogRail', () => ({
+    atStart: true,
+    atEnd: false,
+    canScroll: false,
+
+    init() {
+        this.update();
+    },
+
+    update() {
+        const el = this.$refs.rail;
+
+        if (!el) {
+            return;
+        }
+
+        const max = el.scrollWidth - el.clientWidth;
+        this.canScroll = max > 2;
+        this.atStart = el.scrollLeft <= 2;
+        this.atEnd = el.scrollLeft >= max - 2;
+    },
+
+    scroll(direction) {
+        const el = this.$refs.rail;
+        const card = el?.firstElementChild;
+
+        if (!el) {
+            return;
+        }
+
+        const gap = 24;
+        const step = card ? card.getBoundingClientRect().width + gap : el.clientWidth * 0.8;
+
+        el.scrollBy({
+            left: direction * step,
+            behavior: prefersReduced() ? 'auto' : 'smooth',
+        });
+    },
+}));
+
 // Full-screen brew mode: one recipe step at a time plus a countdown of
 // the recipe's total time. The data model has no per-step durations, so
 // there are no per-step timers. Native <dialog> handles the focus trap
