@@ -15,9 +15,19 @@
         </a>
 
         <div class="mt-4 rounded-2xl border border-coffee-mocha/30 bg-coffee-cream overflow-hidden">
-            @if ($method->image_url)
-                <img src="{{ $method->image_url }}" alt="{{ $method->name }}" class="w-full h-64 object-cover">
-            @endif
+            <div class="relative grid h-64 place-items-center bg-coffee-roast text-coffee-amber">
+                {{-- Drawn fallback stays under the photo; a failed image
+                     removes itself and leaves the illustration. --}}
+                <svg class="h-24 w-24" viewBox="0 0 48 48" aria-hidden="true">
+                    <use href="#cb-{{ $method->illustration() }}" />
+                </svg>
+
+                @if ($method->image_url)
+                    <img src="{{ $method->image_url }}" alt="{{ $method->name }}"
+                         class="absolute inset-0 h-full w-full object-cover"
+                         onerror="this.remove()">
+                @endif
+            </div>
 
             <div class="p-6 sm:p-8">
                 <div class="flex flex-wrap items-start justify-between gap-3">

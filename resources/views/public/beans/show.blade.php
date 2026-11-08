@@ -27,15 +27,18 @@
              Stagger cascades media → panel. --}}
         <div data-reveal-stagger class="mt-8 grid gap-6 lg:grid-cols-2 lg:gap-10 items-start">
             <div class="relative aspect-[4/3] overflow-hidden rounded-3xl bg-coffee-roast">
+                {{-- Drawn layer first: it is the fallback when the photo
+                     fails, so the box is never empty. --}}
+                <div class="absolute inset-0 grid place-items-center" role="img" aria-label="{{ $bean->name }}">
+                    <svg class="h-28 w-28 text-coffee-amber" viewBox="0 0 48 48" aria-hidden="true">
+                        <use href="#cb-{{ $bean->illustration() }}" />
+                    </svg>
+                </div>
+
                 @if ($bean->image_url)
-                    <img src="{{ $bean->image_url }}" alt="{{ $bean->name }}" class="absolute inset-0 h-full w-full object-cover">
-                @else
-                    <div class="absolute inset-0 grid place-items-center" role="img" aria-label="{{ $bean->name }}">
-                        <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="text-coffee-amber" aria-hidden="true">
-                            <ellipse cx="12" cy="12" rx="6" ry="9" transform="rotate(35 12 12)"/>
-                            <path d="M8 17c4-2 4-8 8-10"/>
-                        </svg>
-                    </div>
+                    <img src="{{ $bean->image_url }}" alt="{{ $bean->name }}"
+                         class="absolute inset-0 h-full w-full object-cover"
+                         onerror="this.remove()">
                 @endif
             </div>
 

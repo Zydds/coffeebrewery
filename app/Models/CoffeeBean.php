@@ -43,4 +43,13 @@ class CoffeeBean extends Model
     {
         return $this->hasMany(Recipe::class);
     }
+
+    /**
+     * Sprite symbol for the drawn fallback: packs and instant coffee get
+     * the sachet, everything else the bean.
+     */
+    public function illustration(): string
+    {
+        return in_array($this->category?->slug, ['sachet', 'instant'], true) ? 'sachet' : 'bean';
+    }
 }
