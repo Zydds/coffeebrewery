@@ -71,6 +71,75 @@ const releaseMotion = (targets, anim) => {
 
 window.Alpine = Alpine;
 
+// Serving scaler on recipe detail: base amounts × chosen serving count.
+Alpine.data('servings', (coffee, water) => ({
+    n: 1,
+    coffee,
+    water,
+}));
+
+// Full-screen brew mode: one recipe step at a time plus a countdown of
+// the recipe's total time. The data model has no per-step durations, so
+// there are no per-step timers. Native <dialog> handles the focus trap
+// and Escape; the interval is cleared on close.
+Alpine.data('brewMode', (steps = [], minutes = 0) => ({
+    steps,
+    step: 0,
+    total: Math.max(0, Math.round(minutes * 60)),
+    left: 0,
+    ticker: null,
+
+    get clock() {
+        const minutes = String(Math.floor(this.left / 60)).padStart(2, '0');
+        const seconds = String(this.left % 60).padStart(2, '0');
+
+        return minutes + ':' + seconds;
+    },
+
+    openMode() {
+        this.step = 0;
+        this.left = this.total;
+        document.documentElement.classList.add('is-brewing');
+        this.$refs.dialog?.showModal();
+        this.$nextTick(() => this.$refs.closeBtn?.focus());
+    },
+
+    closeMode() {
+        this.$refs.dialog?.close();
+    },
+
+    cleanup() {
+        this.stop();
+        document.documentElement.classList.remove('is-brewing');
+    },
+
+    toggleTimer() {
+        if (this.ticker) {
+            this.stop();
+            return;
+        }
+
+        if (this.left <= 0) {
+            this.left = this.total;
+        }
+
+        this.ticker = setInterval(() => {
+            this.left = Math.max(0, this.left - 1);
+
+            if (this.left === 0) {
+                this.stop();
+            }
+        }, 1000);
+    },
+
+    stop() {
+        if (this.ticker) {
+            clearInterval(this.ticker);
+            this.ticker = null;
+        }
+    },
+}));
+
 Alpine.data('surpriseSection', (options = {}) => ({
     cheap: options.cheap ?? false,
     quick: options.quick ?? false,

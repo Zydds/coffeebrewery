@@ -101,7 +101,20 @@
                 {{-- Q3: gear (skipped for sachet) --}}
                 <div x-show="current === 'gear'">
                     <h2 class="font-display text-2xl font-bold text-coffee-espresso">{{ __('What gear do you have?') }}</h2>
-                    <div class="mt-6 grid gap-3 sm:grid-cols-3">
+
+                    {{-- The one large illustration on the site: it swaps with
+                         the chosen gear. x-if keeps exactly one SVG in the
+                         DOM, so the per-part CSS runs once per choice. --}}
+                    <div class="mt-5 flex justify-center" aria-hidden="true">
+                        <template x-if="!answers.gear"><x-coffee-illustration type="bean" size="h-24 w-24 sm:h-28 sm:w-28" tone="var(--color-coffee-amber-ink)" /></template>
+                        <template x-if="answers.gear === 'mug'"><x-coffee-illustration type="sachet" size="h-24 w-24 sm:h-28 sm:w-28" tone="var(--color-coffee-amber-ink)" /></template>
+                        <template x-if="answers.gear === 'french-press'"><x-coffee-illustration type="french-press" size="h-24 w-24 sm:h-28 sm:w-28" tone="var(--color-coffee-amber-ink)" /></template>
+                        <template x-if="answers.gear === 'v60'"><x-coffee-illustration type="v60" size="h-24 w-24 sm:h-28 sm:w-28" tone="var(--color-coffee-amber-ink)" /></template>
+                        <template x-if="answers.gear === 'aeropress'"><x-coffee-illustration type="aeropress" size="h-24 w-24 sm:h-28 sm:w-28" tone="var(--color-coffee-amber-ink)" /></template>
+                        <template x-if="answers.gear === 'espresso'"><x-coffee-illustration type="espresso" size="h-24 w-24 sm:h-28 sm:w-28" tone="var(--color-coffee-amber-ink)" /></template>
+                    </div>
+
+                    <div class="mt-4 grid gap-3 sm:grid-cols-3">
                         @foreach ([
                             ['mug',          __('Just a mug'),        __('No brewing kit')],
                             ['french-press',  'French press',          __('Plunger pot')],

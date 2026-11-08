@@ -100,6 +100,8 @@ Band rhythm: **cream** hero → **espresso** proof strip → **latte** catalog �
 | Progress bar | `public/custom/index.blade.php` | Future / active / past segment | `scaleX(0→1)`, reduced-motion snap | `<div class="h-1.5 w-8 rounded-full bg-coffee-mocha/20"><div class="quiz-seg-fill …"></div></div>` |
 | Surprise me panel | `components/surprise-section.blade.php` | Default / `cheapOnly` | Loading, error, empty, rolled | `<x-surprise-section />` or `<x-surprise-section cheap-only />` |
 | Map container | `public/cafes/index.blade.php`, `resources/js/cafes.js` | Ready / loading / empty | Fetch wave, cluster tiers, popup | `<div id="cafe-map" class="h-[68vh] min-h-[420px]" role="region" aria-label="{{ __('Cafe map') }}"></div>` |
+| Marquee | `components/marquee.blade.php` | Home only | Looping, paused offscreen | `<x-marquee />` |
+| Brew mode | `public/recipes/show.blade.php`, `resources/js/app.js` | Closed / open / running / finished | Native `dialog`, total-time countdown, step paging | `<dialog x-ref="dialog" @close="cleanup()">…</dialog>` |
 | Footer | `layouts/public.blade.php` | Single | Static | `<footer class="bg-coffee-espresso text-coffee-cream">…</footer>` |
 
 Selected values: navbar is `72px` tall, sticky at `z-40`, links `44px`; locale links are `36px` high. Bean card: `16px` radius, `96px`/`112px` image block, `p-4` body, `44px` Details button; the panel expands in flow at `320ms`. Recipe card: `16px` radius, `p-5`, `sm:grid-cols-4` stats. Pagination circles are `44px`. Map is `68vh` / `min 420px` inside a `16px` frame.
@@ -121,6 +123,7 @@ Selected values: navbar is `72px` tall, sticky at `z-40`, links `44px`; locale l
 | `--duration-reveal` | `700ms` | One-shot reveal |
 | UI feedback | `150–200ms` | Hover, press, border, shadow, popup |
 | Reveal exit | `450ms` | Leaving viewport |
+| Brew countdown | `1s` tick, no animation | Recipe total time |
 | Dot fill | `360ms`, `40ms` stagger | Acidity/difficulty dots |
 | Quiz segment | `400ms`, `scaleX` | Active progress segment |
 | Recipe leave / settle | `120ms` / `250ms` | Grid fade and 16px slide |

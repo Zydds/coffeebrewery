@@ -2,7 +2,7 @@
      overlay and state set for beans AND brew methods. Pass either
      :bean or :method so the two sections cannot drift into two designs.
      Level dots animate from app.css (.level-dot) when the card reveals. --}}
-@props(['bean' => null, 'method' => null])
+@props(['bean' => null, 'method' => null, 'featured' => false])
 
 @php
     $item = $bean ?? $method;
@@ -39,20 +39,8 @@
 
     $href = $isMethod ? route('methods.show', $item->slug) : route('beans.show', $item->slug);
 
-    // Sprite id from the one shared set; unknown entries fall back to the
-    // bean so a new method or category still gets a drawn icon.
-    $illustration = match (true) {
-        $isMethod && $item->slug === 'es-kopi-sachet' => 'iced',
-        $isMethod && str_contains($item->slug, 'sachet') => 'sachet',
-        $isMethod => [
-            'v60-pour-over' => 'v60',
-            'french-press' => 'french-press',
-            'aeropress' => 'aeropress',
-            'espresso-machine' => 'espresso',
-        ][$item->slug] ?? 'bean',
-        in_array($item->category?->slug, ['sachet', 'instant'], true) => 'sachet',
-        default => 'bean',
-    };
+    // Sprite id shared with the large picker/expanded drawing.
+    $illustration = $item->illustration();
 @endphp
 
 <article {{ $attributes->merge([
@@ -72,13 +60,13 @@
      @mouseleave="!touch && close()"
      @keydown.escape.window="close()">
 
-    <div class="relative grid h-24 sm:h-28 place-items-center overflow-hidden bg-coffee-roast text-coffee-amber shrink-0">
+    <div class="relative grid {{ $featured ? 'h-40 lg:h-56' : 'h-24 sm:h-28' }} place-items-center overflow-hidden bg-coffee-roast text-coffee-amber shrink-0">
         {{-- Icon block, always rendered: it doubles as the photo fallback.
              A product photo (when present) paints over it, and if that
              photo is missing or 404s it removes itself, leaving the icon.
              The symbol comes from the page sprite, so the card carries no
              per-item SVG markup. --}}
-        <svg class="card-illustration h-14 w-14" viewBox="0 0 48 48" aria-hidden="true">
+        <svg class="card-illustration {{ $featured ? 'h-20 w-20 lg:h-28 lg:w-28' : 'h-14 w-14' }}" viewBox="0 0 48 48" aria-hidden="true">
             <use href="#cb-{{ $illustration }}" />
         </svg>
 
@@ -96,9 +84,12 @@
         </svg>
     </div>
 
-    <div class="flex flex-1 flex-col gap-1.5 p-4">
-        <h3 class="font-display text-lg font-bold leading-snug text-coffee-espresso">{{ $item->name }}</h3>
-        <p class="text-sm font-medium text-coffee-mocha{{ $isMethod ? ' line-clamp-2' : '' }}">{{ $subtitle }}</p>
+    <div class="flex flex-1 flex-col gap-1.5 {{ $featured ? 'p-5 lg:p-6' : 'p-4' }}">
+        @if ($featured)
+            <p class="eyebrow">{{ __('Featured bean') }}</p>
+        @endif
+        <h3 class="font-display font-bold leading-snug text-coffee-espresso {{ $featured ? 'text-display tracking-tight' : 'text-lg' }}">{{ $item->name }}</h3>
+        <p class="text-sm font-medium text-coffee-mocha{{ $isMethod ? ' line-clamp-2' : '' }}{{ $featured ? ' text-base' : '' }}">{{ $subtitle }}</p>
 
         <div class="mt-auto flex items-center gap-2 pt-2 text-xs font-medium text-coffee-mocha">
             <span>{{ $levelLabel }}</span>

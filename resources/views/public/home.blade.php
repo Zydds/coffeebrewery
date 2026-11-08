@@ -184,9 +184,10 @@
              role="group"
              aria-label="{{ __('Featured beans') }}">
             @forelse ($featuredBeans as $bean)
-                <x-bean-card :bean="$bean"
+                @php($isFeatured = $loop->first && $featuredBeans->count() > 1)
+                <x-bean-card :bean="$bean" :featured="$isFeatured"
                              x-reveal
-                             class="reveal w-[calc(50%_-_0.75rem)] shrink-0 snap-start md:w-auto"
+                             class="reveal shrink-0 snap-start {{ $isFeatured ? 'w-full md:col-span-2 md:row-span-2' : 'w-[calc(50%_-_0.75rem)] md:w-auto' }}"
                              style="--reveal-delay: {{ $loop->index * 60 }}ms" />
             @empty
                 <x-empty-state :action="(request('category') || request('q')) ? __('Clear search & filters') : null"
@@ -207,6 +208,8 @@
     <x-wave-divider from-color="latte" to-color="cream" />
 
     <div class="bg-coffee-cream">
+        <x-marquee />
+
         <section id="brew-methods" class="max-w-[1200px] mx-auto px-5 sm:px-8 section-top pb-22">
             <h2 data-reveal class="font-display font-bold text-section">{{ __('Brew Methods') }}</h2>
 

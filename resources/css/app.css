@@ -440,6 +440,24 @@ html.grid-settled [data-recipes-grid] {
     }
 }
 
+/* ── Marquee: the home page's only loop ─────────────────── */
+/* Two identical word groups; translating one group width (-50% of the
+   track) restarts exactly on the copy. data-loop pauses it offscreen
+   and reduced motion is killed by the global rule. */
+.marquee-track {
+    animation: marquee-scroll 32s linear infinite;
+}
+
+[data-loop].is-paused .marquee-track {
+    animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+    to {
+        transform: translateX(-50%);
+    }
+}
+
 /* The cafe map's fetch wave still loops and still pauses offscreen via
    the data-loop observer in app.js. */
 [data-loop].is-paused .cafe-progress {
@@ -513,6 +531,17 @@ html.grid-settled [data-recipes-grid] {
     }
 }
 
+/* ── Brew mode dialog ───────────────────────────────────── */
+/* The native dialog is the full screen; the page behind it must not
+   scroll. Open state is a class added by the Alpine component. */
+html.is-brewing {
+    overflow: hidden;
+}
+
+dialog.brew-dialog::backdrop {
+    background: var(--color-coffee-espresso);
+}
+
 /* ── Cross-document View Transitions ───────────────────── */
 /* Opt every same-origin navigation into an animated transition —
    but only for people who have NOT asked for reduced motion.
@@ -525,13 +554,14 @@ html.grid-settled [data-recipes-grid] {
         navigation: auto;
     }
 
-    /* Root snapshot: old page fades out quickly, new page settles in. */
+    /* Root snapshot: the old page stays put while a wave-shaped edge
+       sweeps the new page across it, 400ms on the shared curve. */
     ::view-transition-old(root) {
-        animation: .18s var(--ease-out) both vt-fade-out;
+        animation: none;
     }
 
     ::view-transition-new(root) {
-        animation: .3s var(--ease-out) both vt-fade-in;
+        animation: .4s var(--ease-out) both vt-wave-in;
     }
 
     /* Active filter pill: morph between chip positions on navigation,
@@ -558,15 +588,12 @@ html.grid-settled [data-recipes-grid] {
     }
 }
 
-@keyframes vt-fade-out {
-    to {
-        opacity: 0;
-    }
-}
-
-@keyframes vt-fade-in {
+@keyframes vt-wave-in {
     from {
-        opacity: 0;
+        clip-path: polygon(0 0, 0 0, 0 12%, 0 25%, 0 38%, 0 50%, 0 63%, 0 76%, 0 88%, 0 100%, 0 100%);
+    }
+    to {
+        clip-path: polygon(0 0, 100% 0, 98% 12%, 102% 25%, 98% 38%, 102% 50%, 98% 63%, 102% 76%, 98% 88%, 100% 100%, 0 100%);
     }
 }
 
