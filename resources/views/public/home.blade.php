@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', __('Coffeebrewery � Find Your Bean, Nail Your Brew'))
+@section('title', __('Coffeebrewery — Find Your Bean, Nail Your Brew'))
 
 @section('content')
     {{-- Scroll rail: draws down the left gutter as the page scrolls.
@@ -32,7 +32,7 @@
                     </a>
                     <a href="{{ route('recipes.index', ['quick' => 1]) }}"
                        class="min-h-[52px] px-7 inline-flex items-center rounded-xl border-2 border-coffee-espresso font-semibold text-coffee-espresso transition duration-150 ease-out hover:bg-coffee-espresso hover:text-coffee-latte motion-safe:active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink">
-                        {{ __('Quick recipes =5 min') }}
+                        {{ __('Quick recipes ≤5 min') }}
                     </a>
                 </div>
             </div>
@@ -45,7 +45,7 @@
                             <path d="M21 5c-11 15 9 31-1 46" fill="none" stroke="#6F4E37" stroke-width="3.5" stroke-linecap="round"/>
                         </symbol>
                     </defs>
-                    {{-- Two wave bands drift behind the cup � the home
+                    {{-- Two wave bands drift behind the cup — the home
                          page's wave layer, now scroll-linked (app.css
                          maps the shift); browsers without scroll timelines
                          get a static drawing. Palette tones only. --}}
@@ -79,8 +79,8 @@
 
     <x-wave-divider from-color="cream" to-color="espresso" />
 
-    {{-- Proof strip � full-bleed espresso band; site-wide totals, not the
-         filtered paginator counts. Cascade: stats ? cafe-map link.
+    {{-- Proof strip — full-bleed espresso band; site-wide totals, not the
+         filtered paginator counts. Cascade: stats → cafe-map link.
          Numbers count up once on entry (app.js, rAF, 900ms); the
          server-rendered values are the no-JS / reduced-motion state.
          Thin wave rules split the stats on desktop only. --}}
@@ -139,35 +139,35 @@
             </div>
         </div>
 
-        <x-search-bar :action="route('home')" :placeholder="__('Search beans�')" :value="request('q')" :preserves="['category' => request('category')]" />
+        <x-search-bar :action="route('home')" :placeholder="__('Search beans…')" :value="request('q')" :preserves="['category' => request('category')]" />
 
         {{-- Result count + applied-filter summary --}}
         @if ($featuredBeans->total() > 0 || request()->filled('q') || request()->filled('category'))
             <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-coffee-mocha">
                 <span class="font-semibold text-coffee-espresso">
-                    {{ __('Showing :from�:to of :total beans', [
+                    {{ __('Showing :from–:to of :total beans', [
                         'from' => $featuredBeans->firstItem() ?? 0,
                         'to' => $featuredBeans->lastItem() ?? 0,
                         'total' => $featuredBeans->total(),
                     ]) }}
                 </span>
                 @if (! request()->filled('q') && ! request()->filled('category') && $cheapBeans > 0)
-                    <span aria-hidden="true">�</span>
+                    <span aria-hidden="true">·</span>
                     <a href="{{ route('cheap.index') }}"
                        class="font-semibold text-coffee-amber-ink hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink rounded-sm">
                         {{ __(':count more on the Cheap page', ['count' => $cheapBeans]) }}
                     </a>
                 @endif
                 @if (request('q'))
-                    <span aria-hidden="true">�</span>
+                    <span aria-hidden="true">·</span>
                     <span>&ldquo;{{ request('q') }}&rdquo;</span>
                 @endif
                 @if (request('category'))
-                    <span aria-hidden="true">�</span>
+                    <span aria-hidden="true">·</span>
                     <span>{{ $categories->firstWhere('slug', request('category'))?->name ?? request('category') }}</span>
                 @endif
                 @if (request()->filled('q') || request()->filled('category'))
-                    <span aria-hidden="true">�</span>
+                    <span aria-hidden="true">·</span>
                     <a href="{{ route('home') }}"
                        class="font-semibold text-coffee-amber-ink hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink rounded-sm">
                         {{ __('Clear search & filters') }}
@@ -178,7 +178,7 @@
 
         {{-- Mobile: a snap carousel two cards wide; from md all six fit in a
              grid, so no scroll and no edge fade. The grid is a named view
-             transition element � filtering cross-fades results (150ms). --}}
+             transition element — filtering cross-fades results (150ms). --}}
         <div class="-mx-5 mt-8 flex snap-x snap-mandatory items-start gap-6 overflow-x-auto scroll-pl-5 px-5 pb-2 sm:-mx-8 sm:px-8 sm:scroll-pl-8 md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:pb-0 md:scroll-pl-0 lg:grid-cols-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink focus-visible:ring-offset-4 focus-visible:ring-offset-coffee-latte [view-transition-name:bean-results]"
              data-scroll-fade
              role="group"
@@ -213,7 +213,7 @@
         <section id="brew-methods" class="max-w-[1200px] mx-auto px-5 sm:px-8 section-top pb-22">
             <h2 data-reveal class="font-display font-bold text-section">{{ __('Brew Methods') }}</h2>
 
-            <x-search-bar :action="route('home')" name="method_q" :placeholder="__('Search brew methods�')" :value="request('method_q')" />
+            <x-search-bar :action="route('home')" name="method_q" :placeholder="__('Search brew methods…')" :value="request('method_q')" />
 
             <div class="mt-8 grid grid-cols-2 items-start md:grid-cols-3 lg:grid-cols-4 gap-6 [view-transition-name:method-results]">
                 @forelse ($methods as $method)
