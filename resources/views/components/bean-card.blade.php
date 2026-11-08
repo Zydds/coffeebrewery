@@ -38,6 +38,21 @@
     $priceUnit = trim(preg_replace('/^1\s+/', '', (string) ($item->price_unit ?? ''))) ?: '100 gr';
 
     $href = $isMethod ? route('methods.show', $item->slug) : route('beans.show', $item->slug);
+
+    // Sprite id from the one shared set; unknown entries fall back to the
+    // bean so a new method or category still gets a drawn icon.
+    $illustration = match (true) {
+        $isMethod && $item->slug === 'es-kopi-sachet' => 'iced',
+        $isMethod && str_contains($item->slug, 'sachet') => 'sachet',
+        $isMethod => [
+            'v60-pour-over' => 'v60',
+            'french-press' => 'french-press',
+            'aeropress' => 'aeropress',
+            'espresso-machine' => 'espresso',
+        ][$item->slug] ?? 'bean',
+        in_array($item->category?->slug, ['sachet', 'instant'], true) => 'sachet',
+        default => 'bean',
+    };
 @endphp
 
 <article {{ $attributes->merge([
@@ -62,25 +77,19 @@
             }
         },
      }"
+     :class="open ? 'is-open' : ''"
      @mouseleave="!touch && close()"
      @keydown.escape.window="close(true)">
 
     <div class="relative grid h-24 sm:h-28 place-items-center overflow-hidden bg-coffee-roast text-coffee-amber shrink-0">
         {{-- Icon block, always rendered: it doubles as the photo fallback.
              A product photo (when present) paints over it, and if that
-             photo is missing or 404s it removes itself, leaving the icon. --}}
-        @if ($isMethod)
-            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 5h14l-4 8H9L5 5z"/>
-                <path d="M9 13v3h6v-3"/>
-                <path d="M7 20h10"/>
-            </svg>
-        @else
-            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <ellipse cx="12" cy="12" rx="6" ry="9" transform="rotate(35 12 12)"/>
-                <path d="M8 17c4-2 4-8 8-10"/>
-            </svg>
-        @endif
+             photo is missing or 404s it removes itself, leaving the icon.
+             The symbol comes from the page sprite, so the card carries no
+             per-item SVG markup. --}}
+        <svg class="card-illustration h-14 w-14" viewBox="0 0 48 48" aria-hidden="true">
+            <use href="#cb-{{ $illustration }}" />
+        </svg>
 
         @if ($item->image_url)
             <img src="{{ $item->image_url }}" alt="{{ $item->name }}"

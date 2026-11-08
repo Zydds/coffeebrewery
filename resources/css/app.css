@@ -199,6 +199,75 @@ html.js-motion .reveal.card-lift {
         border-color 200ms var(--ease-out) 0ms;
 }
 
+/* ── Card illustration (sprite) ─────────────────────────── */
+/* The grid card renders one <use> from the page sprite. Opening the
+   details lifts the whole glyph once; no per-part motion here, so a
+   grid of 24 cards stays cheap. The large inline component below is
+   the only place with per-part animation, and only one is on screen. */
+.card-illustration {
+    transition: transform 260ms var(--ease-out);
+}
+
+.is-open .card-illustration {
+    animation: icon-lift 420ms var(--ease-spring) both;
+}
+
+@keyframes icon-lift {
+    0% {
+        transform: translateY(6px) scale(0.96);
+    }
+    100% {
+        transform: none;
+    }
+}
+
+/* ── Large illustration: per-part one-shot motion ───────── */
+/* Used by the brew-method picker and the expanded card, where a single
+   illustration is visible. Every part settles into its rest state, so
+   the drawing stays complete after the animation: no infinite loop. */
+.coffee-illustration .steam {
+    animation: steam-settle 900ms var(--ease-out) both;
+}
+
+.coffee-illustration .drip {
+    animation: drip-settle 700ms var(--ease-out) 180ms both;
+}
+
+.coffee-illustration .plunger {
+    animation: plunger-press 800ms var(--ease-spring) both;
+}
+
+.coffee-illustration .ice {
+    animation: ice-settle 700ms var(--ease-spring) both;
+}
+
+@keyframes steam-settle {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
+
+@keyframes drip-settle {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes plunger-press {
+    40% {
+        transform: translateY(6px);
+    }
+}
+
+@keyframes ice-settle {
+    from {
+        opacity: 0;
+        transform: translateY(-4px) rotate(-4deg);
+    }
+}
+
 /* ── Bean catalog: filter pill, dot fill, carousel fade ─── */
 /* The dark pill is placed on the active chip by app.js (CSS cannot
    measure chip widths) and named for the cross-document view

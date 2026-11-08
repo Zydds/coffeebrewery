@@ -72,6 +72,8 @@
     </script>
 </head>
 <body class="font-sans antialiased bg-coffee-latte text-coffee-espresso">
+    <x-coffee-illustrations />
+
     <x-navbar />
 
     <main>
