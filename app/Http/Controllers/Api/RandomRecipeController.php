@@ -11,14 +11,12 @@ class RandomRecipeController extends Controller
 {
     public function show(Request $request): JsonResponse
     {
-        $exclude = $request->integer('exclude');
-
         $recipe = Recipe::with(['coffeeBean.category', 'brewMethod'])
-            ->when($exclude, fn ($q) => $q->whereKeyNot($exclude))
-            ->when($request->boolean('cheap'), fn ($q) => $q->where('cheap', true))
-            ->when($request->boolean('quick'), fn ($q) => $q
-                ->whereNotNull('brew_time_min')
-                ->where('brew_time_min', '<=', 5))
+            ->forPicker(
+                cheap: $request->boolean('cheap'),
+                quick: $request->boolean('quick'),
+                exclude: $request->integer('exclude'),
+            )
             ->inRandomOrder()
             ->first();
 
@@ -28,23 +26,10 @@ class RandomRecipeController extends Controller
 
         return response()->json([
             'data' => [
-                'id' => $recipe->id,
-                'title' => $recipe->title,
-                'slug' => $recipe->slug,
-                'ratio' => $recipe->ratio,
-                'brew_time_min' => $recipe->brew_time_min,
-                'water_temp' => $recipe->water_temp_c.'°C',
-                'grind_size' => $recipe->grind_size,
+                ...$recipe->summary(),
                 'step_by_step' => $recipe->step_by_step
                     ? array_map(fn ($s) => (string) __($s), $recipe->step_by_step)
                     : $recipe->step_by_step,
-                'bean' => [
-                    'name' => $recipe->coffeeBean->name,
-                    'category' => $recipe->coffeeBean->category->name,
-                ],
-                'method' => [
-                    'name' => $recipe->brewMethod->name,
-                ],
             ],
         ]);
     }

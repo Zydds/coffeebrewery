@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Rules\UniqueSlug;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -15,7 +16,7 @@ class StoreMethodRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:150',
+            'name' => ['required', 'string', 'max:150', new UniqueSlug('brew_methods', $this->route('method'))],
             'difficulty_level' => ['required', Rule::in(['easy', 'medium', 'hard'])],
             'description' => 'required|string|max:2000',
             'is_cheap' => 'boolean',

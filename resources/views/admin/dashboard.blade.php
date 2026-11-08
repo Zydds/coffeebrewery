@@ -58,9 +58,9 @@
                 </p>
             </div>
             <div class="flex gap-2">
-                <a href="{{ route('admin.beans.index') }}?filter=cheap" class="text-sm font-semibold text-coffee-amber hover:underline">Manage products</a>
-                <a href="{{ route('admin.recipes.index') }}" class="text-sm font-semibold text-coffee-amber hover:underline">Recipes</a>
-                <a href="{{ route('cheap.index') }}" target="_blank" rel="noopener" class="text-sm font-semibold text-coffee-amber hover:underline">View page &nearr;</a>
+                <a href="{{ route('admin.beans.index') }}?filter=cheap" class="text-sm font-semibold text-coffee-amber-ink hover:underline">Manage products</a>
+                <a href="{{ route('admin.recipes.index') }}" class="text-sm font-semibold text-coffee-amber-ink hover:underline">Recipes</a>
+                <a href="{{ route('cheap.index') }}" target="_blank" rel="noopener" class="text-sm font-semibold text-coffee-amber-ink hover:underline">View page &nearr;</a>
             </div>
         </div>
     </div>
@@ -69,7 +69,7 @@
     <div class="mt-8">
         <div class="flex items-center justify-between">
             <h2 class="text-lg font-semibold">Recent Recipes</h2>
-            <a href="{{ route('admin.recipes.index') }}" class="text-sm font-semibold text-coffee-amber hover:underline">
+            <a href="{{ route('admin.recipes.index') }}" class="text-sm font-semibold text-coffee-amber-ink hover:underline">
                 View all &rarr;
             </a>
         </div>
@@ -105,7 +105,7 @@
                                 </div>
                             </td>
                             <td class="px-4 py-3 text-right">
-                                <a href="{{ route('admin.recipes.edit', $recipe) }}" class="font-semibold text-coffee-amber hover:underline">Edit</a>
+                                <a href="{{ route('admin.recipes.edit', $recipe) }}" class="font-semibold text-coffee-amber-ink hover:underline">Edit</a>
                             </td>
                         </tr>
                     @empty
@@ -122,7 +122,7 @@
     <div class="mt-8">
         <div class="flex items-center justify-between">
             <h2 class="text-lg font-semibold">Recent Bean Additions</h2>
-            <a href="{{ route('admin.beans.index') }}" class="text-sm font-semibold text-coffee-amber hover:underline">
+            <a href="{{ route('admin.beans.index') }}" class="text-sm font-semibold text-coffee-amber-ink hover:underline">
                 View all &rarr;
             </a>
         </div>
@@ -157,7 +157,7 @@
                                 @endif
                             </td>
                             <td class="px-4 py-3 text-right">
-                                <a href="{{ route('admin.beans.edit', $bean) }}" class="font-semibold text-coffee-amber hover:underline">Edit</a>
+                                <a href="{{ route('admin.beans.edit', $bean) }}" class="font-semibold text-coffee-amber-ink hover:underline">Edit</a>
                             </td>
                         </tr>
                     @empty

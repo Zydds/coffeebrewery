@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BrewMethod;
 use App\Models\Recipe;
+use App\Support\RecipeSeo;
 use Illuminate\Http\Request;
 
 class RecipePublicController extends Controller
@@ -12,45 +13,41 @@ class RecipePublicController extends Controller
     {
         $methods = BrewMethod::orderBy('name')->get();
 
-        $query = Recipe::with(['coffeeBean', 'brewMethod']);
-
-        if ($q = trim((string) $request->q)) {
-            $needle = '%'.mb_strtolower($q).'%';
-            $query->where(fn ($w) => $w
-                ->whereRaw('LOWER(title) LIKE ?', [$needle])
-                ->orWhereHas('coffeeBean', fn ($b) => $b->whereRaw('LOWER(name) LIKE ?', [$needle]))
-                ->orWhereHas('brewMethod', fn ($m) => $m->whereRaw('LOWER(name) LIKE ?', [$needle])));
-        }
-
-        if ($request->filled('method')) {
-            $query->whereHas('brewMethod', fn ($q) => $q->where('slug', $request->method));
-        }
+        $query = Recipe::with(['coffeeBean', 'brewMethod'])
+            ->search($request->q)
+            ->forMethod($request->method);
 
         if ($request->boolean('featured')) {
-            $query->where('is_featured', true);
+            $query->featured();
         }
 
         if ($request->boolean('cheap')) {
-            $query->where('cheap', true);
+            $query->cheap();
         }
 
         if ($request->boolean('quick')) {
-            $query->whereNotNull('brew_time_min')
-                ->where('brew_time_min', '<=', 5)
-                ->orderBy('brew_time_min');
+            $query->quick()->orderBy('brew_time_min');
         }
 
         $recipes = $query->latest()->paginate(9)->withQueryString();
 
-        return view('public.recipes.index', compact('recipes', 'methods'));
+        // A page change gets a slide; a filter/search change gets the card
+        // stagger instead. Derived here rather than in the template — Blade's
+        // raw-PHP block pass would swallow an inline @php(...) that precedes
+        // the ratio-split block.
+        $paged = $request->has('page');
+
+        return view('public.recipes.index', compact('recipes', 'methods', 'paged'));
     }
 
     public function random(Request $request)
     {
         $recipe = Recipe::query()
-            ->when($request->boolean('quick'), fn ($q) => $q
-                ->whereNotNull('brew_time_min')
-                ->where('brew_time_min', '<=', 5))
+            ->forPicker(
+                cheap: $request->boolean('cheap'),
+                quick: $request->boolean('quick'),
+                exclude: $request->integer('exclude'),
+            )
             ->inRandomOrder()
             ->first();
 
@@ -67,6 +64,9 @@ class RecipePublicController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
-        return view('public.recipes.show', compact('recipe'));
+        return view('public.recipes.show', [
+            'recipe' => $recipe,
+            'seo' => new RecipeSeo($recipe),
+        ]);
     }
 }

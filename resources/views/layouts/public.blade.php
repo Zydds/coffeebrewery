@@ -46,6 +46,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <script>
+        window.APP_LOCALE = @json(app()->getLocale());
+
         window.APP_I18N = @json([
             'recipeLoadError' => __('Could not load a recipe. Try again.'),
             'matchError' => __('Could not find a match. Try again.'),
@@ -53,6 +55,19 @@
 
         if ('IntersectionObserver' in window) {
             document.documentElement.classList.add('js-motion');
+        }
+
+        // Recipes pagination: the click handler stashes the direction, and
+        // we paint the incoming grid already 16px off before first paint so
+        // the 250ms settle tween never flashes at its end position. Consume
+        // the key here so a cancelled navigation cannot leak into a later page.
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            var recipesDir = sessionStorage.getItem('recipes-page-dir');
+            sessionStorage.removeItem('recipes-page-dir');
+
+            if (recipesDir === 'next' || recipesDir === 'prev') {
+                document.documentElement.classList.add('page-enter-' + recipesDir);
+            }
         }
     </script>
 </head>
@@ -62,6 +77,8 @@
     <main>
         @yield('content')
     </main>
+
+    @yield('before_footer')
 
     <footer class="bg-coffee-espresso text-coffee-cream">
         <div class="max-w-[1200px] mx-auto px-5 sm:px-8 py-8 text-center text-sm">

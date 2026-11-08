@@ -44,7 +44,6 @@
    tree-shaken until something references them. Only transform + opacity
    ever use these. */
 :root {
-  --duration-ui: 200ms;
   --duration-reveal: 700ms;
 }
 
@@ -126,13 +125,156 @@ html.js-motion [data-reveal-stagger].in-view > * {
 html.js-motion .reveal {
     opacity: 0;
     transform: translateY(12px);
-    transition: opacity var(--duration-reveal) var(--ease-out),
-        transform var(--duration-reveal) var(--ease-out);
+    /* The stagger is an inline --reveal-delay custom property, not
+       transition-delay: cards also carry .card-lift below, whose hover
+       properties must not inherit the reveal delay. */
+    transition: opacity var(--duration-reveal) var(--ease-out) var(--reveal-delay, 0ms),
+        transform var(--duration-reveal) var(--ease-out) var(--reveal-delay, 0ms);
 }
 
 html.js-motion .reveal.is-revealed {
     opacity: 1;
     transform: none;
+}
+
+/* ── Catalog card hover ─────────────────────────────────── */
+/* One soft lift for bean AND method cards. Declared after .reveal so
+   its transition list wins: the one-time reveal keeps the 700ms band,
+   while hover/return run at UI speed on the shared curve. Tailwind v4
+   moves translate utilities on the `translate` property, so hover
+   never fights the reveal's transform. Hover itself is gated at the
+   call site (hover-fine + motion-safe). */
+.card-lift {
+    transition: translate 200ms var(--ease-out),
+        box-shadow 200ms var(--ease-out),
+        border-color 200ms var(--ease-out);
+}
+
+/* More specific than `html.js-motion .reveal`, so a revealed card keeps
+   its one-shot reveal timing only for opacity/transform; hover props are
+   separate and undelayed. */
+html.js-motion .reveal.card-lift {
+    transition: opacity var(--duration-reveal) var(--ease-out) var(--reveal-delay, 0ms),
+        transform var(--duration-reveal) var(--ease-out) var(--reveal-delay, 0ms),
+        translate 200ms var(--ease-out) 0ms,
+        box-shadow 200ms var(--ease-out) 0ms,
+        border-color 200ms var(--ease-out) 0ms;
+}
+
+/* ── Bean catalog: filter pill, dot fill, carousel fade ─── */
+/* The dark pill is placed on the active chip by app.js (CSS cannot
+   measure chip widths) and named for the cross-document view
+   transition, so changing filter slides it across instead of swapping.
+   .pill-ready then removes the chip's own fill, which would paint over
+   the pill; without JS the chip keeps that fill and the state is clear. */
+[data-filter-pill] {
+    view-transition-name: filter-pill;
+}
+
+.pill-ready [aria-current="page"] {
+    background-color: transparent;
+}
+
+/* Filled level dots (acidity for beans, difficulty for methods) pop in
+   left to right, 40ms apart, gated on the card's first reveal — so they
+   run once, and never when the server state should just show (no JS /
+   reduced motion). */
+.reveal.is-revealed .level-dot.is-on {
+    animation: dot-fill 360ms var(--ease-out) both;
+    animation-delay: calc(var(--d, 0) * 40ms);
+}
+
+@keyframes dot-fill {
+    from {
+        opacity: 0;
+        transform: scale(0.55);
+    }
+}
+
+/* ── Quiz: liquid segment fill ─────────────────────────── */
+/* The active segment fills from left to right over 400ms via
+   scaleX(0→1) with transform-origin: left, so only transform animates.
+   Past segments carry .scale-x-100 and stay filled. */
+@keyframes quiz-seg-in {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+}
+
+.quiz-seg-fill {
+    transform-origin: left center;
+    transform: scaleX(0);
+}
+
+.quiz-seg-fill.scale-x-100 {
+    transform: scaleX(1);
+}
+
+/* Reduced-motion: snap the active segment to its filled end state. */
+@media (prefers-reduced-motion: reduce) {
+    .quiz-seg-fill[style*="quiz-seg-in"] {
+        animation: none !important;
+        transform: scaleX(1) !important;
+    }
+}
+
+/* ── Recipes: grid transitions ──────────────────────────── */
+/* The card reveal and its hover border share one anchor: the reveal owns
+   opacity/transform with the 50ms inline delay, while border-color keeps
+   its UI-speed fade and never inherits the stagger delay. */
+html.js-motion .recipe-card.reveal {
+    transition: opacity var(--duration-reveal) var(--ease-out) var(--reveal-delay, 0ms),
+        transform var(--duration-reveal) var(--ease-out) var(--reveal-delay, 0ms),
+        border-color 150ms var(--ease-out);
+}
+
+/* Filter/page navigation is a full document load: fade the outgoing grid
+   (120ms), then either cascade the new cards (filters) or slide them in
+   16px from the direction of travel (pages). The pre-paint class lives on
+   <html>, written by the inline head script, so the offset never flashes. */
+[data-recipes-grid].is-leaving {
+    opacity: 0;
+    transition: opacity 120ms var(--ease-out);
+}
+
+html.page-enter-next [data-recipes-grid] {
+    opacity: 0;
+    transform: translateX(16px);
+}
+
+html.page-enter-prev [data-recipes-grid] {
+    opacity: 0;
+    transform: translateX(-16px);
+}
+
+html.grid-settled [data-recipes-grid] {
+    opacity: 1;
+    transform: none;
+    transition: opacity 250ms var(--ease-out), transform 250ms var(--ease-out);
+}
+
+/* ── Surprise me: checkbox check draw ───────────────────── */
+/* The native input stays the real control (sr-only); the styled box and
+   check mark are its next siblings, so :checked drives the state with no
+   JS. Only the check animates — a 150ms stroke draw. The box colour
+   swaps instantly, so nothing here needs a colour transition. Without
+   JS the checked state still renders, and reduced motion snaps the
+   stroke to its drawn end state. */
+.check-mark path {
+    stroke-dasharray: 24;
+    stroke-dashoffset: 24;
+    transition: stroke-dashoffset 150ms var(--ease-out);
+}
+
+.check-input:checked + .check-box .check-mark path {
+    stroke-dashoffset: 0;
+}
+
+/* Mobile-only right-edge fade: from md the grid fits all six, so there
+   is nothing hidden to advertise. app.js drops it at the end. */
+@media (max-width: 47.99rem) {
+    [data-scroll-fade]:not(.is-end) {
+        mask-image: linear-gradient(to right, black 88%, transparent);
+    }
 }
 
 /* ── Hero: drifting waves — the home page's ONE loop ────── */
@@ -151,7 +293,12 @@ html.js-motion .reveal.is-revealed {
     animation-delay: -14s;
 }
 
-[data-loop].is-paused .wave-drift {
+/* Both looping animations on the site share this contract: the element
+   carrying data-loop gets .is-paused from app.js's IntersectionObserver
+   while offscreen. The hero waves use it, and so does the cafe map's
+   fetch wave. */
+[data-loop].is-paused .wave-drift,
+[data-loop].is-paused .cafe-progress {
     animation-play-state: paused;
 }
 
@@ -189,25 +336,6 @@ html.js-motion .reveal.is-revealed {
     }
 }
 
-.carousel {
-    scrollbar-width: thin;
-    scrollbar-color: #6f4e37 #f4ebe1;
-}
-
-.carousel::-webkit-scrollbar {
-    height: 8px;
-}
-
-.carousel::-webkit-scrollbar-track {
-    background: #f4ebe1;
-    border-radius: 999px;
-}
-
-.carousel::-webkit-scrollbar-thumb {
-    background: #6f4e37;
-    border-radius: 999px;
-}
-
 /* ── Cross-document View Transitions ───────────────────── */
 /* Opt every same-origin navigation into an animated transition —
    but only for people who have NOT asked for reduced motion.
@@ -222,11 +350,34 @@ html.js-motion .reveal.is-revealed {
 
     /* Root snapshot: old page fades out quickly, new page settles in. */
     ::view-transition-old(root) {
-        animation: .18s ease-out both vt-fade-out;
+        animation: .18s var(--ease-out) both vt-fade-out;
     }
 
     ::view-transition-new(root) {
-        animation: .3s cubic-bezier(.2, .7, .3, 1) both vt-fade-in;
+        animation: .3s var(--ease-out) both vt-fade-in;
+    }
+
+    /* Active filter pill: morph between chip positions on navigation,
+       200ms on the shared curve, rather than jumping to the new chip. */
+    ::view-transition-group(filter-pill) {
+        animation-duration: .2s;
+        animation-timing-function: var(--ease-out);
+    }
+
+    /* Result grids: cross-fade between search states without morphing
+       the box, so a shorter or longer result list never slides. Both
+       catalogs get the same treatment. */
+    ::view-transition-group(bean-results),
+    ::view-transition-group(method-results) {
+        animation: none;
+    }
+
+    ::view-transition-old(bean-results),
+    ::view-transition-new(bean-results),
+    ::view-transition-old(method-results),
+    ::view-transition-new(method-results) {
+        animation-duration: .15s;
+        animation-timing-function: var(--ease-out);
     }
 }
 
@@ -240,139 +391,6 @@ html.js-motion .reveal.is-revealed {
     from {
         opacity: 0;
     }
-}
-
-/* ── Cafe map progress bar ───────────────────────────────── */
-/* Slim top-edge shimmer shown while a viewport fetch is in flight
-   (first load and every pan/zoom refresh). Sits in the map's frame
-   wrapper, not inside .leaflet-container, so no Leaflet scoping. */
-.cafe-progress {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--color-coffee-amber);
-    opacity: 0;
-    transform: scaleX(0);
-    transform-origin: left center;
-    transition: transform .3s ease, opacity .3s ease;
-    pointer-events: none;
-    z-index: 1000;
-}
-
-.cafe-progress.is-loading {
-    opacity: 1;
-    transform: scaleX(1);
-    animation: cafe-progress-sweep .9s ease-in-out infinite;
-}
-
-@keyframes cafe-progress-sweep {
-    0%   { clip-path: inset(0 100% 0 0); }
-    50%  { clip-path: inset(0 0 0 0); }
-    100% { clip-path: inset(0 0 0 100%); }
-}
-
-/* ── Cafe map popup card ────────────────────────────────── */
-/* Mirrors the catalog's bean cards: cream card with a mocha border,
-   display-font name, espresso meta lines, full-width espresso action
-   that flips to amber on hover (same as the bean card's buttons).
-
-   The `.leaflet-container a...` selectors are load-bearing: Leaflet
-   colors popup links #0078A8 via `.leaflet-container a` (specificity
-   0,1,1), which beats a bare `.cafe-popup-route` (0,1,0) — hence every
-   link rule below is scoped up to (0,2,1)+ so the palette wins. */
-.leaflet-container .cafe-popup a {
-    color: var(--color-coffee-espresso);
-    text-decoration: none;
-}
-
-.cafe-popup {
-    min-width: 210px;
-    max-width: 280px;
-    font-size: 14px;
-    line-height: 1.45;
-    color: var(--color-coffee-espresso);
-}
-
-.cafe-popup-name {
-    display: block;
-    font-family: var(--font-display);
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 1.3;
-    color: var(--color-coffee-espresso);
-    margin-bottom: 5px;
-}
-
-.cafe-popup-place {
-    font-size: 13px;
-    color: var(--color-coffee-mocha);
-    margin-bottom: 3px;
-}
-
-.cafe-popup-address {
-    font-size: 13px;
-    color: var(--color-coffee-mocha);
-    margin-bottom: 3px;
-}
-
-.cafe-popup-hours {
-    font-size: 13px;
-    color: var(--color-coffee-espresso);
-    font-weight: 500;
-    margin-bottom: 10px;
-}
-
-.leaflet-container .cafe-popup a.cafe-popup-route {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 40px;
-    width: 100%;
-    padding: 0 16px;
-    border-radius: 10px;
-    background: var(--color-coffee-espresso);
-    color: var(--color-coffee-latte);
-    font-weight: 600;
-    text-decoration: none;
-    transition: background-color .15s ease, color .15s ease;
-}
-
-.leaflet-container .cafe-popup a.cafe-popup-route:hover,
-.leaflet-container .cafe-popup a.cafe-popup-route:focus-visible {
-    background: var(--color-coffee-amber);
-    color: var(--color-coffee-espresso);
-}
-
-.cafe-popup-meta {
-    margin-top: 9px;
-    font-size: 12px;
-    color: var(--color-coffee-mocha);
-}
-
-/* Leaflet's default white info-window chrome, warmed into a bean-card.
-   Scoped under `.leaflet-container` (0,2,0) because leaflet.css loads
-   AFTER app.css (it's injected by the cafes entry), so equal-specificity
-   rules like `.leaflet-popup-content-wrapper { background: #fff }` would
-   otherwise win on load order alone. */
-.leaflet-container .leaflet-popup-content-wrapper {
-    border-radius: 16px;
-    border: 1px solid var(--color-coffee-mocha);
-    background: var(--color-coffee-cream);
-    box-shadow: 0 10px 24px rgba(44, 26, 20, .15);
-}
-
-.leaflet-container .leaflet-popup-tip {
-    background: var(--color-coffee-cream);
-}
-
-.leaflet-container .leaflet-popup-content {
-    margin: 16px 18px;
-}
-
-.leaflet-container a.leaflet-popup-close-button {
-    color: var(--color-coffee-mocha);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -2,7 +2,12 @@ import './bootstrap';
 
 import Alpine from 'alpinejs';
 
-import { animate, stagger } from 'animejs';
+import { animate, stagger, cubicBezier } from 'animejs';
+import { easeOutShared } from './easing';
+
+// The one shared curve of the redesign, mirrored from --ease-out in
+// app.css. Passed to every JS tween so CSS and JS can never drift.
+const easeOut = cubicBezier(0.22, 1, 0.36, 1);
 
 // ── Animation helpers ─────────────────────────────────────
 // Single reduced-motion choke point: every animation in this file
@@ -10,27 +15,6 @@ import { animate, stagger } from 'animejs';
 // instant state changes instead of tweens (CSS can't stop WAAPI
 // animations — the guard has to live in JS).
 const prefersReduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-// Mirrors --ease-out in app.css (cubic-bezier(0.22, 1, 0.36, 1)) for
-// the one count-up below. JS has no access to the CSS curve, so this
-// solves x-for-t and returns y. Keep the four numbers in sync by hand.
-const easeOutShared = (x) => {
-    const solve = (t, a, b) => 3 * (1 - t) ** 2 * t * a + 3 * (1 - t) * t ** 2 * b + t ** 3;
-    let low = 0;
-    let high = 1;
-
-    for (let i = 0; i < 12; i++) {
-        const mid = (low + high) / 2;
-
-        if (solve(mid, 0.22, 0.36) < x) {
-            low = mid;
-        } else {
-            high = mid;
-        }
-    }
-
-    return solve((low + high) / 2, 1, 1);
-};
 
 const countUp = (el) => {
     const target = Number(el.dataset.countUp);
@@ -107,10 +91,11 @@ Alpine.data('surpriseSection', (options = {}) => ({
 
         const card = this.$refs.card;
 
-        // Card swap: slide the current recipe out first so the new one
-        // arrives with a fade instead of the content popping in place.
+        // Roll: the current card drops 8px and fades (250ms); the new one
+        // arrives from 8px below and rises into place (250ms). No dice
+        // spin, no scale.
         if (card && this.recipe) {
-            await play(card, { opacity: 0, translateY: -10, duration: 150, ease: 'inQuad' });
+            await play(card, { opacity: 0, translateY: 8, duration: 250, ease: easeOut });
         }
 
         this.loading = true;
@@ -131,6 +116,10 @@ Alpine.data('surpriseSection', (options = {}) => ({
             if (this.quick) {
                 params.set('quick', '1');
             }
+
+            // The JSON route has no session, so the current page locale has
+            // to travel with the request for translated step texts.
+            params.set('locale', window.APP_LOCALE ?? document.documentElement.lang);
 
             const query = params.toString();
             const url = '/api/recipes/random' + (query ? '?' + query : '');
@@ -165,7 +154,16 @@ Alpine.data('surpriseSection', (options = {}) => ({
         if (card) {
             await this.$nextTick();
 
-            play(card, { opacity: [0, 1], translateY: [12, 0], duration: 320, ease: 'outCubic' });
+            await play(card, { opacity: [0, 1], translateY: [8, 0], duration: 250, ease: easeOut });
+
+            // Numbered steps cascade in 50ms apart once the card lands.
+            play(card.querySelectorAll('ol li'), {
+                opacity: [0, 1],
+                translateY: [6, 0],
+                duration: 300,
+                delay: stagger(50),
+                ease: easeOut,
+            });
         }
     },
 
@@ -173,12 +171,6 @@ Alpine.data('surpriseSection', (options = {}) => ({
         this.rolled = true;
         this.roll(this.recipe?.id ?? null);
     },
-}));
-
-Alpine.data('servings', (coffee, water) => ({
-    n: 1,
-    coffee,
-    water,
 }));
 
 Alpine.data('brewFinder', () => ({
@@ -232,10 +224,10 @@ Alpine.data('brewFinder', () => ({
         return this.$refs.questions?.querySelector(`[x-show="current === '${this.current}'"]`) ?? null;
     },
 
-    // Step transition: current question slides out (direction of travel),
-    // state advances, next question slides in — replaces the old hardcoded
-    // setTimeout(220) guess. Under reduced motion play() returns null and
-    // each await resolves instantly, so the wizard advances without tweens.
+    // Step transition: current question slides out 24px in direction of
+    // travel and fades (200ms), next slides in from opposite side (250ms).
+    // Card min-height keeps the footer stable. Under reduced motion play()
+    // returns null and each await resolves instantly.
     async go(dir) {
         if (this.animating) {
             return;
@@ -256,9 +248,9 @@ Alpine.data('brewFinder', () => ({
 
             await play(fromEl, {
                 opacity: 0,
-                translateX: dir > 0 ? -18 : 18,
-                duration: 150,
-                ease: 'inQuad',
+                translateX: dir > 0 ? -24 : 24,
+                duration: 200,
+                ease: easeOut,
             });
 
             if (dir > 0) {
@@ -282,9 +274,9 @@ Alpine.data('brewFinder', () => ({
             if (toEl) {
                 await play(toEl, {
                     opacity: [0, 1],
-                    translateX: toEl === fromEl ? [0, 0] : [dir > 0 ? 18 : -18, 0],
-                    duration: toEl === fromEl ? 200 : 260,
-                    ease: 'outCubic',
+                    translateX: toEl === fromEl ? [0, 0] : [dir > 0 ? 24 : -24, 0],
+                    duration: toEl === fromEl ? 200 : 250,
+                    ease: easeOut,
                 });
             }
         } finally {
@@ -312,6 +304,10 @@ Alpine.data('brewFinder', () => ({
                 params.set(key, value);
             });
 
+            // Same explicit locale as the random endpoint: the API group
+            // has no session, so the page language must be sent along.
+            params.set('locale', window.APP_LOCALE ?? document.documentElement.lang);
+
             const response = await fetch('/api/recipes/suggest?' + params.toString(), {
                 headers: { 'Accept': 'application/json' },
             });
@@ -332,7 +328,7 @@ Alpine.data('brewFinder', () => ({
 
         if (this.finished) {
             await this.$nextTick();
-            play(this.$refs.results, { opacity: [0, 1], translateY: [14, 0], duration: 320, ease: 'outCubic' });
+            play(this.$refs.results, { opacity: [0, 1], translateY: [16, 0], duration: 350, ease: easeOut });
         }
     },
 
@@ -425,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         translateY: [24, 0],
                         duration: 700,
                         delay: staggered ? stagger(60) : 0,
-                        ease: 'outCubic',
+                        ease: easeOut,
                     }
                     : {
                         // Explicit from-values: the .in-view class flip above
@@ -435,7 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         translateY: [0, 24],
                         duration: 450,
                         delay: staggered ? stagger(30) : 0,
-                        ease: 'inQuad',
+                        ease: easeOut,
                     });
 
                 if (anim) {
@@ -452,9 +448,10 @@ document.addEventListener('DOMContentLoaded', () => {
         revealEls.forEach((el) => el.classList.add('in-view'));
     }
 
-    // Pause the page's one looping animation (the hero waves) while
-    // its container is offscreen, resume on re-entry. Reduced motion
-    // is handled globally in app.css (animation: none), not here.
+    // Pause the page's one looping animation (hero waves on home, the
+    // fetch wave on cafes) while its container is offscreen, resume on
+    // re-entry. Reduced motion is handled globally in app.css
+    // (animation: none), not here.
     const loopEls = document.querySelectorAll('[data-loop]');
 
     if ('IntersectionObserver' in window && loopEls.length) {
@@ -489,5 +486,141 @@ document.addEventListener('DOMContentLoaded', () => {
             el.textContent = '0';
             countObserver.observe(el);
         });
+    }
+
+    // Filter chips: move the shared dark pill onto the active chip.
+    // CSS cannot measure chip widths, so this runs once on load (and on
+    // resize / font load). The pill is the named element of the
+    // cross-document view transition, so a filter change slides it.
+    // Without JS the active chip keeps its own background.
+    document.querySelectorAll('[data-filter-pills]').forEach((row) => {
+        const pill = row.querySelector('[data-filter-pill]');
+        const active = row.querySelector('[aria-current="page"]');
+
+        if (!pill || !active) {
+            return;
+        }
+
+        const place = () => {
+            const rowBox = row.getBoundingClientRect();
+            const chipBox = active.getBoundingClientRect();
+
+            // Content coordinates, not viewport ones: the pill is an
+            // absolutely positioned child of the scrollable row, so it rides
+            // along with scrollLeft when the mobile one-line row scrolls.
+            // Without the offset a deep-linked filter drags the pill offscreen.
+            pill.style.width = chipBox.width + 'px';
+            pill.style.height = chipBox.height + 'px';
+            pill.style.transform = 'translate('
+                + (chipBox.left - rowBox.left + row.scrollLeft) + 'px, '
+                + (chipBox.top - rowBox.top + row.scrollTop) + 'px)';
+            row.classList.add('pill-ready');
+
+            // On the mobile one-line scroller the active filter can start
+            // offscreen (deep link): bring it into view without moving the
+            // page. Desktop rows are overflow-visible, so this is a no-op.
+            if (row.scrollWidth > row.clientWidth + 1
+                && (chipBox.left < rowBox.left || chipBox.right > rowBox.right)) {
+                row.scrollLeft += chipBox.left - rowBox.left - 16;
+            }
+        };
+
+        place();
+        row.addEventListener('scroll', place, { passive: true });
+        window.addEventListener('resize', place);
+        document.fonts?.ready.then(place);
+    });
+
+    // Mobile bean carousel: drop the right-edge fade once the end is in
+    // view, so it only advertises cards that are actually still hidden.
+    // Same measurement decides whether the strip is a keyboard-scrollable
+    // region: tabindex only while it actually overflows (it is a plain
+    // grid from md up, where an extra tab stop would be noise).
+    document.querySelectorAll('[data-scroll-fade]').forEach((el) => {
+        let queued = false;
+
+        const update = () => {
+            queued = false;
+            el.classList.toggle('is-end', el.scrollLeft + el.clientWidth >= el.scrollWidth - 2);
+
+            if (el.scrollWidth > el.clientWidth + 1) {
+                el.tabIndex = 0;
+            } else {
+                el.removeAttribute('tabindex');
+            }
+        };
+
+        const queueUpdate = () => {
+            if (!queued) {
+                queued = true;
+                requestAnimationFrame(update);
+            }
+        };
+
+        update();
+        el.addEventListener('scroll', queueUpdate, { passive: true });
+        window.addEventListener('resize', queueUpdate);
+    });
+
+    // Recipes: the result grid is server-rendered, so a filter or page
+    // change is a document load. Fade the outgoing grid for 120ms, then
+    // navigate. Page arrows also stash the direction; the inline head
+    // script paints the incoming grid 16px off before first paint, and
+    // this adds the settle class so it slides home (250ms).
+    const recipesGrid = document.querySelector('[data-recipes-grid]');
+
+    if (recipesGrid) {
+        const leave = (href, dir) => {
+            if (prefersReduced()) {
+                window.location.href = href;
+                return;
+            }
+
+            if (dir) {
+                sessionStorage.setItem('recipes-page-dir', dir);
+            }
+
+            recipesGrid.classList.add('is-leaving');
+            window.setTimeout(() => { window.location.href = href; }, 120);
+        };
+
+        const plainClick = (e) => e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+
+        document.querySelectorAll('[data-recipe-filters] a').forEach((link) => {
+            link.addEventListener('click', (e) => {
+                if (!plainClick(e)) {
+                    return;
+                }
+
+                e.preventDefault();
+                leave(link.href);
+            });
+        });
+
+        document.querySelectorAll('[data-recipe-pagination] a[rel]').forEach((link) => {
+            link.addEventListener('click', (e) => {
+                if (!plainClick(e)) {
+                    return;
+                }
+
+                e.preventDefault();
+                leave(link.href, link.rel === 'next' ? 'next' : 'prev');
+            });
+        });
+
+        // Let the pre-paint offset commit, then settle it. The cleanup
+        // restores the neutral state so a later filter fade is not
+        // overridden by a stale html class.
+        if (/page-enter-(next|prev)/.test(document.documentElement.className)) {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    document.documentElement.classList.add('grid-settled');
+
+                    window.setTimeout(() => {
+                        document.documentElement.classList.remove('page-enter-next', 'page-enter-prev', 'grid-settled');
+                    }, 300);
+                });
+            });
+        }
     }
 });

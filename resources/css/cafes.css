@@ -1,0 +1,236 @@
+/* Cafe map styles. Loaded only by resources/js/cafes.js, after Leaflet's
+   CSS, so the rules here can override Leaflet without load-order luck.
+   They reference the runtime custom properties emitted by app.css
+   (--color-coffee-*, --font-*, --ease-out); no @apply, so they also work
+   when this file is built on its own. */
+
+/* ── Cafe filter selects ─────────────────────────────────── */
+/* The forms plugin paints its chevron as a data-URI background image,
+   which cannot rotate — drop it and use the inline SVG beside the
+   select instead, so the arrow can flip 180deg on open. */
+.cafe-select {
+    background-image: none;
+}
+
+.cafe-chevron > svg {
+    transition: transform .15s var(--ease-out);
+}
+
+.cafe-select.is-open ~ .cafe-chevron > svg {
+    transform: rotate(180deg);
+}
+
+/* ── Cafe map top edge ───────────────────────────────────── */
+/* The map card's top edge is a wave, not a flat hairline. Quiet amber
+   at rest; while a viewport fetch is in flight (.is-loading, set by
+   cafes.js) the wave brightens and pulses. Opacity only — this is the
+   cafes page's single looping animation and it stops the moment the
+   last response lands. Sits in the frame wrapper, not inside
+   .leaflet-container, so no Leaflet scoping is needed. */
+.cafe-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 12px;
+    color: var(--color-coffee-amber);
+    opacity: .7;
+    pointer-events: none;
+    z-index: 1000;
+    transition: opacity .3s var(--ease-out);
+}
+
+.cafe-progress.is-loading {
+    opacity: 1;
+    animation: cafe-wave-pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes cafe-wave-pulse {
+    from { opacity: .35; }
+    to   { opacity: 1; }
+}
+
+/* ── Cafe pins + clusters ────────────────────────────────── */
+/* One inline SVG pin (≈430 B) shared by every marker: amber fill from
+   the palette with a latte centre dot. Flat vector, no image request. */
+.cafe-pin {
+    color: var(--color-coffee-amber);
+}
+
+.cafe-pin-dot {
+    fill: var(--color-coffee-latte);
+}
+
+/* Clusters: cream halo with a brown core that deepens as the child count
+   rises. Four flat palette steps (amber, amber-ink, mocha, roast) - same
+   palette, no gradients. Numeral colour flips to a light tone on the two
+   darkest steps so it stays readable. Scoped under .leaflet-container
+   because MarkerCluster.Default.css loads after app.css. */
+.leaflet-container .cafe-cluster {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px;
+    border-radius: 999px;
+    background: rgba(244, 235, 225, .85);
+    box-shadow: 0 4px 10px rgba(44, 26, 20, .18);
+}
+
+.leaflet-container .cafe-cluster-inner {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 999px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    background: var(--cluster-fill);
+    color: var(--cluster-ink);
+}
+
+.leaflet-container .cafe-cluster--1 {
+    --cluster-fill: var(--color-coffee-amber);
+    --cluster-ink: var(--color-coffee-espresso);
+}
+
+.leaflet-container .cafe-cluster--1 .cafe-cluster-inner {
+    font-size: 12px;
+}
+
+.leaflet-container .cafe-cluster--2 {
+    --cluster-fill: var(--color-coffee-amber-ink);
+    --cluster-ink: var(--color-coffee-latte);
+}
+
+.leaflet-container .cafe-cluster--3 {
+    --cluster-fill: var(--color-coffee-mocha);
+    --cluster-ink: var(--color-coffee-latte);
+}
+
+.leaflet-container .cafe-cluster--4 {
+    --cluster-fill: var(--color-coffee-roast);
+    --cluster-ink: var(--color-coffee-cream);
+}
+
+.leaflet-container .cafe-cluster--4 .cafe-cluster-inner {
+    font-size: 14px;
+}
+
+/* ── Cafe map popup card ────────────────────────────────── */
+/* Mirrors the catalog's bean cards: cream card with a mocha border,
+   display-font name, espresso meta lines, full-width espresso action
+   that flips to amber on hover (same as the bean card's buttons).
+
+   The `.leaflet-container a...` selectors are load-bearing: Leaflet
+   colors popup links #0078A8 via `.leaflet-container a` (specificity
+   0,1,1), which beats a bare `.cafe-popup-route` (0,1,0) — hence every
+   link rule below is scoped up to (0,2,1)+ so the palette wins. */
+.leaflet-container .cafe-popup a {
+    color: var(--color-coffee-espresso);
+    text-decoration: none;
+}
+
+.cafe-popup {
+    min-width: 210px;
+    max-width: 280px;
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--color-coffee-espresso);
+}
+
+.cafe-popup-name {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--color-coffee-espresso);
+    margin-bottom: 5px;
+}
+
+.cafe-popup-place {
+    font-size: 13px;
+    color: var(--color-coffee-mocha);
+    margin-bottom: 3px;
+}
+
+.cafe-popup-hours {
+    font-size: 13px;
+    color: var(--color-coffee-espresso);
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.leaflet-container .cafe-popup a.cafe-popup-route {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    width: 100%;
+    padding: 0 16px;
+    border-radius: 10px;
+    background: var(--color-coffee-espresso);
+    color: var(--color-coffee-latte);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color .15s ease, color .15s ease;
+}
+
+.leaflet-container .cafe-popup a.cafe-popup-route:hover,
+.leaflet-container .cafe-popup a.cafe-popup-route:focus-visible {
+    background: var(--color-coffee-amber);
+    color: var(--color-coffee-espresso);
+}
+
+.cafe-popup-meta {
+    margin-top: 9px;
+    font-size: 12px;
+    color: var(--color-coffee-mocha);
+}
+
+/* Leaflet's default white info-window chrome, warmed into a bean-card.
+   Scoped under `.leaflet-container` (0,2,0) because leaflet.css loads
+   AFTER app.css (it's injected by the cafes entry), so equal-specificity
+   rules like `.leaflet-popup-content-wrapper { background: #fff }` would
+   otherwise win on load order alone. */
+.leaflet-container .leaflet-popup-content-wrapper {
+    border-radius: 16px;
+    border: 1px solid var(--color-coffee-mocha);
+    background: var(--color-coffee-cream);
+    box-shadow: 0 10px 24px rgba(44, 26, 20, .15);
+}
+
+.leaflet-container .leaflet-popup-tip {
+    background: var(--color-coffee-cream);
+}
+
+/* Popup opens with a 150ms fade + 8px rise. Animated on the wrapper and
+   the tip, never on .leaflet-popup itself — Leaflet owns that element's
+   inline transform for positioning. */
+.leaflet-container .leaflet-popup-content-wrapper,
+.leaflet-container .leaflet-popup-tip {
+    animation: cafe-popup-in .15s var(--ease-out) both;
+}
+
+@keyframes cafe-popup-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.leaflet-container .leaflet-popup-content {
+    margin: 16px 18px;
+}
+
+/* (0,3,0): higher than Leaflet's own close-button rule, so the colour
+   survives even if the CSS load order changes. */
+.leaflet-container .leaflet-popup a.leaflet-popup-close-button {
+    color: var(--color-coffee-mocha);
+}

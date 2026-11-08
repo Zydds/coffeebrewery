@@ -7,10 +7,14 @@ use App\Http\Requests\Admin\StoreRecipeRequest;
 use App\Models\BrewMethod;
 use App\Models\CoffeeBean;
 use App\Models\Recipe;
-use Illuminate\Support\Str;
+use App\Services\CatalogWriter;
 
 class RecipeController extends Controller
 {
+    public function __construct(
+        private CatalogWriter $writer
+    ) {}
+
     public function index()
     {
         $recipes = Recipe::with(['coffeeBean', 'brewMethod'])->latest()->get();
@@ -28,10 +32,7 @@ class RecipeController extends Controller
 
     public function store(StoreRecipeRequest $request)
     {
-        $data = $request->validated();
-        $data['slug'] = Str::slug($data['title']);
-
-        Recipe::create($data);
+        $this->writer->save(new Recipe, $request->validated());
 
         return redirect()->route('admin.recipes.index')
             ->with('success', 'Recipe created.');
@@ -47,10 +48,7 @@ class RecipeController extends Controller
 
     public function update(StoreRecipeRequest $request, Recipe $recipe)
     {
-        $data = $request->validated();
-        $data['slug'] = Str::slug($data['title']);
-
-        $recipe->update($data);
+        $this->writer->save($recipe, $request->validated());
 
         return redirect()->route('admin.recipes.index')
             ->with('success', 'Recipe updated.');

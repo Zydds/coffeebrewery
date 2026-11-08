@@ -25,17 +25,18 @@ class CloudinaryUploader
     }
 
     /**
-     * Replace an existing image: delete old, upload new.
+     * Replace an existing image: upload the new one, then delete the old
+     * one, so a failed upload never removes the current asset.
      *
      * @return array{secure_url: string, public_id: string}
      */
     public function replace(UploadedFile $file, ?string $oldPublicId, string $folder = 'coffee-app'): array
     {
-        if ($oldPublicId) {
-            $this->delete($oldPublicId);
-        }
+        $result = $this->upload($file, $folder);
 
-        return $this->upload($file, $folder);
+        $this->delete($oldPublicId);
+
+        return $result;
     }
 
     /**

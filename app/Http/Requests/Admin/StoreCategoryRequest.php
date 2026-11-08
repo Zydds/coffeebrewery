@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Rules\UniqueSlug;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCategoryRequest extends FormRequest
@@ -13,10 +14,8 @@ class StoreCategoryRequest extends FormRequest
 
     public function rules(): array
     {
-        $categoryId = $this->route('category')?->id;
-
         return [
-            'name' => 'required|string|max:100',
+            'name' => ['required', 'string', 'max:100', new UniqueSlug('categories', $this->route('category'))],
             'description' => 'nullable|string|max:500',
         ];
     }

@@ -5,11 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreCategoryRequest;
 use App\Models\Category;
+use App\Services\CatalogWriter;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
+    public function __construct(
+        private CatalogWriter $writer
+    ) {}
+
     public function index()
     {
         $categories = Category::withCount('coffeeBeans')->get();
@@ -24,10 +28,7 @@ class CategoryController extends Controller
 
     public function store(StoreCategoryRequest $request)
     {
-        $data = $request->validated();
-        $data['slug'] = Str::slug($data['name']);
-
-        Category::create($data);
+        $this->writer->save(new Category, $request->validated());
 
         return redirect()->route('admin.categories.index')
             ->with('success', 'Category created.');
@@ -40,10 +41,7 @@ class CategoryController extends Controller
 
     public function update(StoreCategoryRequest $request, Category $category)
     {
-        $data = $request->validated();
-        $data['slug'] = Str::slug($data['name']);
-
-        $category->update($data);
+        $this->writer->save($category, $request->validated());
 
         return redirect()->route('admin.categories.index')
             ->with('success', 'Category updated.');

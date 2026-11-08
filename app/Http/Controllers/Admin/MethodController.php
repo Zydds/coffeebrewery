@@ -5,14 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreMethodRequest;
 use App\Models\BrewMethod;
-use App\Services\CloudinaryUploader;
+use App\Services\CatalogWriter;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Str;
 
 class MethodController extends Controller
 {
     public function __construct(
-        private CloudinaryUploader $uploader
+        private CatalogWriter $writer
     ) {}
 
     public function index()
@@ -29,16 +28,12 @@ class MethodController extends Controller
 
     public function store(StoreMethodRequest $request)
     {
-        $data = $request->validated();
-        $data['slug'] = Str::slug($data['name']);
-
-        if ($request->hasFile('image')) {
-            $result = $this->uploader->upload($request->file('image'), 'coffee-app/methods');
-            $data['image_url'] = $result['secure_url'];
-            $data['image_public_id'] = $result['public_id'];
-        }
-
-        BrewMethod::create($data);
+        $this->writer->save(
+            new BrewMethod,
+            $request->validated(),
+            $request->file('image'),
+            'coffee-app/methods'
+        );
 
         return redirect()->route('admin.methods.index')
             ->with('success', 'Brew method created.');
@@ -51,16 +46,12 @@ class MethodController extends Controller
 
     public function update(StoreMethodRequest $request, BrewMethod $method)
     {
-        $data = $request->validated();
-        $data['slug'] = Str::slug($data['name']);
-
-        if ($request->hasFile('image')) {
-            $result = $this->uploader->replace($request->file('image'), $method->image_public_id, 'coffee-app/methods');
-            $data['image_url'] = $result['secure_url'];
-            $data['image_public_id'] = $result['public_id'];
-        }
-
-        $method->update($data);
+        $this->writer->save(
+            $method,
+            $request->validated(),
+            $request->file('image'),
+            'coffee-app/methods'
+        );
 
         return redirect()->route('admin.methods.index')
             ->with('success', 'Brew method updated.');
@@ -69,8 +60,7 @@ class MethodController extends Controller
     public function destroy(BrewMethod $method)
     {
         try {
-            $this->uploader->delete($method->image_public_id);
-            $method->delete();
+            $this->writer->delete($method);
 
             return redirect()->route('admin.methods.index')
                 ->with('success', 'Brew method deleted.');

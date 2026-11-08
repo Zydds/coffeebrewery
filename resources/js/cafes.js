@@ -2,18 +2,9 @@ import L from 'leaflet';
 import 'leaflet.markercluster';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
-import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
-import markerIconUrl from 'leaflet/dist/images/marker-icon.png';
-import markerIconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
-import markerShadowUrl from 'leaflet/dist/images/marker-shadow.png';
-
-// Bundlers break Leaflet's default-icon path detection (it 404s on
-// /marker-icon.png) — point the default icon at the hashed assets.
-L.Icon.Default.mergeOptions({
-    iconRetinaUrl: markerIconRetinaUrl,
-    iconUrl: markerIconUrl,
-    shadowUrl: markerShadowUrl,
-});
+// Page-specific styles come last so they can override Leaflet's defaults.
+import '../css/cafes.css';
+import { easeOutShared } from './easing';
 
 // ── Cafe map (/cafes) ───────────────────────────────────────
 // Single-page map: region cascade, clustered pins, auto-refresh on pan.
@@ -21,6 +12,16 @@ L.Icon.Default.mergeOptions({
 // so the page never triggers a browser permission prompt.
 
 const boot = window.CAFES_BOOTSTRAP;
+
+const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+const prefersReduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// One shared inline pin for every marker: 26x34, amber body from the
+// palette, latte centre dot. ~430 B, no image request, no per-marker HTML.
+// Must stay above the init call: function declarations hoist, consts do not.
+const PIN_HTML = '<svg width="26" height="34" viewBox="0 0 26 34" aria-hidden="true">'
+    + '<path d="M13 1.5c-6.1 0-11 4.8-11 10.8C2 20.5 13 32.5 13 32.5s11-12 11-20.2c0-6-4.9-10.8-11-10.8Z" fill="currentColor"/>'
+    + '<circle cx="13" cy="12.3" r="4.3" class="cafe-pin-dot"/></svg>';
 
 if (boot && document.getElementById('cafe-map')) {
     initCafeMap(boot);
@@ -54,12 +55,37 @@ function initCafeMap(boot) {
     }).addTo(map);
 
     // Clustering from day one: city-level zoom has hundreds of pins.
+    // The badge colour is a brown ramp keyed to the child count: one or two
+    // cafes read as light brown, dense clusters deepen toward the brand's
+    // regular brown. Four flat palette steps, never a CSS gradient.
+    const clusterIcon = (cluster) => {
+        const count = cluster.getChildCount();
+        const tier = count >= 200 ? 4 : count >= 50 ? 3 : count >= 10 ? 2 : 1;
+        const size = count >= 200 ? 52 : count >= 50 ? 46 : count >= 10 ? 40 : 34;
+
+        return L.divIcon({
+            html: `<span class="cafe-cluster-inner">${count}</span>`,
+            className: `cafe-cluster cafe-cluster--${tier}`,
+            iconSize: [size, size],
+        });
+    };
+
     const cluster = L.markerClusterGroup({
         showCoverageOnHover: false,
         maxClusterRadius: 45,
         disableClusteringAtZoom: 16,
+        iconCreateFunction: clusterIcon,
     });
     map.addLayer(cluster);
+
+    // Shared icon instance for all markers (all 400+ pins reuse this one).
+    const pinIcon = L.divIcon({
+        className: 'cafe-pin',
+        html: PIN_HTML,
+        iconSize: [26, 34],
+        iconAnchor: [13, 34],
+        popupAnchor: [0, -32],
+    });
 
     // Diff-by-id marker bookkeeping — panning must add/remove markers,
     // never clear-and-repaint (that's the classic blinking-map mistake).
@@ -132,6 +158,10 @@ function initCafeMap(boot) {
             params.set('region', currentRegion);
         }
 
+        // Keep API translations in the language chosen for this page; the
+        // stateless api group cannot read the session.
+        params.set('locale', window.APP_LOCALE ?? document.documentElement.lang);
+
         try {
             const response = await fetch(`${boot.apiUrl}?${params}`, {
                 headers: { Accept: 'application/json' },
@@ -157,7 +187,7 @@ function initCafeMap(boot) {
                     continue;
                 }
 
-                const marker = L.marker([cafe.lat, cafe.lng]);
+                const marker = L.marker([cafe.lat, cafe.lng], { icon: pinIcon });
                 marker.bindPopup(popupHtml(cafe));
                 markers.set(key, marker);
                 cluster.addLayer(marker);
@@ -246,6 +276,93 @@ function initCafeMap(boot) {
     const provinsiSelect = document.getElementById('cafe-provinsi');
     const kotaSelect = document.getElementById('cafe-kota');
 
+    // ── Select chevrons ─────────────────────────────────────
+    // Native selects expose no open event, so the arrow follows the
+    // interaction: pointerdown/keydown opens it, change/blur/Escape closes
+    // it. CSS owns the 150ms rotate (transform only).
+    [provinsiSelect, kotaSelect].forEach((select) => {
+        if (! select) {
+            return;
+        }
+
+        const open = () => select.classList.add('is-open');
+        const close = () => select.classList.remove('is-open');
+
+        select.addEventListener('pointerdown', open);
+        select.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                close();
+            } else if (['Enter', ' ', 'ArrowDown', 'ArrowUp'].includes(e.key)) {
+                open();
+            }
+        });
+        select.addEventListener('change', close);
+        select.addEventListener('blur', close);
+    });
+
+    // ── Cafe count ──────────────────────────────────────────
+    // Server-rendered value stays put until a region actually changes;
+    // then it counts to the new total over 400ms. Reduced motion snaps.
+    const countEl = document.getElementById('cafe-count');
+    const countLive = document.getElementById('cafe-count-live');
+    let countFrame = 0;
+
+    function setCount(kode) {
+        if (! countEl) {
+            return;
+        }
+
+        const option = kode
+            ? kotaSelect?.querySelector(`option[value="${CSS.escape(kode)}"]`)
+            : null;
+        const target = Number(boot.counts?.[kode] ?? option?.dataset.count ?? 0);
+
+        if (countLive) {
+            countLive.textContent = `${target} ${i18n.countLabel}`;
+        }
+
+        cancelAnimationFrame(countFrame);
+
+        if (prefersReduced()) {
+            countEl.textContent = String(target);
+            return;
+        }
+
+        const from = Number(countEl.textContent) || 0;
+
+        if (from === target) {
+            return;
+        }
+
+        const start = performance.now();
+
+        const frame = (now) => {
+            const t = Math.min((now - start) / 400, 1);
+
+            countEl.textContent = String(Math.round(from + (target - from) * easeOutShared(t)));
+
+            if (t < 1) {
+                countFrame = requestAnimationFrame(frame);
+            }
+        };
+
+        countFrame = requestAnimationFrame(frame);
+    }
+
+    // City options are rebuilt in place (same select element), so a new
+    // province reads as a swap rather than a silent jump: the control
+    // dips to 25% and settles back in 200ms.
+    function fadeKota() {
+        if (! kotaSelect || prefersReduced()) {
+            return;
+        }
+
+        kotaSelect.animate(
+            [{ opacity: 0.25, transform: 'translateY(-4px)' }, { opacity: 1, transform: 'translateY(0)' }],
+            { duration: 200, easing: EASE },
+        );
+    }
+
     // All kabupaten/kota options are server-rendered with data-parent and
     // data-count; switching province just filters them in place, so every
     // province shows real names + counts (and "not available yet" where
@@ -283,7 +400,9 @@ function initCafeMap(boot) {
     }
 
     provinsiSelect?.addEventListener('change', () => {
-        applyRegion(rebuildKota(provinsiSelect.value));
+        const kode = rebuildKota(provinsiSelect.value);
+        fadeKota();
+        applyRegion(kode);
     });
 
     kotaSelect?.addEventListener('change', () => {
@@ -292,6 +411,7 @@ function initCafeMap(boot) {
 
     function applyRegion(kode) {
         currentRegion = kode || null;
+        setCount(kode);
 
         // URL tracks the selection so back/refresh/shared links behave.
         const url = new URL(window.location.href);

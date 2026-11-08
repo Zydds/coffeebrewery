@@ -9,7 +9,15 @@
         <div class="flex flex-wrap items-end justify-between gap-6">
             <h1 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Recipes') }}</h1>
 
-            <div class="flex flex-wrap gap-2" role="navigation" aria-label="{{ __('Filter recipes') }}">
+            {{-- Mobile: one snap-scrolling line, so eleven filters never take
+                 two rows above the cards. From sm the row wraps as before.
+                 The shared dark pill slides between the active chips (app.js
+                 + the view-transition rule in app.css). --}}
+            <div class="relative flex w-full snap-x snap-mandatory gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>a]:shrink-0 [&>a]:snap-start sm:w-auto sm:flex-wrap sm:overflow-visible sm:pb-0"
+                 role="navigation" aria-label="{{ __('Filter recipes') }}"
+                 data-filter-pills data-recipe-filters>
+                <span data-filter-pill aria-hidden="true"
+                      class="pointer-events-none absolute left-0 top-0 rounded-full bg-coffee-espresso"></span>
                 <x-chip :href="route('recipes.index', array_filter(['q' => request('q')]))"
                         :active="request('method') === null && !request('featured') && !request('cheap')">
                     {{ __('All') }}
@@ -38,18 +46,38 @@
         <x-search-bar :action="route('recipes.index')" :placeholder="__('Search recipes…')" :value="request('q')"
                       :preserves="['method' => request('method'), 'featured' => request('featured'), 'cheap' => request('cheap')]" />
 
-        <div data-reveal-stagger class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {{-- Filter/search: the leave handler fades this grid out 120ms, then
+             the incoming cards cascade at 50ms. Page links keep the cascade
+             off and slide the incoming grid instead (app.js + app.css). --}}
+        <div data-recipes-grid class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @forelse ($recipes as $recipe)
+                @php
+                    // One 46-char ratio wraps into five lines in a quarter-width
+                    // stat cell. Keep the first measure in the cell, move the
+                    // rest (e.g. "+ 150 ml cold water") to a note line below.
+                    $ratio = (string) $recipe->ratio;
+                    $ratioNote = null;
+
+                    if (mb_strlen($ratio) > 24 && preg_match('/^(.*?\d+\s*ml)\b(.*)$/iu', $ratio, $m)) {
+                        $ratio = trim($m[1]);
+                        $ratioNote = trim($m[2]);
+                    }
+                @endphp
+
                 <a href="{{ route('recipes.show', $recipe->slug) }}"
-                   class="group flex flex-col rounded-2xl border border-coffee-mocha/30 bg-coffee-cream p-5 hover:border-coffee-amber transition-colors">
+                   @if (! $paged) x-reveal @endif
+                   @if (! $paged) style="--reveal-delay: {{ $loop->index * 50 }}ms" @endif
+                   class="recipe-card group flex flex-col rounded-2xl border border-coffee-mocha/30 bg-coffee-cream p-5 hover:border-coffee-amber transition-colors{{ $paged ? '' : ' reveal' }}">
                     <div class="flex items-start justify-between gap-3">
                         <h2 class="font-semibold text-coffee-espresso group-hover:text-coffee-amber-ink transition-colors leading-snug">
                             {{ $recipe->title }}
                         </h2>
                         <div class="flex shrink-0 items-center gap-1.5">
+                            {{-- Cheap keeps the filled amber chip; Non-cheap is
+                                 an outline only, so cheap recipes read first. --}}
                             <span class="text-xs font-semibold px-2 py-0.5 rounded-full {{ $recipe->cheap
                                 ? 'bg-coffee-amber text-coffee-espresso'
-                                : 'bg-coffee-mocha/15 text-coffee-mocha' }}">
+                                : 'border border-coffee-mocha/30 text-coffee-mocha' }}">
                                 {{ $recipe->cheap ? __('Cheap') : __('Non-cheap') }}
                             </span>
                             @if ($recipe->is_featured)
@@ -62,7 +90,14 @@
                         {{ $recipe->coffeeBean->name ?? __('Unknown bean') }} &middot; {{ $recipe->brewMethod->name ?? __('Unknown method') }}
                     </p>
 
-                    <dl class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-coffee-mocha border-t border-coffee-mocha/20 pt-3">
+                    {{-- Thin wave replaces the old flat divider. non-scaling-stroke
+                         keeps it 1px at every card width. --}}
+                    <svg class="mt-3 h-2 w-full text-coffee-mocha/30" viewBox="0 0 200 8"
+                         preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+                        <path d="M0 4 Q25 1 50 4 T100 4 T150 4 T200 4" vector-effect="non-scaling-stroke"/>
+                    </svg>
+
+                    <dl class="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-coffee-mocha">
                         <div>
                             <dt>{{ __('Time') }}</dt>
                             <dd class="mt-0.5 font-semibold text-coffee-espresso text-sm">
@@ -75,7 +110,7 @@
                         </div>
                         <div>
                             <dt>{{ __('Ratio') }}</dt>
-                            <dd class="mt-0.5 font-semibold text-coffee-espresso text-sm">{{ $recipe->ratio }}</dd>
+                            <dd class="mt-0.5 font-semibold text-coffee-espresso text-sm leading-snug">{{ $ratio }}</dd>
                         </div>
                         <div>
                             <dt>{{ __('Temp') }}</dt>
@@ -86,9 +121,14 @@
                             <dd class="mt-0.5 font-semibold text-coffee-espresso text-sm">{{ $recipe->grind_size }}</dd>
                         </div>
                     </dl>
+
+                    @if ($ratioNote)
+                        <p class="mt-2 text-xs text-coffee-mocha">{{ $ratioNote }}</p>
+                    @endif
                 </a>
             @empty
-                <x-empty-state :action="(request('q') || request('method') || request('featured') || request('cheap') || request('quick')) ? __('Clear search & filters') : null"
+                <x-empty-state x-reveal class="reveal"
+                               :action="(request('q') || request('method') || request('featured') || request('cheap') || request('quick')) ? __('Clear search & filters') : null"
                                :href="route('recipes.index')">
                     @if (request('q') || request('method') || request('featured') || request('cheap') || request('quick'))
                         {{ __('No recipes found matching your search') }}.
@@ -99,6 +139,6 @@
             @endforelse
         </div>
 
-        <x-page-arrows :paginator="$recipes" />
+        <x-page-arrows :paginator="$recipes" data-recipe-pagination />
     </div>
 @endsection

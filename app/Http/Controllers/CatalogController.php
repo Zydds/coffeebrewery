@@ -24,7 +24,12 @@ class CatalogController extends Controller
             'methods' => BrewMethod::count(),
         ];
 
-        return view('public.home', compact('featuredBeans', 'categories', 'methods', 'proof'));
+        // The catalog below lists regular beans only, so the "Showing" line
+        // names that scope and links the rest — otherwise 6 listed vs 14 in
+        // the proof strip reads as a contradiction.
+        $cheapBeans = CoffeeBean::where('is_cheap', true)->count();
+
+        return view('public.home', compact('featuredBeans', 'categories', 'methods', 'proof', 'cheapBeans'));
     }
 
     public function cheapIndex(Request $request)

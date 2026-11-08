@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Rules\UniqueSlug;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRecipeRequest extends FormRequest
@@ -16,7 +17,7 @@ class StoreRecipeRequest extends FormRequest
         return [
             'coffee_bean_id' => 'required|exists:coffee_beans,id',
             'brew_method_id' => 'required|exists:brew_methods,id',
-            'title' => 'required|string|max:200',
+            'title' => ['required', 'string', 'max:200', new UniqueSlug('recipes', $this->route('recipe'))],
             'water_temp_c' => 'required|integer|between:60,100',
             'grind_size' => 'required|string|max:50',
             'ratio' => 'required|string|max:50',

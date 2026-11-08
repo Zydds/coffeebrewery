@@ -15,11 +15,11 @@
         <label for="search-{{ \Illuminate\Support\Str::slug($placeholder) }}" class="sr-only">{{ $placeholder }}</label>
         <input id="search-{{ \Illuminate\Support\Str::slug($placeholder) }}"
                type="search" name="{{ $name }}" value="{{ $value }}" placeholder="{{ $placeholder }}"
-               class="min-h-[44px] w-full rounded-full border border-coffee-mocha/40 bg-coffee-cream pl-11 pr-4 text-sm text-coffee-espresso placeholder:text-coffee-mocha/70 focus:border-coffee-amber focus:outline-hidden focus:ring-2 focus:ring-coffee-amber/40">
+               class="min-h-[44px] w-full rounded-full border border-coffee-mocha/40 bg-coffee-cream pl-11 pr-4 text-sm text-coffee-espresso placeholder:text-coffee-mocha transition-[border-color] duration-150 ease-out focus:border-coffee-amber-ink focus:outline-hidden focus:ring-2 focus:ring-coffee-amber-ink/40">
     </div>
 
     <button type="submit"
-            class="min-h-[44px] shrink-0 rounded-full bg-coffee-espresso px-5 text-sm font-semibold text-coffee-latte transition-colors hover:bg-coffee-roast">
+            class="min-h-[44px] shrink-0 rounded-full bg-coffee-espresso px-5 text-sm font-semibold text-coffee-latte transition-colors hover:bg-coffee-roast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink focus-visible:ring-offset-2 focus-visible:ring-offset-coffee-latte">
         {{ __('Search') }}
     </button>
 </form>

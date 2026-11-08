@@ -8,7 +8,8 @@
 
 <a {{ $attributes->merge([
         'href' => $href,
-        'class' => 'min-h-[44px] px-5 inline-flex items-center rounded-full font-semibold text-[15px] '
+        'aria-current' => $active ? 'page' : false,
+        'class' => 'relative z-10 min-h-[44px] px-5 inline-flex items-center rounded-full font-semibold text-[15px] '
             . 'transition-[background-color,color,transform] duration-150 ease-out '
             . 'motion-safe:active:scale-[0.97] '
             . 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink '
