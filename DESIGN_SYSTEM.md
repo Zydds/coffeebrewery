@@ -29,10 +29,10 @@ Families: **Outfit** for display/headings, loaded 600, 700, 800; **Inter** for U
 
 | Role | Family | Size / line-height | Weight | Notes |
 |---|---|---|---|---|
-| Home h1 | Outfit | `clamp(2.6rem, 6vw, 4.5rem)` / `1.1` | 800 | `tracking-tight`; one highlighted phrase in an amber `mark` |
+| Home h1 | Outfit | `text-display`: `clamp(2.5rem, 6vw, 4.5rem)` / `1.05` | 800 | `tracking-tight`; one highlighted phrase in an amber `mark` |
 | Page h1 | Outfit | `clamp(2rem, 4vw, 2.75rem)` / inherited `1.5` | 700 | Cafes, Cheap, Custom, Recipes index |
 | Detail h1 | Outfit | `clamp(2rem, 4vw, 3rem)` / `1.1` | 800 | Bean, method, recipe detail; `tracking-tight` |
-| Section h2 | Outfit | `clamp(2rem, 4vw, 2.75rem)` / inherited `1.5` | 700 | Catalog and band headings |
+| Section h2 | Outfit | `text-section`: `clamp(2.25rem, 5vw, 4rem)` / `1.08` | 700 | 56–64px desktop; catalog and band headings |
 | Subsection h2 | Outfit | `clamp(1.75rem, 3vw, 2.25rem)` / `1.25` | 700 | “Recipes with this bean” |
 | Card h3 | Outfit | `1.125rem` / `1.375` | 700 | `leading-snug` |
 | Body | Inter | `1rem` / `1.5` | 400 | Default body |
@@ -89,8 +89,8 @@ Band rhythm: **cream** hero → **espresso** proof strip → **latte** catalog �
 | Buttons | `components/primary-button.blade.php`, `secondary-button.blade.php`, `danger-button.blade.php`; public CTAs are inline | Primary, secondary, danger, public CTA | Hover, active scale, `focus-visible`, disabled | `<a class="min-h-[52px] rounded-xl bg-coffee-espresso px-7 font-semibold text-coffee-latte">…</a>` |
 | Filter pills | `components/chip.blade.php` | Active / inactive | Hover invert, press `scale-[0.97]`, focus ring, `aria-current` | `<x-chip :href="route('home')" :active="true">All</x-chip>` |
 | Search field | `components/search-bar.blade.php` | Default | Placeholder, focus ring, submit | `<x-search-bar :action="route('home')" :placeholder="__('Search beans…')" />` |
-| Bean card | `components/bean-card.blade.php` | Bean | Closed, open overlay, hover, image/fallback | `<x-bean-card :bean="$bean" x-reveal class="reveal" />` |
-| Brew method card | `components/bean-card.blade.php` | Method | Same shell, 3 dots, open overlay | `<x-bean-card :method="$method" x-reveal class="reveal" />` |
+| Bean card | `components/bean-card.blade.php` | Bean | Closed, expanding panel, hover, image/fallback | `<x-bean-card :bean="$bean" x-reveal class="reveal" />` |
+| Brew method card | `components/bean-card.blade.php` | Method | Same shell, 3 dots, expanding panel | `<x-bean-card :method="$method" x-reveal class="reveal" />` |
 | Recipe card | `public/recipes/index.blade.php`, `public/beans/show.blade.php` | Cheap, non-cheap, featured | Hover border/title, focus | `<a href="{{ route('recipes.show', $recipe->slug) }}" class="recipe-card …">…</a>` |
 | Badges | `public/recipes/index.blade.php`, `public/recipes/show.blade.php` | Cheap, non-cheap, featured | Static | `<span class="rounded-full bg-coffee-amber px-2 py-0.5 text-xs font-semibold text-coffee-espresso">Cheap</span>` |
 | Acidity / difficulty dots | `components/bean-card.blade.php`, `public/beans/show.blade.php` | 5 bean dots / 3 method dots | On, off, staggered fill on reveal | `@for ($i = 1; $i <= 5; $i++) <i class="h-2.5 w-2.5 rounded-full border-2 border-coffee-mocha {{ $i <= $level ? 'bg-coffee-espresso' : '' }}"></i> @endfor` |
@@ -102,19 +102,20 @@ Band rhythm: **cream** hero → **espresso** proof strip → **latte** catalog �
 | Map container | `public/cafes/index.blade.php`, `resources/js/cafes.js` | Ready / loading / empty | Fetch wave, cluster tiers, popup | `<div id="cafe-map" class="h-[68vh] min-h-[420px]" role="region" aria-label="{{ __('Cafe map') }}"></div>` |
 | Footer | `layouts/public.blade.php` | Single | Static | `<footer class="bg-coffee-espresso text-coffee-cream">…</footer>` |
 
-Selected values: navbar is `72px` tall, sticky at `z-40`, links `44px`; locale links are `36px` high. Bean card: `16px` radius, `96px`/`112px` image block, `p-4` body, `44px` Details button; overlay is roast with `p-5`, `200ms` fade. Recipe card: `16px` radius, `p-5`, `sm:grid-cols-4` stats. Pagination circles are `44px`. Map is `68vh` / `min 420px` inside a `16px` frame.
+Selected values: navbar is `72px` tall, sticky at `z-40`, links `44px`; locale links are `36px` high. Bean card: `16px` radius, `96px`/`112px` image block, `p-4` body, `44px` Details button; the panel expands in flow at `320ms`. Recipe card: `16px` radius, `p-5`, `sm:grid-cols-4` stats. Pagination circles are `44px`. Map is `68vh` / `min 420px` inside a `16px` frame.
 
 ## 7. Interaction rules
 
 **Current code:** bean and method cards **do have a hover effect**: `.card-lift` transitions `translate`, shadow, and border over `200ms`; the class also applies `hover-fine:-translate-y-1`, an amber border, and a `0 10px 24px` shadow. Recipe cards change border and title color only. The brief’s “cards have no hover effect” is **not implemented**; see Cleanup.
 
-**Details behaviour (implemented):** clicking Details sets `open = true`, hides the button with `opacity: 0`, and fades the absolute overlay in over `200ms` via `opacity` and `visibility`. The overlay’s full-detail link receives focus after the next tick. Moving the pointer out of the card closes the overlay unless the device reports `(hover: none)`. Clicking the overlay closes it. `Escape` closes it and restores focus to the Details button. The button remains focusable while transparent; the overlay is a `role="group"`, not a dialog, and has no focus trap. Hover-close while focus is inside the overlay can leave focus on a hidden link.
+**Details behaviour (implemented):** clicking Details toggles an in-flow panel open with `grid-template-rows: 0fr → 1fr` over `320ms`; the card grows, the grid stays `items-start`, and nothing is covered. The same button becomes Close and stays focusable. On touch, the panel also carries a `36px` close button. Mouse-leave closes it on fine pointers, and `Escape` closes it. The closed panel is `visibility: hidden` after the transition, so its link cannot take focus; it is a `role="group"` with no focus trap.
 
 ## 8. Motion
 
 | Token / value | Duration | Use |
 |---|---|---|
 | `--ease-out` | `cubic-bezier(0.22, 1, 0.36, 1)` | The shared curve; CSS and JS mirror it by hand |
+| `--ease-spring` | `cubic-bezier(0.34, 1.4, 0.64, 1)` | Presses, icon lift, card expand (5.3% overshoot) |
 | `--ease-in-out` | `cubic-bezier(0.77, 0, 0.175, 1)` | Legacy only |
 | `--ease-drawer` | `cubic-bezier(0.32, 0.72, 0, 1)` | Legacy only |
 | `--duration-reveal` | `700ms` | One-shot reveal |
@@ -127,16 +128,17 @@ Selected values: navbar is `72px` tall, sticky at `z-40`, links `44px`; locale l
 | Surprise swap | `250ms` out/in; steps `300ms` / `50ms` stagger | Result card |
 | Finder step / result | `200ms` out, `250ms` in, `350ms` result | Quiz |
 | Count-up | `900ms` stats; `400ms` cafe count | rAF loops |
-| Hero drift | `40s` back, `30s` front, linear | Home loop |
+| Card expand | `320ms`; icon lift `420ms` | In-flow details panel |
+| Hero pour / tilt | `1200ms` one-shot / `180ms` follow | Coffee fill, ≤3° pointer tilt |
 | Cafe loading wave | `1s` alternate, opacity only | Cafes loop |
 
-**Allowed properties:** the design rule is `transform` and `opacity` only. The current code also transitions `border-color`, `box-shadow`, `background-color`, `color`, `visibility`, and `stroke-dashoffset`; these are existing feedback exceptions, not permission for new ones.
+**Allowed properties:** the design rule is `transform`, `opacity`, and `clip-path`. One additional property is allowed for card expansion only: `grid-template-rows: 0fr → 1fr`. The current code also transitions `border-color`, `box-shadow`, `background-color`, `color`, `visibility`, and `stroke-dashoffset`; these are existing feedback exceptions, not permission for new ones.
 
 **Reveal:** `x-reveal` uses `.reveal`: `opacity 0 → 1` and `translateY(12px) → 0` over `700ms`, one-shot, via IntersectionObserver with `rootMargin: 0 0 -60px`. `data-reveal` tweens the element itself; `data-reveal-stagger` cascades direct children at `60ms`, entering with `24px` and exiting over `450ms` with `24px`. All of it gates on `html.js-motion`; without JS the end state is visible.
 
 **Wave divider:** `components/wave-divider.blade.php` is a static inline SVG, `viewBox="0 0 1440 100"`, default height `96px`, `preserveAspectRatio="none"`. `from-color` paints above the wave and `to-color` fills it; both are whitelisted to the seven tokens. `flip` applies `scaleX(-1)`. It is decorative and `aria-hidden`.
 
-**One loop per page:** home uses the two hero wave bands; cafes uses the fetch wave pulse while loading. Both pause offscreen via `data-loop` + IntersectionObserver.
+**One loop per page:** the home page's marquee is its only loop; the hero waves are scroll-linked (`animation-timeline: scroll()`) and static without support. Cafes uses the fetch wave pulse while loading. Looping elements pause offscreen via `data-loop` + IntersectionObserver.
 
 **Reduced motion:** `prefers-reduced-motion: reduce` kills all animations and transitions globally, forces `.reveal` visible, disables view transitions, makes the JS `play()` helper return without tweening, leaves server-rendered count values in place, and snaps the quiz fill to `scaleX(1)`.
 
@@ -144,7 +146,7 @@ Selected values: navbar is `72px` tall, sticky at `z-40`, links `44px`; locale l
 
 No icon package or icon font. All icons are inline SVG using `currentColor`, `stroke-linecap="round"`, `stroke-linejoin="round"`, and decorative `aria-hidden="true"`. Stroke widths in use: `1.2`, `1.5`, `1.8`, `2`, `2.5`, `3.5`.
 
-Sizes: `10`, `15`, `16`, `18`, `20`, `22`, `24`, `44`, `120`; clusters are `34/40/46/52px` with `12/13/14px` numerals. The shared cafe pin is one inline SVG of about `430 B` reused for all markers. Hero cup and beans are flat-vector illustration using the palette only.
+Sizes: `10`, `15`, `16`, `18`, `20`, `22`, `24`, `44`, `120`; clusters are `34/40/46/52px` with `12/13/14px` numerals. The shared cafe pin is one inline SVG of about `430 B` reused for all markers. Hero cup and beans are flat-vector illustration using the palette only. Catalog cards reference one page-level sprite (`components/coffee-illustrations.blade.php`); the large picker/expanded-card drawing is the separate `components/coffee-illustration.blade.php`.
 
 **Rule:** an inline SVG stays under `2 KB`. Current exceptions: `application-logo.blade.php` is `3,045 B`; the wave divider is `1,736 B`; the dice icon is `672 B`.
 
@@ -152,7 +154,7 @@ Sizes: `10`, `15`, `16`, `18`, `20`, `22`, `24`, `44`, `120`; clusters are `34/4
 
 - **Contrast:** target WCAG AA, `4.5:1` for normal text and `3:1` for large text and non-text UI. Computed ratios are in section 2. `amber-ink` on cream is `4.45:1`, just under AA for normal text; `amber` on latte is `3.12:1`, so it is not body text there.
 - **Focus:** public controls use `focus-visible:ring-2` with `ring-coffee-amber-ink`, offset `2px` on latte/cream; dark surfaces use `ring-coffee-latte`; quiz options use `outline-2` with `outline-offset-2`. Legacy Breeze components still use indigo rings.
-- **Keyboard cards:** Details is a real button with `aria-controls` and `aria-expanded`; the overlay link is reachable; `Escape` closes and restores focus. Recipe cards and filter chips are links. The bean carousel becomes a tab stop (`tabindex="0"`) only when it overflows and scrolls with the browser’s native keys; there are no custom arrow handlers.
+- **Keyboard cards:** Details is a real button with `aria-controls` and `aria-expanded`; the expanded link is reachable once the panel is visible, and the closed panel cannot take focus. `Escape` closes. Recipe cards and filter chips are links. The bean carousel becomes a tab stop (`tabindex="0"`) only when it overflows and scrolls with the browser’s native keys; there are no custom arrow handlers.
 - **Touch targets:** most controls use `min-h-[44px]` or `44px` squares. Exceptions: locale links are `36px`, recipe serving buttons are `40×40px`.
 - **Semantics:** `aria-current="page"` on active chips, `aria-pressed` on quiz/serving toggles, `aria-live` on results and cafe counts, `role="region"` on the map, `sr-only` labels for dots and icon-only controls.
 - **Reduced motion:** required and implemented globally; see section 8.

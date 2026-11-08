@@ -3,12 +3,20 @@
 @section('title', __('Coffeebrewery � Find Your Bean, Nail Your Brew'))
 
 @section('content')
+    {{-- Scroll rail: draws down the left gutter as the page scrolls.
+         Static in browsers without scroll-driven animations (or with
+         reduced motion), so it is never a blank stick. --}}
+    <div class="scroll-rail fixed left-8 top-1/2 hidden h-[38vh] w-0.5 -translate-y-1/2 rounded-full bg-coffee-mocha/20 min-[1440px]:block"
+         aria-hidden="true">
+        <span class="scroll-rail-fill block h-full w-full rounded-full bg-coffee-amber"></span>
+    </div>
+
     {{-- Hero --}}
     <section class="bg-coffee-cream">
         <div class="max-w-[1200px] mx-auto px-5 sm:px-8 py-16 lg:py-[72px] grid gap-10 lg:grid-cols-[1.1fr_.9fr] items-center">
             <div data-reveal-stagger>
                 <p class="eyebrow">{{ __('Coffee, explained') }}</p>
-                <h1 class="mt-3 font-display font-extrabold leading-[1.1] tracking-tight text-[clamp(2.6rem,6vw,4.5rem)]">
+                <h1 class="mt-3 font-display font-extrabold tracking-tight text-display">
                     {{ __('Find your bean.') }}
                     <mark class="rounded-xl bg-coffee-amber px-[0.16em] text-coffee-espresso [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">{{ __('Nail your brew.') }}</mark>
                 </h1>
@@ -29,7 +37,7 @@
                 </div>
             </div>
 
-            <div data-loop class="w-full max-w-[460px] justify-self-center">
+            <div data-tilt class="w-full max-w-[460px] justify-self-center">
                 <svg class="hero-art" viewBox="0 0 440 480" role="img" aria-label="{{ __('Paper coffee cup surrounded by floating coffee beans') }}">
                     <defs>
                         <symbol id="bean" viewBox="0 0 40 56">
@@ -38,9 +46,9 @@
                         </symbol>
                     </defs>
                     {{-- Two wave bands drift behind the cup � the home
-                         page's single looping animation (app.css holds
-                         the timing; data-loop on the wrapper pauses it
-                         offscreen). Palette tones only. --}}
+                         page's wave layer, now scroll-linked (app.css
+                         maps the shift); browsers without scroll timelines
+                         get a static drawing. Palette tones only. --}}
                     <g class="wave-drift wave-back">
                         <path d="M0,368 c55,-14 165,14 220,0 c55,-14 165,14 220,0 c55,-14 165,14 220,0 c55,-14 165,14 220,0 L880,480 L0,480 Z" fill="#6F4E37" opacity=".12"/>
                     </g>
@@ -52,7 +60,7 @@
                         <g transform="rotate(-12 225 270)">
                         <path d="M130 140h190l-26 285q-69 14-138 0z" fill="#FDFBF7"/>
                         <path d="M286 140h34l-26 285q-6 1.5-12 2.5z" fill="#6F4E37" opacity=".14"/>
-                        <path d="M139 235h172l-10 112q-76 12-152 0z" fill="#4A2C21"/>
+                        <path class="coffee-fill" d="M139 235h172l-10 112q-76 12-152 0z" fill="#4A2C21"/>
                         <g transform="translate(225 285)" fill="none" stroke="#C87D55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M-14 -8h22v8a8 8 0 0 1-8 8h-6a8 8 0 0 1-8-8z"/><path d="M8 -6h3a4 4 0 0 1 0 8h-3"/></g>
                         <text x="225" y="326" text-anchor="middle" font-family="Outfit,sans-serif" font-weight="700" font-size="17" fill="#C87D55">Coffeebrewery</text>
                         <path d="M140 118q85-46 170 0z" fill="#6F4E37"/>
@@ -112,7 +120,7 @@
     {{-- Bean catalog --}}
     <section id="bean-catalog" class="max-w-[1200px] mx-auto px-5 sm:px-8 section-top">
         <div data-reveal-stagger class="flex flex-wrap items-end justify-between gap-6">
-            <h2 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Bean Catalog') }}</h2>
+            <h2 class="font-display font-bold text-section">{{ __('Bean Catalog') }}</h2>
             <div class="relative flex flex-wrap gap-2" role="navigation" aria-label="{{ __('Filter beans by type') }}" data-filter-pills>
                 {{-- Shared dark pill, moved onto the active chip by app.js and
                      named for the cross-document view transition so a filter
@@ -200,7 +208,7 @@
 
     <div class="bg-coffee-cream">
         <section id="brew-methods" class="max-w-[1200px] mx-auto px-5 sm:px-8 section-top pb-22">
-            <h2 data-reveal class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Brew Methods') }}</h2>
+            <h2 data-reveal class="font-display font-bold text-section">{{ __('Brew Methods') }}</h2>
 
             <x-search-bar :action="route('home')" name="method_q" :placeholder="__('Search brew methods�')" :value="request('method_q')" />
 

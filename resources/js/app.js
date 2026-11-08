@@ -448,10 +448,36 @@ document.addEventListener('DOMContentLoaded', () => {
         revealEls.forEach((el) => el.classList.add('in-view'));
     }
 
-    // Pause the page's one looping animation (hero waves on home, the
-    // fetch wave on cafes) while its container is offscreen, resume on
-    // re-entry. Reduced motion is handled globally in app.css
-    // (animation: none), not here.
+    // Hero tilt: mouse only (fine pointer), max 3 degrees per axis, and
+    // off for reduced motion. This is direct pointer feedback like a
+    // hover state, not a loop; the cup's one-time entrance already ran.
+    const tiltZone = document.querySelector('[data-tilt]');
+
+    if (tiltZone && window.matchMedia('(hover: hover) and (pointer: fine)').matches && !prefersReduced()) {
+        const art = tiltZone.querySelector('.hero-art');
+        const max = 3;
+
+        if (art) {
+            tiltZone.addEventListener('pointermove', (e) => {
+                const box = tiltZone.getBoundingClientRect();
+                const x = (e.clientX - box.left) / box.width - 0.5;
+                const y = (e.clientY - box.top) / box.height - 0.5;
+
+                art.style.transform = 'perspective(900px) rotateY('
+                    + (x * max * 2).toFixed(2) + 'deg) rotateX('
+                    + (-y * max * 2).toFixed(2) + 'deg)';
+            });
+
+            tiltZone.addEventListener('pointerleave', () => {
+                art.style.transform = '';
+            });
+        }
+    }
+
+    // Pause the cafe map's fetch wave while its container is offscreen.
+    // The hero waves are scroll-linked CSS now, and the marquee's
+    // animation is paused by the same observer contract. Reduced motion
+    // is handled globally in app.css (animation: none), not here.
     const loopEls = document.querySelectorAll('[data-loop]');
 
     if ('IntersectionObserver' in window && loopEls.length) {

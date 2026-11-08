@@ -83,7 +83,7 @@
 /* Display type: hero + featured card only. 44px at 360px, 72px at
    desktop. Section titles use text-section (36px → 60-64px). */
 @utility text-display {
-  font-size: clamp(2.75rem, 6vw, 4.5rem);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
   line-height: 1.05;
   letter-spacing: -0.02em;
 }
@@ -411,34 +411,77 @@ html.grid-settled [data-recipes-grid] {
     }
 }
 
-/* ── Hero: drifting waves — the home page's ONE loop ────── */
-/* Two bands behind the cup, linear (constant drift), 40s back /
-   30s front so they never move in lockstep. The path repeats every
-   220 units in the 440-wide viewBox, so translateX(-440px) = two
-   full periods = a seamless loop. data-loop (home markup, observer
-   in app.js) pauses both while the art is offscreen; the global
-   prefers-reduced-motion rule kills the animation outright. */
-.wave-drift {
-    animation: wave-drift 40s linear infinite;
+/* ── Hero: scroll-linked waves ──────────────────────────── */
+/* The two bands move with the page instead of looping: the marquee is
+   the home page's only loop. Scroll-driven CSS keeps this out of JS;
+   browsers without scroll timelines (and reduced motion) render the
+   static drawing in the markup, which is already the end state. */
+.wave-back {
+    --wave-shift: -120px;
 }
 
 .wave-front {
-    animation-duration: 30s;
-    animation-delay: -14s;
+    --wave-shift: -220px;
 }
 
-/* Both looping animations on the site share this contract: the element
-   carrying data-loop gets .is-paused from app.js's IntersectionObserver
-   while offscreen. The hero waves use it, and so does the cafe map's
-   fetch wave. */
-[data-loop].is-paused .wave-drift,
+@supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .wave-drift {
+            animation: wave-scroll linear both;
+            animation-timeline: scroll(root block);
+            animation-range: 0 120vh;
+        }
+    }
+}
+
+@keyframes wave-scroll {
+    to {
+        transform: translateX(var(--wave-shift, -160px));
+    }
+}
+
+/* The cafe map's fetch wave still loops and still pauses offscreen via
+   the data-loop observer in app.js. */
 [data-loop].is-paused .cafe-progress {
     animation-play-state: paused;
 }
 
-@keyframes wave-drift {
-    to {
-        transform: translateX(-440px);
+/* One-time pour: the coffee inside the cup fills from the bottom when
+   the page opens, then stays full. clip-path is one of the allowed
+   animated properties and leaves the SVG geometry untouched. */
+.coffee-fill {
+    animation: coffee-fill 1200ms var(--ease-out) 350ms both;
+}
+
+@keyframes coffee-fill {
+    from {
+        clip-path: inset(100% 0 0 0);
+    }
+}
+
+/* Desktop cursor tilt, max 3° each axis. app.js only binds this for a
+   fine pointer and no reduced-motion preference, and it writes inline
+   transforms; the transition smooths both the move and the return. */
+.hero-art {
+    transition: transform 180ms var(--ease-out);
+    transform-style: preserve-3d;
+}
+
+/* Left gutter rail (home only). The fill uses a scroll timeline; without
+   support it renders as a full static line. */
+@supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .scroll-rail-fill {
+            transform-origin: top;
+            animation: rail-fill linear both;
+            animation-timeline: scroll(root block);
+        }
+    }
+}
+
+@keyframes rail-fill {
+    from {
+        transform: scaleY(0);
     }
 }
 

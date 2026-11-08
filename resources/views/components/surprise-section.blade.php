@@ -8,7 +8,7 @@
          x-data="surpriseSection({{ $cheapOnly ? '{ cheap: true }' : '{}' }})">
     <div class="max-w-[1200px] mx-auto px-5 sm:px-8 grid gap-10 lg:grid-cols-[.85fr_1.15fr] items-center">
         <div>
-            <h2 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)] text-coffee-latte">{{ __('Can\'t decide what to brew?') }}</h2>
+            <h2 class="font-display font-bold text-section text-coffee-latte">{{ __('Can\'t decide what to brew?') }}</h2>
             <p class="mt-4 max-w-[420px]">{{ __('Roll a random recipe. Every roll gives you a different one.') }}</p>
             <button type="button"
                     @click="rollNext()"
