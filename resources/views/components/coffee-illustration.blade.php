@@ -2,9 +2,10 @@
      time: the brew-method picker and the expanded card. The parts carry
      .steam / .drip / .plunger / .ice classes, so app.css can play a
      one-shot animation when the element is inserted. --}}
-@props(['type' => 'bean', 'tone' => 'var(--color-coffee-amber)', 'size' => 'h-40 w-40'])
+@props(['type' => 'bean', 'tone' => 'amber', 'size' => 'h-40 w-40'])
 
-<svg viewBox="0 0 120 120" class="coffee-illustration {{ $size }}" style="color: {{ $tone }}"
+<svg viewBox="0 0 120 120"
+     class="coffee-illustration {{ $size }} {{ $tone === 'amber-ink' ? 'text-coffee-amber-ink' : 'text-coffee-amber' }}"
      role="img" aria-hidden="true">
     @switch($type)
         @case('v60')

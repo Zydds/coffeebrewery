@@ -106,12 +106,12 @@
                          the chosen gear. x-if keeps exactly one SVG in the
                          DOM, so the per-part CSS runs once per choice. --}}
                     <div class="mt-5 flex justify-center" aria-hidden="true">
-                        <template x-if="!answers.gear"><x-coffee-illustration type="bean" size="h-24 w-24 sm:h-28 sm:w-28" tone="var(--color-coffee-amber-ink)" /></template>
-                        <template x-if="answers.gear === 'mug'"><x-coffee-illustration type="sachet" size="h-24 w-24 sm:h-28 sm:w-28" tone="var(--color-coffee-amber-ink)" /></template>
-                        <template x-if="answers.gear === 'french-press'"><x-coffee-illustration type="french-press" size="h-24 w-24 sm:h-28 sm:w-28" tone="var(--color-coffee-amber-ink)" /></template>
-                        <template x-if="answers.gear === 'v60'"><x-coffee-illustration type="v60" size="h-24 w-24 sm:h-28 sm:w-28" tone="var(--color-coffee-amber-ink)" /></template>
-                        <template x-if="answers.gear === 'aeropress'"><x-coffee-illustration type="aeropress" size="h-24 w-24 sm:h-28 sm:w-28" tone="var(--color-coffee-amber-ink)" /></template>
-                        <template x-if="answers.gear === 'espresso'"><x-coffee-illustration type="espresso" size="h-24 w-24 sm:h-28 sm:w-28" tone="var(--color-coffee-amber-ink)" /></template>
+                        <template x-if="!answers.gear"><x-coffee-illustration type="bean" size="h-24 w-24 sm:h-28 sm:w-28" tone="amber-ink" /></template>
+                        <template x-if="answers.gear === 'mug'"><x-coffee-illustration type="sachet" size="h-24 w-24 sm:h-28 sm:w-28" tone="amber-ink" /></template>
+                        <template x-if="answers.gear === 'french-press'"><x-coffee-illustration type="french-press" size="h-24 w-24 sm:h-28 sm:w-28" tone="amber-ink" /></template>
+                        <template x-if="answers.gear === 'v60'"><x-coffee-illustration type="v60" size="h-24 w-24 sm:h-28 sm:w-28" tone="amber-ink" /></template>
+                        <template x-if="answers.gear === 'aeropress'"><x-coffee-illustration type="aeropress" size="h-24 w-24 sm:h-28 sm:w-28" tone="amber-ink" /></template>
+                        <template x-if="answers.gear === 'espresso'"><x-coffee-illustration type="espresso" size="h-24 w-24 sm:h-28 sm:w-28" tone="amber-ink" /></template>
                     </div>
 
                     <div class="mt-4 grid gap-3 sm:grid-cols-3">
