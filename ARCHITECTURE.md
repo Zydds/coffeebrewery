@@ -16,7 +16,7 @@ Versions come from `composer.lock`, `package-lock.json`, or the file named in th
 | Database | PostgreSQL | Version TBD; provider Neon | Relational catalog and cafe data | Active |
 | Images | Cloudinary via `cloudinary-labs/cloudinary-laravel` | 3.0.2 | Remote image storage for serverless; currently in `require-dev` | Active |
 | Map | Leaflet + markercluster, CARTO Positron tiles | 1.9.4 / 1.5.3; tiles unversioned | City pin clustering on a light basemap | Active |
-| Animation | anime.js | 4.5.0 | Reveals, count-up, wizard transitions | Active |
+| Animation | anime.js | 4.5.0 | Legacy reveals, count-up, wizard transitions; new motion uses CSS/native APIs | Active — removal candidate |
 | Auth scaffold | Laravel Breeze | 2.4.2 | Login, password reset, profile views | Replaceable |
 | Testing | PHPUnit | 11.5.57 | Feature and unit tests | Active |
 | Hosting | Vercel with `vercel-php` | Runtime not pinned; latest npm `vercel-php` is 0.9.0 | Documented free PHP hosting plan | Planned |
@@ -138,7 +138,7 @@ Only the folders that carry architectural weight.
 | `resources/css/`, `resources/js/` | Tailwind entry and tokens; `cafes.css` (loaded by the `cafes.js` entry); `app.js`, `cafes.js`, `easing.js`, `bootstrap.js` |
 | `resources/views/` | `layouts`, `components`, `public`, `admin`, `auth`, `profile` |
 | `routes/` | `web.php`, `api.php`, `auth.php`, `console.php` |
-| `public/build/` | Committed Vite output |
+| `public/build/` | Generated Vite output (ignored by git) |
 | `tests/` | Feature and unit tests; SQLite in memory |
 | `docs/` | Implementation plan, UI redesign plan, cafe audit and build plan |
 
@@ -243,7 +243,7 @@ There is no `vercel.json`, no `api/index.php`, no `.vercel` directory, no Docker
 ### Documented plan
 
 1. Add `api/index.php` that requires `public/index.php`, plus `vercel.json` that routes all requests to it and pins a `vercel-php` runtime.
-2. Build assets with `npm run build`; `public/build` is committed in this repo.
+2. Build assets with `npm run build`; `public/build` is generated on deploy and is not tracked in git.
 3. Run migrations from a trusted machine against Neon with `php artisan migrate --force --seed`. Do not run migrations on deploy; there is no migration step in code, and who audits this is TBD.
 4. Set environment variables in the Vercel dashboard, including `CLOUDINARY_URL` and the Neon credentials.
 
@@ -277,6 +277,7 @@ Current restriction is `auth` plus the `admin` middleware checking `users.is_adm
 - **Map dependency.** CARTO tiles need the client key and attribution; the fallback if it is revoked is TBD. OSM import also depends on an external Overpass instance.
 - **The JSON API is an internal, unversioned contract.** `/api/*` serves only the same-origin scripts and has no client auth or version prefix; the payload keys are pinned by feature tests, so changing them is a breaking change for `app.js` and `cafes.js`.
 - **No analytics, error tracking, or CI.** There is no Sentry, product analytics, uptime check, or workflow file in the repo; tests and migrations run locally.
+- **anime.js is retained for legacy effects only.** The Surprise roll, Brew Finder step transitions, count-up, and scroll reveals still use it. New motion is CSS, View Transitions, or scroll-driven CSS; do not add new anime.js calls. Removing the dependency is a later pass, not part of the current redesign.
 
 ## 11. How to change the stack
 
