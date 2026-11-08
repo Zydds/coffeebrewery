@@ -12,8 +12,23 @@
     </div>
 
     {{-- Hero --}}
-    <section class="bg-coffee-cream">
-        <div class="max-w-[1200px] mx-auto px-5 sm:px-8 py-16 lg:py-[72px] grid gap-10 lg:grid-cols-[1.1fr_.9fr] items-center">
+    <section class="relative overflow-hidden bg-coffee-cream">
+        {{-- The wave layers belong to the section, not to the cup drawing:
+             they span the full width and are clipped by the section edge.
+             The SVG is twice as wide as the section so the scroll shift can
+             never expose a side edge. --}}
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-44 sm:h-56 lg:h-64" aria-hidden="true">
+            <svg class="h-full w-[200%] -translate-x-1/4" viewBox="0 0 1440 240" preserveAspectRatio="none">
+                <g class="wave-drift wave-back">
+                    <path d="M0,140 c90,-18 270,18 360,0 c90,-18 270,18 360,0 c90,-18 270,18 360,0 c90,-18 270,18 360,0 L1440,240 L0,240 Z" fill="var(--color-coffee-mocha)" opacity=".12"/>
+                </g>
+                <g class="wave-drift wave-front">
+                    <path d="M0,178 c90,-16 270,16 360,0 c90,-16 270,16 360,0 c90,-16 270,16 360,0 c90,-16 270,16 360,0 L1440,240 L0,240 Z" fill="var(--color-coffee-roast)" opacity=".14"/>
+                </g>
+            </svg>
+        </div>
+
+        <div class="relative max-w-[1200px] mx-auto px-5 sm:px-8 py-16 lg:py-[72px] grid gap-10 lg:grid-cols-[1.1fr_.9fr] items-center">
             <div data-reveal-stagger>
                 <p class="eyebrow">{{ __('Coffee, explained') }}</p>
                 <h1 class="mt-3 font-display font-extrabold tracking-tight text-display">
@@ -45,16 +60,6 @@
                             <path d="M21 5c-11 15 9 31-1 46" fill="none" stroke="#6F4E37" stroke-width="3.5" stroke-linecap="round"/>
                         </symbol>
                     </defs>
-                    {{-- Two wave bands drift behind the cup — the home
-                         page's wave layer, now scroll-linked (app.css
-                         maps the shift); browsers without scroll timelines
-                         get a static drawing. Palette tones only. --}}
-                    <g class="wave-drift wave-back">
-                        <path d="M0,368 c55,-14 165,14 220,0 c55,-14 165,14 220,0 c55,-14 165,14 220,0 c55,-14 165,14 220,0 L880,480 L0,480 Z" fill="#6F4E37" opacity=".12"/>
-                    </g>
-                    <g class="wave-drift wave-front">
-                        <path d="M0,404 c55,-12 165,12 220,0 c55,-12 165,12 220,0 c55,-12 165,12 220,0 c55,-12 165,12 220,0 L880,480 L0,480 Z" fill="#4A2C21" opacity=".14"/>
-                    </g>
                     <ellipse cx="225" cy="448" rx="115" ry="14" fill="#2C1A14" opacity=".14"/>
                     <g class="cup-settle">
                         <g transform="rotate(-12 225 270)">
