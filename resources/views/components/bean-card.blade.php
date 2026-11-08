@@ -62,24 +62,15 @@
         open: false,
         touch: matchMedia('(hover: none)').matches,
         toggle() {
-            this.open = true;
-            this.$nextTick(() => this.$refs.panelLink?.focus());
+            this.open = !this.open;
         },
-        close(restore = false) {
-            if (!this.open) {
-                return;
-            }
-
+        close() {
             this.open = false;
-
-            if (restore) {
-                this.$nextTick(() => this.$refs.detailsBtn?.focus());
-            }
         },
      }"
      :class="open ? 'is-open' : ''"
      @mouseleave="!touch && close()"
-     @keydown.escape.window="close(true)">
+     @keydown.escape.window="close()">
 
     <div class="relative grid h-24 sm:h-28 place-items-center overflow-hidden bg-coffee-roast text-coffee-amber shrink-0">
         {{-- Icon block, always rendered: it doubles as the photo fallback.
@@ -135,41 +126,58 @@
 
     <div class="px-4 pb-4">
         <button type="button"
-                x-ref="detailsBtn"
                 @click.stop="toggle()"
                 aria-controls="card-panel-{{ $item->id }}"
                 :aria-expanded="open.toString()"
-                class="block min-h-[44px] w-full rounded-xl bg-coffee-espresso text-sm font-semibold text-coffee-latte transition-[background-color,color,opacity] duration-150 hover:bg-coffee-amber hover:text-coffee-espresso focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink focus-visible:ring-offset-2 focus-visible:ring-offset-coffee-cream"
-                :class="open ? 'opacity-0' : ''">
-            {{ __('Details') }}
+                class="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl bg-coffee-espresso text-sm font-semibold text-coffee-latte transition-colors duration-150 hover:bg-coffee-amber hover:text-coffee-espresso focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink focus-visible:ring-offset-2 focus-visible:ring-offset-coffee-cream">
+            <span x-show="!open">{{ __('Details') }}</span>
+            <span x-show="open" x-cloak>{{ __('Close details') }}</span>
+            <svg x-show="open" x-cloak class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#cb-close" />
+            </svg>
         </button>
     </div>
 
-    {{-- Closed state is `invisible`, not just transparent: an opacity-0
-         overlay still hit-tests, and its link sat exactly on top of the
-         Details button, so the button could never be clicked. --}}
+    {{-- Expansion is in flow, not an overlay: 0fr → 1fr on the grid row
+         grows the card itself and nothing else. The closed container is
+         hidden (not just clipped) so its link cannot take focus. --}}
     <div id="card-panel-{{ $item->id }}" role="group" aria-label="{{ $item->name }}"
-         class="invisible absolute inset-0 flex flex-col justify-center gap-2.5 bg-coffee-roast p-5 text-coffee-cream opacity-0 transition-[opacity,visibility] duration-200"
-         :class="open ? 'visible opacity-100' : 'invisible opacity-0'"
-         @click="close(true)"
-         x-cloak>
-        <p class="font-display text-lg font-bold text-coffee-latte">{{ $item->name }}</p>
+         :aria-hidden="(!open).toString()"
+         class="card-expand" :class="open ? 'is-open' : ''">
+        <div class="card-expand-inner">
+            <div class="relative flex flex-col gap-2.5 border-t border-coffee-cream/15 bg-coffee-roast p-4 text-coffee-cream">
+                <button type="button"
+                        x-show="touch"
+                        x-cloak
+                        @click.stop="close()"
+                        class="absolute right-2 top-2 grid h-9 w-9 place-items-center rounded-full text-coffee-cream transition-colors hover:bg-coffee-cream/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-latte focus-visible:ring-offset-2 focus-visible:ring-offset-coffee-roast"
+                        aria-label="{{ __('Close details') }}">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="#cb-close" />
+                    </svg>
+                </button>
 
-        <p class="text-xs font-semibold uppercase tracking-wider text-coffee-cream/80">{{ $chipLabel }}</p>
-        <div class="flex flex-wrap gap-2">
-            @forelse ($chips as $chip)
-                <span class="rounded-full bg-coffee-cream px-3 py-0.5 text-sm text-coffee-espresso">{{ $chip }}</span>
-            @empty
-                <span class="text-sm text-coffee-cream/70">{{ __('None listed') }}</span>
-            @endforelse
+                <template x-if="open">
+                    <x-coffee-illustration :type="$illustration" size="mx-auto h-16 w-16 sm:h-20 sm:w-20" />
+                </template>
+
+                <p class="text-xs font-semibold uppercase tracking-wider text-coffee-cream/80">{{ $chipLabel }}</p>
+                <div class="flex flex-wrap gap-2">
+                    @forelse ($chips as $chip)
+                        <span class="rounded-full bg-coffee-cream px-3 py-0.5 text-sm text-coffee-espresso">{{ $chip }}</span>
+                    @empty
+                        <span class="text-sm text-coffee-cream/70">{{ __('None listed') }}</span>
+                    @endforelse
+                </div>
+
+                <p class="text-sm"><b>{{ $lineOne[0] }}</b> {{ $lineOne[1] }}</p>
+                <p class="text-sm"><b>{{ $lineTwo[0] }}</b> {{ $lineTwo[1] }}</p>
+
+                <a href="{{ $href }}"
+                   class="mt-1 inline-flex min-h-[44px] items-center justify-center rounded-xl bg-coffee-amber px-4 text-sm font-semibold text-coffee-espresso transition-colors hover:bg-coffee-latte focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-latte focus-visible:ring-offset-2 focus-visible:ring-offset-coffee-roast">
+                    {{ __('View full details') }}
+                </a>
+            </div>
         </div>
-
-        <p class="text-sm"><b>{{ $lineOne[0] }}</b> {{ $lineOne[1] }}</p>
-        <p class="text-sm"><b>{{ $lineTwo[0] }}</b> {{ $lineTwo[1] }}</p>
-
-        <a href="{{ $href }}" x-ref="panelLink"
-           class="mt-1 inline-flex min-h-[44px] items-center justify-center rounded-xl bg-coffee-amber px-4 text-sm font-semibold text-coffee-espresso transition-colors hover:bg-coffee-latte focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-latte focus-visible:ring-offset-2 focus-visible:ring-offset-coffee-roast">
-            {{ __('View full details') }}
-        </a>
     </div>
 </article>

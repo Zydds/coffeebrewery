@@ -171,7 +171,7 @@
         {{-- Mobile: a snap carousel two cards wide; from md all six fit in a
              grid, so no scroll and no edge fade. The grid is a named view
              transition element � filtering cross-fades results (150ms). --}}
-        <div class="-mx-5 mt-8 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-pl-5 px-5 pb-2 sm:-mx-8 sm:px-8 sm:scroll-pl-8 md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:pb-0 md:scroll-pl-0 lg:grid-cols-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink focus-visible:ring-offset-4 focus-visible:ring-offset-coffee-latte [view-transition-name:bean-results]"
+        <div class="-mx-5 mt-8 flex snap-x snap-mandatory items-start gap-6 overflow-x-auto scroll-pl-5 px-5 pb-2 sm:-mx-8 sm:px-8 sm:scroll-pl-8 md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:pb-0 md:scroll-pl-0 lg:grid-cols-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink focus-visible:ring-offset-4 focus-visible:ring-offset-coffee-latte [view-transition-name:bean-results]"
              data-scroll-fade
              role="group"
              aria-label="{{ __('Featured beans') }}">
@@ -204,7 +204,7 @@
 
             <x-search-bar :action="route('home')" name="method_q" :placeholder="__('Search brew methods�')" :value="request('method_q')" />
 
-            <div class="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 [view-transition-name:method-results]">
+            <div class="mt-8 grid grid-cols-2 items-start md:grid-cols-3 lg:grid-cols-4 gap-6 [view-transition-name:method-results]">
                 @forelse ($methods as $method)
                     <x-bean-card :method="$method"
                                  x-reveal

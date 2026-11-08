@@ -268,6 +268,33 @@ html.js-motion .reveal.card-lift {
     }
 }
 
+/* ── In-place card expansion ────────────────────────────── */
+/* The only animated layout property on the site, and only because a
+   disclosure needs it: 0fr → 1fr lets the card itself grow instead of
+   covering it with an overlay. Visibility flips at the end of closing
+   so a clipped link can never keep focus. */
+.card-expand {
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition:
+        grid-template-rows 320ms var(--ease-spring),
+        visibility 0s linear 320ms;
+}
+
+.card-expand.is-open {
+    grid-template-rows: 1fr;
+    visibility: visible;
+    transition:
+        grid-template-rows 320ms var(--ease-spring),
+        visibility 0s;
+}
+
+.card-expand-inner {
+    min-height: 0;
+    overflow: hidden;
+}
+
 /* ── Bean catalog: filter pill, dot fill, carousel fade ─── */
 /* The dark pill is placed on the active chip by app.js (CSS cannot
    measure chip widths) and named for the cross-document view

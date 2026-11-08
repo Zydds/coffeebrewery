@@ -51,7 +51,7 @@
         {{-- Named for the cross-document view transition: filtering
              cross-fades the results instead of snapping (150ms). Cards
              cascade at 60ms, exactly like home. --}}
-        <div class="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 [view-transition-name:bean-results]">
+        <div class="mt-8 grid grid-cols-2 items-start md:grid-cols-3 lg:grid-cols-4 gap-6 [view-transition-name:bean-results]">
             @forelse ($beans as $bean)
                 <x-bean-card :bean="$bean"
                              x-reveal
@@ -79,7 +79,7 @@
 
             <x-search-bar :action="route('cheap.index')" name="method_q" :placeholder="__('Search brew methods…')" :value="request('method_q')" />
 
-            <div class="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 [view-transition-name:method-results]">
+            <div class="mt-8 grid grid-cols-2 items-start md:grid-cols-3 lg:grid-cols-4 gap-6 [view-transition-name:method-results]">
                 @forelse ($methods as $method)
                     <x-bean-card :method="$method"
                                  x-reveal
