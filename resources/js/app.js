@@ -487,6 +487,12 @@ const revealObserver = 'IntersectionObserver' in window
     }, { threshold: 0, rootMargin: '0px 0px -60px 0px' })
     : null;
 
+// x-reveal also appears on server-rendered cards that sit outside any
+// x-data root (recipes, catalog block, brew methods). Alpine.start()
+// only initialises root selectors, so without this the directive never
+// runs and those cards stay at .reveal's opacity: 0.
+Alpine.addInitSelector(() => '[x-reveal]');
+
 Alpine.directive('reveal', (el) => {
     if (!revealObserver) {
         el.classList.add('is-revealed');
