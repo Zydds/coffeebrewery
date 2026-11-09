@@ -5,7 +5,9 @@
 @section('meta_description', __('Answer four quick questions about your ingredients, time, gear, and taste — we\'ll match you with a brew recipe that fits.'))
 
 @section('content')
-    <div class="max-w-[1200px] mx-auto px-5 sm:px-8 pt-16 pb-10" x-data="brewFinder()">
+    <div class="relative isolate max-w-[1200px] mx-auto px-5 sm:px-8 pt-16 pb-10" x-data="brewFinder()">
+        <x-sprig type="branch" :rotate="-7" size="h-80 w-60" class="top-40 left-[calc(50%-50vw)] -translate-x-[62.5%] lg:-translate-x-[10%] xl:-translate-x-[8%]" />
+        <x-sprig type="branch" :rotate="7" flip size="h-80 w-60" class="top-56 right-[calc(50%-50vw)] translate-x-[62.5%] lg:translate-x-[10%] xl:translate-x-[8%]" />
         <div class="max-w-2xl mx-auto text-center">
             <h1 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Find Your Brew') }}</h1>
             <p class="mt-4 text-coffee-mocha">

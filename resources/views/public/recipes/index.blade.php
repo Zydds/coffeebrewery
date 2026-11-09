@@ -5,7 +5,8 @@
 @section('meta_description', __('Browse coffee recipes step by step — filter, espresso, French press and more — with ratio, water temperature, and grind size.'))
 
 @section('content')
-    <div class="max-w-[1200px] mx-auto px-5 sm:px-8 py-[88px]">
+    <div class="relative isolate max-w-[1200px] mx-auto px-5 sm:px-8 py-[88px]">
+        <x-sprig type="pair" :rotate="5" flip size="h-24 w-40" class="top-16 right-[calc(50%-50vw)] translate-x-4/5 min-[1440px]:translate-x-[12.5%]" />
         <div class="flex flex-wrap items-end justify-between gap-6">
             <h1 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Recipes') }}</h1>
 

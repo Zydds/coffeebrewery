@@ -12,7 +12,7 @@
     </div>
 
     {{-- Hero --}}
-    <section class="relative overflow-hidden bg-coffee-cream">
+    <section class="relative isolate overflow-hidden bg-coffee-cream">
         {{-- The wave layers belong to the section, not to the cup drawing:
              they span the full width and are clipped by the section edge.
              The SVG is twice as wide as the section so the scroll shift can
@@ -27,6 +27,8 @@
                 </g>
             </svg>
         </div>
+
+        <x-sprig type="branch" :rotate="-6" size="h-56 w-44" class="-bottom-10 -left-26 xl:-left-16 2xl:-left-10" />
 
         <div class="relative max-w-[1200px] mx-auto px-5 sm:px-8 py-16 lg:py-[72px] grid gap-10 lg:grid-cols-[1.1fr_.9fr] items-center">
             <div data-reveal-stagger>
@@ -119,7 +121,8 @@
     <x-wave-divider from-color="espresso" to-color="latte" />
 
     {{-- Bean catalog --}}
-    <section id="bean-catalog" class="max-w-[1200px] mx-auto px-5 sm:px-8 section-top">
+    <section id="bean-catalog" class="relative isolate max-w-[1200px] mx-auto px-5 sm:px-8 section-top">
+        <x-sprig type="pair" :rotate="6" flip size="h-24 w-40" class="top-14 right-[calc(50%-50vw)] translate-x-4/5 min-[1440px]:translate-x-[12.5%]" />
         <div data-reveal-stagger class="flex flex-wrap items-end justify-between gap-6">
             <h2 class="font-display font-bold text-section">{{ __('Bean Catalog') }}</h2>
             <div class="relative flex flex-wrap gap-2" role="navigation" aria-label="{{ __('Filter beans by type') }}" data-filter-pills>
@@ -268,7 +271,8 @@
     <div class="bg-coffee-cream">
         <x-marquee />
 
-        <section id="brew-methods" class="max-w-[1200px] mx-auto px-5 sm:px-8 section-top pb-22">
+        <section id="brew-methods" class="relative isolate max-w-[1200px] mx-auto px-5 sm:px-8 section-top pb-22">
+            <x-sprig type="leaf" :rotate="-8" size="h-24 w-24" class="top-4 left-[calc(50%-50vw)] -translate-x-1/2 xl:-translate-x-1/4" />
             <h2 data-reveal class="font-display font-bold text-section">{{ __('Brew Methods') }}</h2>
 
             <x-search-bar :action="route('home')" name="method_q" :placeholder="__('Search brew methods…')" :value="request('method_q')" />
@@ -296,5 +300,5 @@
          into the section. --}}
     <x-wave-divider from-color="cream" to-color="roast" />
 
-    <x-surprise-section />
+    <x-surprise-section :sprig="true" />
 @endsection

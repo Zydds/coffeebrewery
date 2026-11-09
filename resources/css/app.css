@@ -48,6 +48,11 @@
    ever use these. */
 :root {
   --duration-reveal: 700ms;
+
+  /* Decorative illustration only — never UI. Sampled from the coffee
+     branch reference; berries reuse the terracotta accent. */
+  --leaf-dark: #4f5a26;
+  --leaf-light: #87914a;
 }
 
 /* ── Phase 1 foundations ─────────────────────────────────── */
@@ -173,6 +178,51 @@ html.js-motion .reveal {
 html.js-motion .reveal.is-revealed {
     opacity: 1;
     transform: none;
+}
+
+/* ── Decorative sprigs ──────────────────────────────────── */
+/* Illustration only, never UI. The host section isolates its stacking
+   context so z-index -1 sits above that section's background and below
+   its content. Hidden below 768px, and no pointer events at any size.
+   One-shot 3° settle on viewport entry, driven by app.js; without JS
+   (or with reduced motion) the sprig renders at its resting angle. */
+.sprig {
+    position: absolute;
+    z-index: -1;
+    display: none;
+    pointer-events: none;
+    opacity: 0.3;
+    transform-origin: center;
+}
+
+@media (min-width: 768px) {
+    .sprig {
+        display: block;
+    }
+}
+
+html.js-motion .sprig {
+    rotate: 3deg;
+    transition: rotate 900ms var(--ease-out);
+}
+
+html.js-motion .sprig.is-settled {
+    rotate: 0deg;
+}
+
+/* The roast band needs a lighter olive or the leaves disappear. Still
+   illustration-only; the tokens are scoped to this instance. */
+.sprig-tone-dark {
+    --leaf-dark: #8d9660;
+    --leaf-light: #c7cba4;
+    opacity: 0.3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.js-motion .sprig {
+        rotate: 0deg;
+        transition: none;
+    }
 }
 
 /* ── Catalog card hover ─────────────────────────────────── */

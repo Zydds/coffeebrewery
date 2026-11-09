@@ -53,4 +53,56 @@
     <symbol id="cb-close" viewBox="0 0 24 24">
         <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
     </symbol>
+
+    {{-- Decorative sprigs. Illustration-only: the two --leaf-* tokens
+         never appear on UI elements. One leaf path, repeated at different
+         angles, keeps all three symbols original and light. --}}
+    <symbol id="cb-sprig-branch" viewBox="0 0 150 210">
+        <path d="M62 204C56 166 72 132 64 96 60 66 48 40 34 22" fill="none" stroke="var(--leaf-dark)" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M64 150c6 10 10 18 16 28M66 142c12 6 22 8 30 10" fill="none" stroke="var(--leaf-dark)" stroke-width="2.5" stroke-linecap="round"/>
+        <g>
+            <g transform="translate(34 22) rotate(-140) scale(.9)">
+                <path d="M0 0C10-13 30-15 44 0 30 15 10 13 0 0Z" fill="var(--leaf-dark)"/>
+                <path d="M6 0C17-3 29-3 40 0" fill="none" stroke="var(--leaf-light)" stroke-width="1.6" stroke-linecap="round"/>
+            </g>
+            <g transform="translate(66 78) rotate(-28)">
+                <path d="M0 0C10-13 30-15 44 0 30 15 10 13 0 0Z" fill="var(--leaf-dark)"/>
+                <path d="M6 0C17-3 29-3 40 0" fill="none" stroke="var(--leaf-light)" stroke-width="1.6" stroke-linecap="round"/>
+            </g>
+            <g transform="translate(44 54) rotate(-152) scale(.92)">
+                <path d="M0 0C10-13 30-15 44 0 30 15 10 13 0 0Z" fill="var(--leaf-dark)"/>
+                <path d="M6 0C17-3 29-3 40 0" fill="none" stroke="var(--leaf-light)" stroke-width="1.6" stroke-linecap="round"/>
+            </g>
+            <g transform="translate(58 108) rotate(166) scale(.86)">
+                <path d="M0 0C10-13 30-15 44 0 30 15 10 13 0 0Z" fill="var(--leaf-dark)"/>
+                <path d="M6 0C17-3 29-3 40 0" fill="none" stroke="var(--leaf-light)" stroke-width="1.6" stroke-linecap="round"/>
+            </g>
+            <g transform="translate(68 132) rotate(-6) scale(.9)">
+                <path d="M0 0C10-13 30-15 44 0 30 15 10 13 0 0Z" fill="var(--leaf-dark)"/>
+                <path d="M6 0C17-3 29-3 40 0" fill="none" stroke="var(--leaf-light)" stroke-width="1.6" stroke-linecap="round"/>
+            </g>
+        </g>
+        <circle cx="82" cy="180" r="10" fill="var(--color-coffee-amber)"/>
+        <circle cx="99" cy="156" r="9" fill="var(--color-coffee-amber)"/>
+    </symbol>
+
+    <symbol id="cb-sprig-pair" viewBox="0 0 120 84">
+        <path d="M18 78C36 64 52 50 74 32" fill="none" stroke="var(--leaf-dark)" stroke-width="3.5" stroke-linecap="round"/>
+        <g transform="translate(38 60) rotate(-155) scale(1.02)">
+            <path d="M0 0C10-13 30-15 44 0 30 15 10 13 0 0Z" fill="var(--leaf-dark)"/>
+            <path d="M6 0C17-3 29-3 40 0" fill="none" stroke="var(--leaf-light)" stroke-width="1.6" stroke-linecap="round"/>
+        </g>
+        <g transform="translate(74 33) rotate(-25) scale(1.02)">
+            <path d="M0 0C10-13 30-15 44 0 30 15 10 13 0 0Z" fill="var(--leaf-dark)"/>
+            <path d="M6 0C17-3 29-3 40 0" fill="none" stroke="var(--leaf-light)" stroke-width="1.6" stroke-linecap="round"/>
+        </g>
+    </symbol>
+
+    <symbol id="cb-sprig-leaf" viewBox="0 0 84 84">
+        <path d="M24 70C28 64 32 58 36 52" fill="none" stroke="var(--leaf-dark)" stroke-width="3" stroke-linecap="round"/>
+        <g transform="translate(34 52) rotate(-52) scale(1.15)">
+            <path d="M0 0C10-13 30-15 44 0 30 15 10 13 0 0Z" fill="var(--leaf-dark)"/>
+            <path d="M6 0C17-3 29-3 40 0" fill="none" stroke="var(--leaf-light)" stroke-width="1.6" stroke-linecap="round"/>
+        </g>
+    </symbol>
 </svg>

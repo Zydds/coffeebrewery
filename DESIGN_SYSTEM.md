@@ -4,10 +4,10 @@ Verified against `resources/css/app.css`, `resources/js/app.js`, every component
 
 ## 1. Principles
 
-- **Flat vector.** Inline SVG, flat fills, no gradients, textures, bevels, or 3D. Illustration uses the same seven palette tokens as the UI.
+- **Flat vector.** Inline SVG, flat fills, no gradients, textures, bevels, or 3D. UI illustration uses the same seven palette tokens as the UI; the decorative sprigs are the one scoped exception (section 9).
 - **Flowing water.** Waves divide bands, soften card edges, and carry the hero. Motion is slow, lateral, and continuous only where it explains the theme.
 - **Minimal motion.** Motion exists for feedback, state change, or first-view reveal. One looping animation per page maximum.
-- **Fixed palette.** Seven `coffee-*` colors plus opacity variants. No new color enters without approval.
+- **Fixed palette.** Seven `coffee-*` colors plus opacity variants. No new color enters without approval; the illustration-only `--leaf-*` pair is approved for sprigs and nothing else.
 
 ## 2. Color palette
 
@@ -152,6 +152,22 @@ No icon package or icon font. All icons are inline SVG using `currentColor`, `st
 Sizes: `10`, `15`, `16`, `18`, `20`, `22`, `24`, `44`, `120`; clusters are `34/40/46/52px` with `12/13/14px` numerals. The shared cafe pin is one inline SVG of about `430 B` reused for all markers. Hero cup and beans are flat-vector illustration using the palette only. Catalog cards reference one page-level sprite (`components/coffee-illustrations.blade.php`); the large picker/expanded-card drawing is the separate `components/coffee-illustration.blade.php`.
 
 **Rule:** an inline SVG stays under `2 KB`. Current exceptions: `application-logo.blade.php` is `3,045 B`; the wave divider is `1,736 B`; the dice icon is `672 B`.
+
+### Decorative illustration
+
+The coffee sprigs (`components/sprig.blade.php`, symbols `cb-sprig-branch`, `cb-sprig-pair`, `cb-sprig-leaf` in `components/coffee-illustrations.blade.php`) are the only place two extra colours are allowed. They are illustration-only and **must never paint UI**: not text, icons, borders, buttons, focus rings, or surfaces.
+
+| Custom property | Value | Role |
+|---|---|---|
+| `--leaf-dark` | `#4f5a26` | Leaf fill and stems |
+| `--leaf-light` | `#87914a` | Leaf midrib line |
+
+- Both live in plain `:root` in `app.css`, not `@theme`, so Tailwind emits no utilities for them. Reference them only from SVG inside the sprig symbols.
+- Berries use the existing `--color-coffee-amber` (`#C87D55`), so the accent stays on-palette.
+- On the dark roast band, `.sprig-tone-dark` re-scopes `--leaf-dark: #8d9660` and `--leaf-light: #c7cba4`; the lighter olive keeps the leaves legible against `coffee-roast`.
+- Light-section sprigs render at `0.3` opacity; dark-tone sprigs also `0.3`. They are `aria-hidden`, `pointer-events: none`, sit at `z-index: -1` inside an `isolate` section, and are hidden below `768px`.
+- Motion is one `3deg → 0deg` settle over `900ms` on first viewport entry, never repeated, and skipped entirely under `prefers-reduced-motion: reduce`.
+- Maximum two visible sprigs per viewport; placements avoid text, buttons, and cards at `1440`, `1024`, and `768px`.
 
 ## 10. Accessibility
 

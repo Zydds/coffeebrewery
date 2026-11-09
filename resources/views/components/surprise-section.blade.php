@@ -2,11 +2,14 @@
      cheap-only = this page only rolls cheap recipes, so the Cheap toggle
      would be a no-op and is omitted. The roll/card animation lives in
      app.js (surpriseSection); the checkbox draw in app.css. --}}
-@props(['cheapOnly' => false])
+@props(['cheapOnly' => false, 'sprig' => false])
 
-<section id="surprise" data-reveal-stagger class="bg-coffee-roast py-[88px] text-coffee-cream"
+<section id="surprise" class="relative isolate bg-coffee-roast py-[88px] text-coffee-cream"
          x-data="surpriseSection({{ $cheapOnly ? '{ cheap: true }' : '{}' }})">
-    <div class="max-w-[1200px] mx-auto px-5 sm:px-8 grid gap-10 lg:grid-cols-[.85fr_1.15fr] items-center">
+    @if ($sprig)
+        <x-sprig type="branch" tone="dark" :rotate="-4" size="h-64 w-48" class="-left-29 bottom-0 xl:-left-20" />
+    @endif
+    <div data-reveal-stagger class="max-w-[1200px] mx-auto px-5 sm:px-8 grid gap-10 lg:grid-cols-[.85fr_1.15fr] items-center">
         <div>
             <h2 class="font-display font-bold text-section text-coffee-latte">{{ __('Can\'t decide what to brew?') }}</h2>
             <p class="mt-4 max-w-[420px]">{{ __('Roll a random recipe. Every roll gives you a different one.') }}</p>

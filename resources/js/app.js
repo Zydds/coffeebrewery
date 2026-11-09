@@ -566,6 +566,29 @@ document.addEventListener('DOMContentLoaded', () => {
         revealEls.forEach((el) => el.classList.add('in-view'));
     }
 
+    // Decorative sprigs: one 3° settle when the sprig first enters the
+    // viewport. CSS owns the tween; this only flips the class once. The
+    // resting angle is already the no-JS / reduced-motion state.
+    const sprigs = document.querySelectorAll('.sprig');
+
+    if ('IntersectionObserver' in window && sprigs.length && !prefersReduced()) {
+        const sprigObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) {
+                    return;
+                }
+
+                entry.target.classList.add('is-settled');
+                sprigObserver.unobserve(entry.target);
+            });
+        }, {
+            threshold: 0,
+            rootMargin: '0px 0px -40px 0px',
+        });
+
+        sprigs.forEach((el) => sprigObserver.observe(el));
+    }
+
     // Hero tilt: mouse only (fine pointer), max 3 degrees per axis, and
     // off for reduced motion. This is direct pointer feedback like a
     // hover state, not a loop; the cup's one-time entrance already ran.
