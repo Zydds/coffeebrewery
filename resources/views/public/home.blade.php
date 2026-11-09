@@ -17,7 +17,7 @@
              they span the full width and are clipped by the section edge.
              The SVG is twice as wide as the section so the scroll shift can
              never expose a side edge. --}}
-        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-44 sm:h-56 lg:h-64" aria-hidden="true">
+        <div class="pointer-events-none absolute inset-x-0 -bottom-0.5 h-44 sm:h-56 lg:h-64" aria-hidden="true">
             <svg class="h-full w-[200%] -translate-x-1/4" viewBox="0 0 1440 240" preserveAspectRatio="none">
                 <g class="wave-drift wave-back">
                     <path d="M0,140 c90,-18 270,18 360,0 c90,-18 270,18 360,0 c90,-18 270,18 360,0 c90,-18 270,18 360,0 L1440,240 L0,240 Z" fill="var(--color-coffee-mocha)" opacity=".12"/>
@@ -84,7 +84,10 @@
         </div>
     </section>
 
-    <x-wave-divider from-color="cream" to-color="espresso" />
+    {{-- The divider repeats the hero's beige shoulder (app.css
+         .wave-shoulder-hero) and overlaps the layers by 2px, so the beige
+         runs under the dark curve with no cream strip or subpixel seam. --}}
+    <x-wave-divider from-color="cream" to-color="espresso" class="wave-shoulder-hero relative z-10 -mt-0.5" />
 
     {{-- Proof strip — full-bleed espresso band; site-wide totals, not the
          filtered paginator counts. Cascade: stats → cafe-map link.

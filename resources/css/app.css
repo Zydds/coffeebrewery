@@ -490,6 +490,19 @@ html.grid-settled [data-recipes-grid] {
     }
 }
 
+/* The hero's two translucent layers stack to a flat beige at the section
+   bottom. The following divider must repeat that beige above its dark
+   curve, otherwise a 40px cream strip splits the two. Derived from the
+   same three tokens rather than a new hex; !important beats the
+   component's inline cream background. The layers and divider overlap by
+   2px so fractional zoom cannot expose a subpixel seam. */
+.wave-shoulder-hero {
+    background-color: color-mix(in srgb,
+        var(--color-coffee-roast) 14%,
+        color-mix(in srgb, var(--color-coffee-mocha) 12%, var(--color-coffee-cream))
+    ) !important;
+}
+
 /* ── Marquee: the home page's only loop ─────────────────── */
 /* Two identical word groups; translating one group width (-50% of the
    track) restarts exactly on the copy. data-loop pauses it offscreen
