@@ -88,23 +88,19 @@
          filtered paginator counts. Cascade: stats → cafe-map link.
          Numbers count up once on entry (app.js, rAF, 900ms); the
          server-rendered values are the no-JS / reduced-motion state.
-         Thin wave rules split the stats on desktop only. --}}
+         Hairline rules split the stats on desktop only. --}}
     <section class="bg-coffee-espresso text-coffee-cream">
         <div data-reveal-stagger class="max-w-[1200px] mx-auto px-5 sm:px-8 py-8 lg:py-10 flex flex-wrap items-center justify-between gap-x-10 gap-y-6">
             <div class="flex flex-col">
                 <span data-count-up="{{ $proof['beans'] }}" class="font-display text-3xl lg:text-4xl font-extrabold leading-none text-coffee-latte tabular-nums">{{ $proof['beans'] }}</span>
                 <span class="mt-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-coffee-cream/70">{{ __('Coffee beans') }}</span>
             </div>
-            <svg class="hidden md:block h-14 w-4 text-coffee-cream/25" viewBox="0 0 16 56" fill="none" aria-hidden="true">
-                <path d="M8 2q-6 6 0 12t0 12 0 12 0 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
+            <span class="hidden h-14 w-px bg-coffee-cream/20 md:block" aria-hidden="true"></span>
             <div class="flex flex-col">
                 <span data-count-up="{{ $proof['recipes'] }}" class="font-display text-3xl lg:text-4xl font-extrabold leading-none text-coffee-latte tabular-nums">{{ $proof['recipes'] }}</span>
                 <span class="mt-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-coffee-cream/70">{{ __('Recipes') }}</span>
             </div>
-            <svg class="hidden md:block h-14 w-4 text-coffee-cream/25" viewBox="0 0 16 56" fill="none" aria-hidden="true">
-                <path d="M8 2q-6 6 0 12t0 12 0 12 0 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
+            <span class="hidden h-14 w-px bg-coffee-cream/20 md:block" aria-hidden="true"></span>
             <div class="flex flex-col">
                 <span data-count-up="{{ $proof['methods'] }}" class="font-display text-3xl lg:text-4xl font-extrabold leading-none text-coffee-latte tabular-nums">{{ $proof['methods'] }}</span>
                 <span class="mt-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-coffee-cream/70">{{ __('Brew Methods') }}</span>
