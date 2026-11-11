@@ -55,54 +55,47 @@
     </symbol>
 
     {{-- Decorative sprigs. Illustration-only: the two --leaf-* tokens
-         never appear on UI elements. One leaf path, repeated at different
-         angles, keeps all three symbols original and light. --}}
-    <symbol id="cb-sprig-branch" viewBox="0 0 150 210">
-        <path d="M62 204C56 166 72 132 64 96 60 66 48 40 34 22" fill="none" stroke="var(--leaf-dark)" stroke-width="4.5" stroke-linecap="round"/>
-        <path d="M64 150c6 10 10 18 16 28M66 142c12 6 22 8 30 10" fill="none" stroke="var(--leaf-dark)" stroke-width="2.5" stroke-linecap="round"/>
-        <g>
-            <g transform="translate(34 22) rotate(-140) scale(.9)">
-                <path d="M0 0C10-13 30-15 44 0 30 15 10 13 0 0Z" fill="var(--leaf-dark)"/>
-                <path d="M6 0C17-3 29-3 40 0" fill="none" stroke="var(--leaf-light)" stroke-width="1.6" stroke-linecap="round"/>
-            </g>
-            <g transform="translate(66 78) rotate(-28)">
-                <path d="M0 0C10-13 30-15 44 0 30 15 10 13 0 0Z" fill="var(--leaf-dark)"/>
-                <path d="M6 0C17-3 29-3 40 0" fill="none" stroke="var(--leaf-light)" stroke-width="1.6" stroke-linecap="round"/>
-            </g>
-            <g transform="translate(44 54) rotate(-152) scale(.92)">
-                <path d="M0 0C10-13 30-15 44 0 30 15 10 13 0 0Z" fill="var(--leaf-dark)"/>
-                <path d="M6 0C17-3 29-3 40 0" fill="none" stroke="var(--leaf-light)" stroke-width="1.6" stroke-linecap="round"/>
-            </g>
-            <g transform="translate(58 108) rotate(166) scale(.86)">
-                <path d="M0 0C10-13 30-15 44 0 30 15 10 13 0 0Z" fill="var(--leaf-dark)"/>
-                <path d="M6 0C17-3 29-3 40 0" fill="none" stroke="var(--leaf-light)" stroke-width="1.6" stroke-linecap="round"/>
-            </g>
-            <g transform="translate(68 132) rotate(-6) scale(.9)">
-                <path d="M0 0C10-13 30-15 44 0 30 15 10 13 0 0Z" fill="var(--leaf-dark)"/>
-                <path d="M6 0C17-3 29-3 40 0" fill="none" stroke="var(--leaf-light)" stroke-width="1.6" stroke-linecap="round"/>
-            </g>
+         never appear on UI elements. The leaf is defined once here and
+         reused by all three symbols, so the shape is identical everywhere
+         and the branch keeps its budget. Filled ribbons give the stems a
+         real taper. --}}
+    <defs>
+        <g id="cb-sprig-leaf-art">
+            <path d="M0 0C6-5.4 14-9.3 22-9.3C32-8 41.6-1.6 44 0C41.6 1.6 32 8 22 9.3C14 9.3 6 5.4 0 0Z" fill="var(--leaf-dark)"/>
+            <path d="M6 0C16-1.5 29-1.5 39 0" fill="none" stroke="var(--leaf-light)" stroke-width="1.9" stroke-linecap="round"/>
         </g>
-        <circle cx="82" cy="180" r="10" fill="var(--color-coffee-amber)"/>
-        <circle cx="99" cy="156" r="9" fill="var(--color-coffee-amber)"/>
-    </symbol>
+    </defs>
 
-    <symbol id="cb-sprig-pair" viewBox="0 0 120 84">
-        <path d="M18 78C36 64 52 50 74 32" fill="none" stroke="var(--leaf-dark)" stroke-width="3.5" stroke-linecap="round"/>
-        <g transform="translate(38 60) rotate(-155) scale(1.02)">
-            <path d="M0 0C10-13 30-15 44 0 30 15 10 13 0 0Z" fill="var(--leaf-dark)"/>
-            <path d="M6 0C17-3 29-3 40 0" fill="none" stroke="var(--leaf-light)" stroke-width="1.6" stroke-linecap="round"/>
-        </g>
-        <g transform="translate(74 33) rotate(-25) scale(1.02)">
-            <path d="M0 0C10-13 30-15 44 0 30 15 10 13 0 0Z" fill="var(--leaf-dark)"/>
-            <path d="M6 0C17-3 29-3 40 0" fill="none" stroke="var(--leaf-light)" stroke-width="1.6" stroke-linecap="round"/>
+    <symbol id="cb-sprig-branch" viewBox="0 0 152 251">
+        <g transform="translate(-64.3 2.4)">
+            <path d="M145.3 236.2L144.2 221.5L142.7 206.9L141 192.4L139 177.9L136.7 163.5L134 149.1L131.1 134.8L127.9 120.5L124.3 106.3L120.5 92.2L116.3 78.1L111.9 64.1L107.1 50.1L102 36.1L96.7 22.3L91 8.4L93 7.6L99 21.3L104.7 35.1L110.1 49L115.1 62.9L119.9 77L124.3 91.1L128.4 105.2L132.1 119.5L135.6 133.8L138.7 148.2L141.5 162.6L144 177.1L146.2 191.7L148 206.3L149.5 221L150.7 235.8Z" fill="var(--leaf-dark)"/>
+            <use href="#cb-sprig-leaf-art" transform="translate(148.5 225.3) rotate(194) scale(1.44)"/>
+            <use href="#cb-sprig-leaf-art" transform="translate(144.6 211.4) rotate(-23) scale(1.4)"/>
+            <use href="#cb-sprig-leaf-art" transform="translate(143 178.5) rotate(201) scale(1.34)"/>
+            <use href="#cb-sprig-leaf-art" transform="translate(138.3 166.1) rotate(-16) scale(1.3)"/>
+            <use href="#cb-sprig-leaf-art" transform="translate(134.2 132.3) rotate(192) scale(1.24)"/>
+            <use href="#cb-sprig-leaf-art" transform="translate(129 121.4) rotate(-26) scale(1.2)"/>
+            <use href="#cb-sprig-leaf-art" transform="translate(124.3 93.5) rotate(199) scale(1.12)"/>
+            <use href="#cb-sprig-leaf-art" transform="translate(119.1 85.2) rotate(-18) scale(1.08)"/>
+            <path d="M114.6 66.9L123.2 68.5M114.6 66.9L120.5 60.4M114.6 66.9L108.2 69M108.4 49L102.7 55.6M108.4 49L99.8 47.6M102.3 32.7L110.9 33.9M102.3 32.7L107.8 26M102.3 32.7L95.9 35.2M96.5 18.6L91.1 25.4M96.5 18.6L87.8 17.6" fill="none" stroke="var(--leaf-dark)" stroke-width="1.7"/>
+            <g fill="var(--color-coffee-amber)"><circle cx="125.8" cy="68.9" r="7"/><circle cx="122.3" cy="58.5" r="6.6"/><circle cx="105.7" cy="69.8" r="6.4"/><circle cx="101" cy="57.5" r="6.8"/><circle cx="97.2" cy="47.2" r="6.4"/><circle cx="113.5" cy="34.2" r="6.6"/><circle cx="109.5" cy="24" r="6.2"/><circle cx="93.5" cy="36.2" r="6.1"/><circle cx="89.5" cy="27.5" r="6.5"/><circle cx="85.3" cy="17.3" r="6.1"/></g>
+            <g fill="var(--color-coffee-cream)" opacity=".5"><ellipse cx="127.8" cy="70.5" rx="1.9" ry="1.2"/><ellipse cx="124.4" cy="60" rx="1.9" ry="1.2"/><ellipse cx="107.8" cy="71.3" rx="1.9" ry="1.2"/><ellipse cx="98.9" cy="60.5" rx="1.9" ry="1.2"/><ellipse cx="95.1" cy="50.1" rx="1.9" ry="1.2"/><ellipse cx="115.5" cy="35.6" rx="1.9" ry="1.2"/><ellipse cx="111.5" cy="25.4" rx="1.9" ry="1.2"/><ellipse cx="95.5" cy="37.6" rx="1.9" ry="1.2"/><ellipse cx="87.5" cy="30.5" rx="1.9" ry="1.2"/><ellipse cx="83.2" cy="20.4" rx="1.9" ry="1.2"/></g>
+            <g fill="var(--color-coffee-espresso)" opacity=".6"><circle cx="123.2" cy="68.5" r="1.1"/><circle cx="120.5" cy="60.4" r="1.1"/><circle cx="108.2" cy="69" r="1.1"/><circle cx="102.7" cy="55.6" r="1.1"/><circle cx="99.8" cy="47.6" r="1.1"/><circle cx="110.9" cy="33.9" r="1.1"/><circle cx="107.8" cy="26" r="1.1"/><circle cx="95.9" cy="35.2" r="1.1"/><circle cx="91.1" cy="25.4" r="1.1"/><circle cx="87.8" cy="17.6" r="1.1"/></g>
         </g>
     </symbol>
 
-    <symbol id="cb-sprig-leaf" viewBox="0 0 84 84">
-        <path d="M24 70C28 64 32 58 36 52" fill="none" stroke="var(--leaf-dark)" stroke-width="3" stroke-linecap="round"/>
-        <g transform="translate(34 52) rotate(-52) scale(1.15)">
-            <path d="M0 0C10-13 30-15 44 0 30 15 10 13 0 0Z" fill="var(--leaf-dark)"/>
-            <path d="M6 0C17-3 29-3 40 0" fill="none" stroke="var(--leaf-light)" stroke-width="1.6" stroke-linecap="round"/>
+    <symbol id="cb-sprig-pair" viewBox="0 0 147 95">
+        <g transform="translate(3 -6)">
+            <path d="M24 90C42 80 64 64 93.2 41.6" fill="none" stroke="var(--leaf-dark)" stroke-width="3.4" stroke-linecap="round"/>
+            <use href="#cb-sprig-leaf-art" transform="translate(48 76) rotate(-150) scale(.95)"/>
+            <use href="#cb-sprig-leaf-art" transform="translate(90 44) rotate(-25)"/>
+        </g>
+    </symbol>
+
+    <symbol id="cb-sprig-leaf" viewBox="0 0 77 82">
+        <g transform="translate(-18 1)">
+            <path d="M28 70C34 63 40 57 49 46.5" fill="none" stroke="var(--leaf-dark)" stroke-width="2.2" stroke-linecap="round"/>
+            <use href="#cb-sprig-leaf-art" transform="translate(46 50) rotate(-48) scale(1.05)"/>
         </g>
     </symbol>
 </svg>
