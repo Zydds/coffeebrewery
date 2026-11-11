@@ -225,6 +225,149 @@ html.js-motion .sprig.is-settled {
     }
 }
 
+/* ── Sprig groups ───────────────────────────────────────── */
+/* One cluster per placement, anchored to the 1200px content column with a
+   negative offset, never to the viewport edge, so the relation to the copy
+   holds at 1280, 1440 and 1920. Each piece keeps 10 units of transparent
+   padding inside its viewBox; the negative `bottom` below drops that
+   padding under the section edge so the ink, not the box, sits on it.
+   Crop is judged on the ink, never on the box. */
+.sprig-group {
+    position: absolute;
+    z-index: -1;
+    display: none;
+    pointer-events: none;
+}
+
+@media (min-width: 768px) {
+    .sprig-group {
+        display: block;
+    }
+}
+
+.sprig-group .sprig {
+    display: block;
+    z-index: auto;
+    opacity: 0.92;
+}
+
+.sprig-group .sprig-tone-dark {
+    opacity: 0.96;
+}
+
+/* Hero: a flat run along the waterline, left of the cup. z-index 0 lifts it
+   over the wave layers; the copy wrapper is positioned and later in the
+   DOM, so it still paints the text above the leaves. */
+.sprig-group--hero {
+    left: calc(max(0px, 50% - 600px) - 32px);
+    bottom: 0;
+    z-index: 0;
+    width: 0;
+    height: 0;
+}
+
+.sprig-group--hero .sprig-piece--a {
+    left: 10px;
+    bottom: calc(clamp(190px, 20vw, 280px) * -0.075);
+    width: clamp(190px, 20vw, 280px);
+    height: auto;
+    aspect-ratio: 147 / 95;
+}
+
+.sprig-group--hero .sprig-piece--b {
+    left: clamp(208px, 20.3vw, 292px);
+    bottom: calc(clamp(150px, 14.5vw, 208px) * -0.134);
+    height: clamp(150px, 14.5vw, 208px);
+    width: auto;
+    aspect-ratio: 77 / 82;
+}
+
+/* Third piece only where the band right of the buttons is wide enough
+   (the cup column starts 659px right of the content edge at every width). */
+.sprig-group--hero .sprig-piece--c {
+    display: none;
+}
+
+@media (min-width: 1280px) {
+    .sprig-group--hero .sprig-piece--c {
+        display: block;
+        left: 492px;
+        bottom: calc(clamp(200px, 16.7vw, 240px) * -0.134);
+        height: clamp(200px, 16.7vw, 240px);
+        width: auto;
+        aspect-ratio: 77 / 82;
+    }
+}
+
+/* Below lg the cup sits under the copy, so the run folds into the left
+   gutter: the pair at the waterline, the leaf above it. */
+@media (max-width: 1023px) {
+    .sprig-group--hero .sprig-piece--b {
+        left: 24px;
+        bottom: 132px;
+    }
+}
+
+/* Brew Methods: hangs 52px over the marquee boundary at the top-right,
+   clear of the title text and the search bar. */
+.sprig-group--methods {
+    right: calc(max(0px, 50% - 600px) + 16px);
+    top: -52px;
+    width: 0;
+    height: 0;
+}
+
+.sprig-group--methods .sprig-piece--a {
+    right: 150px;
+    top: 30px;
+    width: clamp(200px, 20vw, 290px);
+    height: auto;
+    aspect-ratio: 147 / 95;
+}
+
+.sprig-group--methods .sprig-piece--b {
+    right: 0;
+    top: 0;
+    height: clamp(160px, 14vw, 200px);
+    width: auto;
+    aspect-ratio: 77 / 82;
+}
+
+/* Surprise: a two-leaf tuft rooted at the bottom-left corner of the roast
+   band, growing up past the headline and checkboxes. The gutter left of the
+   copy is 152px at 1440, so the pieces stay near-upright: a rotated tall
+   leaf would carry its ink into the text column. */
+.sprig-group--surprise {
+    left: calc(max(0px, 50% - 600px) - 162px);
+    bottom: 20px;
+    width: 208px;
+    height: 0;
+}
+
+.sprig-group--surprise .sprig-piece--a {
+    right: 0;
+    bottom: calc(clamp(190px, 15.3vw, 220px) * -0.134);
+    height: clamp(190px, 15.3vw, 220px);
+    width: auto;
+    aspect-ratio: 77 / 82;
+}
+
+.sprig-group--surprise .sprig-piece--b {
+    right: 8px;
+    bottom: calc(100px + clamp(150px, 12.5vw, 180px) * -0.134);
+    height: clamp(150px, 12.5vw, 180px);
+    width: auto;
+    aspect-ratio: 77 / 82;
+}
+
+/* The dark band's left gutter is narrower than one leaf below 1440; the
+   group is hidden there rather than cropped or dropped onto the copy. */
+@media (max-width: 1439px) {
+    .sprig-group--surprise {
+        display: none;
+    }
+}
+
 /* ── Catalog card hover ─────────────────────────────────── */
 /* One soft lift for bean AND method cards. Declared after .reveal so
    its transition list wins: the one-time reveal keeps the 700ms band,

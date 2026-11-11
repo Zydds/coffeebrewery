@@ -167,7 +167,12 @@ The coffee sprigs (`components/sprig.blade.php`, symbols `cb-sprig-branch`, `cb-
 - On the dark roast band, `.sprig-tone-dark` re-scopes `--leaf-dark: #8d9660` and `--leaf-light: #c7cba4`; the lighter olive keeps the leaves legible against `coffee-roast`.
 - Light-section sprigs render at `0.5` opacity; dark-tone sprigs also `0.5`. They are `aria-hidden`, `pointer-events: none`, sit at `z-index: -1` inside an `isolate` section, and are hidden below `768px`.
 - Motion is one `3deg → 0deg` settle over `900ms` on first viewport entry, never repeated, and skipped entirely under `prefers-reduced-motion: reduce`.
-- Maximum two visible sprigs per viewport; placements avoid text, buttons, and cards at `1440`, `1024`, and `768px`.
+- Home uses exactly three clusters (`components/sprig-group.blade.php`, presets `hero`, `methods`, `surprise`), each two or three pieces of different rotation, flip, and size. Group pieces render at `0.92` opacity, `0.96` on the roast band.
+- Anchor a cluster to the `max-w-[1200px]` content column with a negative offset, never to the viewport edge, and let the page wrapper's `overflow-x: clip` handle the overhang. Clusters hide below `768px`; the surprise cluster also hides below `1440px`, where the dark band's left gutter is only `32px`.
+- Size at `1440px`: branch `360–480px` tall, pair `220–300px` wide, single leaf `160–220px` tall, set with `clamp()` so each piece reaches about `70%` at `1024px`. An edge may cut at most `15%` of a piece's ink.
+- The `sprig` art carries about `13%` transparent padding per side, so anchors use negative `bottom` offsets to drop that padding under the section edge. Measure crop on the ink, never on the box.
+- Never place a cluster over text, buttons, cards, the cup illustration, or form controls. If a free area cannot hold the minimum piece size, pick another area or hide the cluster; do not shrink below the minimum.
+- Loose `.sprig` pieces outside these three clusters are only for non-home pages, at `0.5` opacity.
 
 ## 10. Accessibility
 

@@ -7,7 +7,7 @@
 <section id="surprise" class="relative isolate bg-coffee-roast py-[88px] text-coffee-cream"
          x-data="surpriseSection({{ $cheapOnly ? '{ cheap: true }' : '{}' }})">
     @if ($sprig)
-        <x-sprig type="branch" tone="dark" :rotate="-4" size="h-64 w-48" class="-left-29 bottom-0 xl:-left-20" />
+        <x-sprig-group variant="surprise" />
     @endif
     <div data-reveal-stagger class="max-w-[1200px] mx-auto px-5 sm:px-8 grid gap-10 lg:grid-cols-[.85fr_1.15fr] items-center">
         <div>
