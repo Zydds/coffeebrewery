@@ -3,14 +3,6 @@
 @section('title', __('Coffeebrewery — Find Your Bean, Nail Your Brew'))
 
 @section('content')
-    {{-- Scroll rail: draws down the left gutter as the page scrolls.
-         Static in browsers without scroll-driven animations (or with
-         reduced motion), so it is never a blank stick. --}}
-    <div class="scroll-rail fixed left-8 top-1/2 hidden h-[38vh] w-0.5 -translate-y-1/2 rounded-full bg-coffee-mocha/20 min-[1440px]:block"
-         aria-hidden="true">
-        <span class="scroll-rail-fill block h-full w-full rounded-full bg-coffee-amber"></span>
-    </div>
-
     {{-- Hero --}}
     <section class="relative isolate bg-coffee-cream">
         {{-- The wave layers belong to the section, not to the cup drawing:

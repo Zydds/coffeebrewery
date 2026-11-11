@@ -709,24 +709,6 @@ html.grid-settled [data-recipes-grid] {
     transform-style: preserve-3d;
 }
 
-/* Left gutter rail (home only). The fill uses a scroll timeline; without
-   support it renders as a full static line. */
-@supports (animation-timeline: scroll()) {
-    @media (prefers-reduced-motion: no-preference) {
-        .scroll-rail-fill {
-            transform-origin: top;
-            animation: rail-fill linear both;
-            animation-timeline: scroll(root block);
-        }
-    }
-}
-
-@keyframes rail-fill {
-    from {
-        transform: scaleY(0);
-    }
-}
-
 /* ── Hero: one-time entrances (no loops) ─────────────────── */
 /* Beans: opacity + 16px rise, 80ms stagger via --i set per bean in
    the markup. Cup: 4px settle (drops into place) — both replace the
