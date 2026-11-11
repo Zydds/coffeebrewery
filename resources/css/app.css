@@ -191,7 +191,7 @@ html.js-motion .reveal.is-revealed {
     z-index: -1;
     display: none;
     pointer-events: none;
-    opacity: 0.3;
+    opacity: 0.5;
     transform-origin: center;
 }
 
@@ -215,7 +215,7 @@ html.js-motion .sprig.is-settled {
 .sprig-tone-dark {
     --leaf-dark: #8d9660;
     --leaf-light: #c7cba4;
-    opacity: 0.3;
+    opacity: 0.5;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -165,7 +165,7 @@ The coffee sprigs (`components/sprig.blade.php`, symbols `cb-sprig-branch`, `cb-
 - Both live in plain `:root` in `app.css`, not `@theme`, so Tailwind emits no utilities for them. Reference them only from SVG inside the sprig symbols.
 - Berries use the existing `--color-coffee-amber` (`#C87D55`), so the accent stays on-palette.
 - On the dark roast band, `.sprig-tone-dark` re-scopes `--leaf-dark: #8d9660` and `--leaf-light: #c7cba4`; the lighter olive keeps the leaves legible against `coffee-roast`.
-- Light-section sprigs render at `0.3` opacity; dark-tone sprigs also `0.3`. They are `aria-hidden`, `pointer-events: none`, sit at `z-index: -1` inside an `isolate` section, and are hidden below `768px`.
+- Light-section sprigs render at `0.5` opacity; dark-tone sprigs also `0.5`. They are `aria-hidden`, `pointer-events: none`, sit at `z-index: -1` inside an `isolate` section, and are hidden below `768px`.
 - Motion is one `3deg → 0deg` settle over `900ms` on first viewport entry, never repeated, and skipped entirely under `prefers-reduced-motion: reduce`.
 - Maximum two visible sprigs per viewport; placements avoid text, buttons, and cards at `1440`, `1024`, and `768px`.
 
