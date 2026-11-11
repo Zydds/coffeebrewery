@@ -6,6 +6,7 @@
     'type' => 'leaf',
     'rotate' => 0,
     'flip' => false,
+    'flipY' => false,
     'size' => '',
     'tone' => 'light',
 ])
@@ -25,6 +26,12 @@
 
     if ($flip) {
         $transform[] = 'translate(' . (2 * $minX + $boxWidth) . ' 0) scale(-1 1)';
+    }
+
+    // Vertical mirror inside the viewBox keeps the art inside its box, so a
+    // hanging sprig never clips at the tips the way a 180deg rotate would.
+    if ($flipY) {
+        $transform[] = 'translate(0 ' . (2 * $minY + $boxHeight) . ') scale(1 -1)';
     }
 
     if ((float) $rotate !== 0.0) {

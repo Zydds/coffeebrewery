@@ -8,7 +8,7 @@
     {{-- Page header: same card-panel style as the cafe map page.
          pt-6 keeps the gap tight (navbar is sticky, nothing to clear). --}}
     <div class="relative isolate max-w-[1200px] mx-auto px-5 sm:px-8 pt-6 pb-5">
-        <x-sprig type="pair" :rotate="5" flip size="h-24 w-40" class="top-0 right-[calc(50%-50vw)] translate-x-4/5 min-[1440px]:translate-x-[12.5%]" />
+        <x-sprig-hanging variant="cheap" side="left" />
         <div class="rounded-2xl border border-coffee-mocha/40 bg-coffee-cream p-5 sm:p-6">
             <div class="flex items-center gap-3">
                 <span class="grid h-11 w-11 place-items-center rounded-xl bg-coffee-amber text-coffee-espresso shrink-0">

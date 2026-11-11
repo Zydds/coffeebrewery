@@ -225,147 +225,154 @@ html.js-motion .sprig.is-settled {
     }
 }
 
-/* ── Sprig groups ───────────────────────────────────────── */
-/* One cluster per placement, anchored to the 1200px content column with a
-   negative offset, never to the viewport edge, so the relation to the copy
-   holds at 1280, 1440 and 1920. Each piece keeps 10 units of transparent
-   padding inside its viewBox; the negative `bottom` below drops that
-   padding under the section edge so the ink, not the box, sits on it.
-   Crop is judged on the ink, never on the box. */
-.sprig-group {
+.sprig-hanging {
+    --h: clamp(300px, 21.5vw, 560px);
+    /* 8deg of tilt spreads a 300px+ branch to ~0.6 * --h. The 1440 gutter
+       is 120px, so the cluster nudges 40px into the container padding: the
+       only pixels that cross the content edge are the top of the stem,
+       above every heading. */
+    --nudge: -40px;
     position: absolute;
+    top: -47px;
     z-index: -1;
     display: none;
+    width: 0;
+    height: 0;
     pointer-events: none;
 }
 
-@media (min-width: 768px) {
-    .sprig-group {
+/* 1440 is the first width where the tilted cluster fits a side gutter with
+   no crop and no intrusion (152px at 1440, 72px at 1280, 32px below). The
+   quiz card is narrower than the content column, so its gutter fits 70%
+   earlier: shown from 1024. */
+@media (min-width: 1440px) {
+    .sprig-hanging {
         display: block;
     }
 }
 
-.sprig-group .sprig {
+/* The catalog hangs from the dark stats wave and Surprise from the wave
+   above its roast band; both start higher than a plain section edge so the
+   cut stem end stays behind the wave instead of floating in the band. */
+.sprig-hanging--catalog {
+    top: -72px;
+}
+
+.sprig-hanging--surprise {
+    top: -74px;
+}
+
+html .sprig-hanging .sprig {
     display: block;
-    z-index: auto;
-    opacity: 0.92;
+    opacity: 1;
+    rotate: 0deg;
+    transition: none;
 }
 
-.sprig-group .sprig-tone-dark {
-    opacity: 0.96;
+/* The whole cluster swings once around the 0x0 anchor, which is the root. */
+html.js-motion .sprig-hanging {
+    rotate: 2deg;
+    transform-origin: 50% 0;
+    transition: rotate 1200ms var(--ease-out);
 }
 
-/* Hero: a flat run along the waterline, left of the cup. z-index 0 lifts it
-   over the wave layers; the copy wrapper is positioned and later in the
-   DOM, so it still paints the text above the leaves. */
-.sprig-group--hero {
-    left: calc(max(0px, 50% - 600px) - 32px);
-    bottom: 0;
-    z-index: 0;
-    width: 0;
-    height: 0;
+html.js-motion .sprig-hanging.is-settled {
+    rotate: 0deg;
 }
 
-.sprig-group--hero .sprig-piece--a {
-    left: 10px;
-    bottom: calc(clamp(190px, 20vw, 280px) * -0.075);
-    width: clamp(190px, 20vw, 280px);
-    height: auto;
-    aspect-ratio: 147 / 95;
-}
-
-.sprig-group--hero .sprig-piece--b {
-    left: clamp(208px, 20.3vw, 292px);
-    bottom: calc(clamp(150px, 14.5vw, 208px) * -0.134);
-    height: clamp(150px, 14.5vw, 208px);
-    width: auto;
-    aspect-ratio: 77 / 82;
-}
-
-/* Third piece only where the band right of the buttons is wide enough
-   (the cup column starts 659px right of the content edge at every width). */
-.sprig-group--hero .sprig-piece--c {
-    display: none;
-}
-
-@media (min-width: 1280px) {
-    .sprig-group--hero .sprig-piece--c {
-        display: block;
-        left: 492px;
-        bottom: calc(clamp(200px, 16.7vw, 240px) * -0.134);
-        height: clamp(200px, 16.7vw, 240px);
-        width: auto;
-        aspect-ratio: 77 / 82;
+@media (prefers-reduced-motion: reduce) {
+    html.js-motion .sprig-hanging {
+        rotate: 0deg;
+        transition: none;
     }
 }
 
-/* Below lg the cup sits under the copy, so the run folds into the left
-   gutter: the pair at the waterline, the leaf above it. */
-@media (max-width: 1023px) {
-    .sprig-group--hero .sprig-piece--b {
-        left: 24px;
-        bottom: 132px;
-    }
+.sprig-hanging .sprig-piece {
+    position: absolute;
 }
 
-/* Brew Methods: hangs 52px over the marquee boundary at the top-right,
-   clear of the title text and the search bar. */
-.sprig-group--methods {
-    right: calc(max(0px, 50% - 600px) + 16px);
-    top: -52px;
-    width: 0;
-    height: 0;
-}
-
-.sprig-group--methods .sprig-piece--a {
-    right: 150px;
-    top: 30px;
-    width: clamp(200px, 20vw, 290px);
-    height: auto;
-    aspect-ratio: 147 / 95;
-}
-
-.sprig-group--methods .sprig-piece--b {
-    right: 0;
+.sprig-hanging .sprig-piece--a {
     top: 0;
-    height: clamp(160px, 14vw, 200px);
+    height: var(--h);
     width: auto;
-    aspect-ratio: 77 / 82;
+    transform: rotate(var(--a-tilt, 8deg));
+    transform-origin: 95% 6%;
 }
 
-/* Surprise: a two-leaf tuft rooted at the bottom-left corner of the roast
-   band, growing up past the headline and checkboxes. The gutter left of the
-   copy is 152px at 1440, so the pieces stay near-upright: a rotated tall
-   leaf would carry its ink into the text column. */
-.sprig-group--surprise {
-    left: calc(max(0px, 50% - 600px) - 162px);
-    bottom: 20px;
-    width: 208px;
-    height: 0;
+.sprig-hanging .sprig-piece--b {
+    top: calc(var(--h) * 0.55);
+    width: calc(var(--h) * var(--b-w, 0.62));
+    height: auto;
+    transform: rotate(var(--b-tilt, 18deg));
 }
 
-.sprig-group--surprise .sprig-piece--a {
-    right: 0;
-    bottom: calc(clamp(190px, 15.3vw, 220px) * -0.134);
-    height: clamp(190px, 15.3vw, 220px);
-    width: auto;
-    aspect-ratio: 77 / 82;
+.sprig-hanging .sprig-piece--pair {
+    transform-origin: 16% 5%;
 }
 
-.sprig-group--surprise .sprig-piece--b {
-    right: 8px;
-    bottom: calc(100px + clamp(150px, 12.5vw, 180px) * -0.134);
-    height: clamp(150px, 12.5vw, 180px);
-    width: auto;
-    aspect-ratio: 77 / 82;
+.sprig-hanging .sprig-piece--leaf {
+    transform-origin: 36% 12%;
 }
 
-/* The dark band's left gutter is narrower than one leaf below 1440; the
-   group is hidden there rather than cropped or dropped onto the copy. */
-@media (max-width: 1439px) {
-    .sprig-group--surprise {
-        display: none;
+.sprig-hanging--left .sprig-piece {
+    right: var(--nudge);
+}
+
+.sprig-hanging--right .sprig-piece {
+    left: var(--nudge);
+}
+
+.sprig-hanging--right .sprig-piece--a {
+    transform: rotate(calc(-1 * var(--a-tilt, 8deg)));
+    transform-origin: 5% 6%;
+}
+
+.sprig-hanging--right .sprig-piece--b {
+    transform: rotate(calc(-1 * var(--b-tilt, 18deg)));
+}
+
+.sprig-hanging--right .sprig-piece--pair {
+    transform-origin: 84% 5%;
+}
+
+.sprig-hanging--right .sprig-piece--leaf {
+    transform-origin: 64% 12%;
+}
+
+.sprig-hanging--left:not(.sprig-hanging--custom) {
+    left: calc(max(0px, 50% - 600px) + 32px);
+}
+
+.sprig-hanging--right:not(.sprig-hanging--custom) {
+    right: calc(max(0px, 50% - 600px) + 32px);
+}
+
+/* Quiz card: narrower than the content column, so the cluster anchors to
+   the card and the root tucks under its top corner. */
+.sprig-hanging--custom {
+    top: 18px;
+}
+
+.sprig-hanging--custom.sprig-hanging--left {
+    left: 26px;
+}
+
+.sprig-hanging--custom.sprig-hanging--right {
+    right: 26px;
+}
+
+@media (min-width: 1024px) {
+    .sprig-hanging--custom {
+        display: block;
     }
+}
+
+/* The leaf sits lower and smaller than the pair so the cluster reads as a
+   branch with one shoot, not two identical twigs. */
+.sprig-hanging .sprig-piece--leaf {
+    --b-w: 0.55;
+    --b-tilt: 20deg;
+    top: calc(var(--h) * 0.6);
 }
 
 /* ── Catalog card hover ─────────────────────────────────── */

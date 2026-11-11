@@ -3,7 +3,7 @@
      accessibility tree; the same words already appear as real headings.
      data-loop pauses it offscreen (app.js), and reduced motion stops it
      in app.css. --}}
-<div class="overflow-hidden border-y border-coffee-mocha/25 bg-coffee-cream py-4" data-loop aria-hidden="true">
+<div class="relative z-10 overflow-hidden border-y border-coffee-mocha/25 bg-coffee-cream py-4" data-loop aria-hidden="true">
     <div class="marquee-track flex w-max">
         @for ($copy = 0; $copy < 2; $copy++)
             <div class="flex shrink-0 items-center gap-8 pr-8">

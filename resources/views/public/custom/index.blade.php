@@ -6,8 +6,6 @@
 
 @section('content')
     <div class="relative isolate max-w-[1200px] mx-auto px-5 sm:px-8 pt-16 pb-10" x-data="brewFinder()">
-        <x-sprig type="branch" :rotate="-7" size="h-80 w-60" class="top-40 left-[calc(50%-50vw)] -translate-x-[62.5%] lg:-translate-x-[10%] xl:-translate-x-[8%]" />
-        <x-sprig type="branch" :rotate="7" flip size="h-80 w-60" class="top-56 right-[calc(50%-50vw)] translate-x-[62.5%] lg:translate-x-[10%] xl:translate-x-[8%]" />
         <div class="max-w-2xl mx-auto text-center">
             <h1 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Find Your Brew') }}</h1>
             <p class="mt-4 text-coffee-mocha">
@@ -37,187 +35,191 @@
 
             {{-- Question card: fixed min-height so the footer never jumps
                  during the slide transition between steps. --}}
-            <div x-show="!finished && !loading" x-ref="questions" x-cloak
-                 class="mt-4 rounded-3xl border border-coffee-mocha/30 bg-coffee-cream p-6 sm:p-8"
-                 style="min-height: 280px">
+            <div class="relative isolate mt-4" x-show="!finished && !loading" x-cloak>
+                <x-sprig-hanging variant="custom" side="left" />
+                <x-sprig-hanging variant="custom" side="right" />
+                <div x-ref="questions"
+                     class="rounded-3xl border border-coffee-mocha/30 bg-coffee-cream p-6 sm:p-8"
+                     style="min-height: 280px">
 
-                {{-- Q1: ingredients --}}
-                <div x-show="current === 'ingredients'">
-                    <h2 class="font-display text-2xl font-bold text-coffee-espresso">{{ __('What coffee do you have?') }}</h2>
-                    <div class="mt-6 grid gap-3 sm:grid-cols-3">
-                        @foreach ([
-                            ['sachet',  __('Sachet'),        __('3-in-1 & instant packs')],
-                            ['beans',   __('Whole beans'),   __('You have a grinder')],
-                            ['ground',  __('Ground coffee'), __('Ready to brew')],
-                        ] as [$val, $label, $sub])
-                        <button type="button" @click="pick('ingredients', '{{ $val }}')"
-                                :aria-pressed="answers.ingredients === '{{ $val }}'"
-                                :class="{
-                                    'border-coffee-amber ring-1 ring-coffee-amber': answers.ingredients === '{{ $val }}',
-                                    'opacity-70': answers.ingredients && answers.ingredients !== '{{ $val }}',
-                                    'border-coffee-mocha/30 hover:border-coffee-amber/60': !answers.ingredients || answers.ingredients !== '{{ $val }}'
-                                }"
-                                class="quiz-option relative rounded-xl border-2 bg-coffee-latte/40 p-4 text-left transition-[border-color,opacity,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coffee-amber-ink">
-                            {{-- Check mark: drawn when selected --}}
-                            <span class="quiz-check absolute top-3 right-3 grid h-5 w-5 place-items-center rounded-full bg-coffee-amber text-coffee-espresso"
-                                  :class="answers.ingredients === '{{ $val }}' ? 'opacity-100 scale-100' : 'opacity-0 scale-75'"
-                                  style="transition: opacity 150ms cubic-bezier(0.22,1,0.36,1), transform 150ms cubic-bezier(0.22,1,0.36,1)">
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg>
-                            </span>
-                            <span class="block font-semibold text-coffee-espresso pr-6">{{ $label }}</span>
-                            <span class="mt-1 block text-xs text-coffee-mocha">{{ $sub }}</span>
+                    {{-- Q1: ingredients --}}
+                    <div x-show="current === 'ingredients'">
+                        <h2 class="font-display text-2xl font-bold text-coffee-espresso">{{ __('What coffee do you have?') }}</h2>
+                        <div class="mt-6 grid gap-3 sm:grid-cols-3">
+                            @foreach ([
+                                ['sachet',  __('Sachet'),        __('3-in-1 & instant packs')],
+                                ['beans',   __('Whole beans'),   __('You have a grinder')],
+                                ['ground',  __('Ground coffee'), __('Ready to brew')],
+                            ] as [$val, $label, $sub])
+                            <button type="button" @click="pick('ingredients', '{{ $val }}')"
+                                    :aria-pressed="answers.ingredients === '{{ $val }}'"
+                                    :class="{
+                                        'border-coffee-amber ring-1 ring-coffee-amber': answers.ingredients === '{{ $val }}',
+                                        'opacity-70': answers.ingredients && answers.ingredients !== '{{ $val }}',
+                                        'border-coffee-mocha/30 hover:border-coffee-amber/60': !answers.ingredients || answers.ingredients !== '{{ $val }}'
+                                    }"
+                                    class="quiz-option relative rounded-xl border-2 bg-coffee-latte/40 p-4 text-left transition-[border-color,opacity,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coffee-amber-ink">
+                                {{-- Check mark: drawn when selected --}}
+                                <span class="quiz-check absolute top-3 right-3 grid h-5 w-5 place-items-center rounded-full bg-coffee-amber text-coffee-espresso"
+                                      :class="answers.ingredients === '{{ $val }}' ? 'opacity-100 scale-100' : 'opacity-0 scale-75'"
+                                      style="transition: opacity 150ms cubic-bezier(0.22,1,0.36,1), transform 150ms cubic-bezier(0.22,1,0.36,1)">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg>
+                                </span>
+                                <span class="block font-semibold text-coffee-espresso pr-6">{{ $label }}</span>
+                                <span class="mt-1 block text-xs text-coffee-mocha">{{ $sub }}</span>
+                            </button>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Q2: time --}}
+                    <div x-show="current === 'time'">
+                        <h2 class="font-display text-2xl font-bold text-coffee-espresso">{{ __('How much time do you have?') }}</h2>
+                        <div class="mt-6 grid gap-3 sm:grid-cols-3">
+                            @foreach ([
+                                ['quick', __('Quick'),       __('5 minutes or less')],
+                                ['ten',   __('About 10 min'),__('A short brew ritual')],
+                                ['rush',  __('No rush'),     __('Enjoy the process')],
+                            ] as [$val, $label, $sub])
+                            <button type="button" @click="pick('time', '{{ $val }}')"
+                                    :aria-pressed="answers.time === '{{ $val }}'"
+                                    :class="{
+                                        'border-coffee-amber ring-1 ring-coffee-amber': answers.time === '{{ $val }}',
+                                        'opacity-70': answers.time && answers.time !== '{{ $val }}',
+                                        'border-coffee-mocha/30 hover:border-coffee-amber/60': !answers.time || answers.time !== '{{ $val }}'
+                                    }"
+                                    class="quiz-option relative rounded-xl border-2 bg-coffee-latte/40 p-4 text-left transition-[border-color,opacity,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coffee-amber-ink">
+                                <span class="quiz-check absolute top-3 right-3 grid h-5 w-5 place-items-center rounded-full bg-coffee-amber text-coffee-espresso"
+                                      :class="answers.time === '{{ $val }}' ? 'opacity-100 scale-100' : 'opacity-0 scale-75'"
+                                      style="transition: opacity 150ms cubic-bezier(0.22,1,0.36,1), transform 150ms cubic-bezier(0.22,1,0.36,1)">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg>
+                                </span>
+                                <span class="block font-semibold text-coffee-espresso pr-6">{{ $label }}</span>
+                                <span class="mt-1 block text-xs text-coffee-mocha">{{ $sub }}</span>
+                            </button>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Q3: gear (skipped for sachet) --}}
+                    <div x-show="current === 'gear'">
+                        <h2 class="font-display text-2xl font-bold text-coffee-espresso">{{ __('What gear do you have?') }}</h2>
+
+                        {{-- The one large illustration on the site: it swaps with
+                             the chosen gear. x-if keeps exactly one SVG in the
+                             DOM, so the per-part CSS runs once per choice. --}}
+                        <div class="mt-5 flex justify-center" aria-hidden="true">
+                            <template x-if="!answers.gear"><x-coffee-illustration type="bean" size="h-24 w-24 sm:h-28 sm:w-28" tone="amber-ink" /></template>
+                            <template x-if="answers.gear === 'mug'"><x-coffee-illustration type="sachet" size="h-24 w-24 sm:h-28 sm:w-28" tone="amber-ink" /></template>
+                            <template x-if="answers.gear === 'french-press'"><x-coffee-illustration type="french-press" size="h-24 w-24 sm:h-28 sm:w-28" tone="amber-ink" /></template>
+                            <template x-if="answers.gear === 'v60'"><x-coffee-illustration type="v60" size="h-24 w-24 sm:h-28 sm:w-28" tone="amber-ink" /></template>
+                            <template x-if="answers.gear === 'aeropress'"><x-coffee-illustration type="aeropress" size="h-24 w-24 sm:h-28 sm:w-28" tone="amber-ink" /></template>
+                            <template x-if="answers.gear === 'espresso'"><x-coffee-illustration type="espresso" size="h-24 w-24 sm:h-28 sm:w-28" tone="amber-ink" /></template>
+                        </div>
+
+                        <div class="mt-4 grid gap-3 sm:grid-cols-3">
+                            @foreach ([
+                                ['mug',          __('Just a mug'),        __('No brewing kit')],
+                                ['french-press',  'French press',          __('Plunger pot')],
+                                ['v60',          'Pour-over (V60)',        __('Dripper & filter')],
+                                ['aeropress',    'Aeropress',              __('Press brewer')],
+                                ['espresso',     __('Espresso machine'),   __('Pump machine')],
+                            ] as [$val, $label, $sub])
+                            <button type="button" @click="pick('gear', '{{ $val }}')"
+                                    :aria-pressed="answers.gear === '{{ $val }}'"
+                                    :class="{
+                                        'border-coffee-amber ring-1 ring-coffee-amber': answers.gear === '{{ $val }}',
+                                        'opacity-70': answers.gear && answers.gear !== '{{ $val }}',
+                                        'border-coffee-mocha/30 hover:border-coffee-amber/60': !answers.gear || answers.gear !== '{{ $val }}'
+                                    }"
+                                    class="quiz-option relative rounded-xl border-2 bg-coffee-latte/40 p-4 text-left transition-[border-color,opacity,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coffee-amber-ink">
+                                <span class="quiz-check absolute top-3 right-3 grid h-5 w-5 place-items-center rounded-full bg-coffee-amber text-coffee-espresso"
+                                      :class="answers.gear === '{{ $val }}' ? 'opacity-100 scale-100' : 'opacity-0 scale-75'"
+                                      style="transition: opacity 150ms cubic-bezier(0.22,1,0.36,1), transform 150ms cubic-bezier(0.22,1,0.36,1)">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg>
+                                </span>
+                                <span class="block font-semibold text-coffee-espresso pr-6">{{ $label }}</span>
+                                <span class="mt-1 block text-xs text-coffee-mocha">{{ $sub }}</span>
+                            </button>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Q4: taste --}}
+                    <div x-show="current === 'taste'">
+                        <h2 class="font-display text-2xl font-bold text-coffee-espresso">{{ __('How do you like it?') }}</h2>
+                        <div class="mt-6 grid gap-3 sm:grid-cols-3">
+                            @foreach ([
+                                ['strong', __('Strong & bold'),   __('Full body, punchy')],
+                                ['mild',   __('Smooth & mild'),   __('Easy drinking')],
+                                ['fruity', __('Fruity & bright'), __('Acidic, floral notes')],
+                            ] as [$val, $label, $sub])
+                            <button type="button" @click="pick('taste', '{{ $val }}')"
+                                    :aria-pressed="answers.taste === '{{ $val }}'"
+                                    :class="{
+                                        'border-coffee-amber ring-1 ring-coffee-amber': answers.taste === '{{ $val }}',
+                                        'opacity-70': answers.taste && answers.taste !== '{{ $val }}',
+                                        'border-coffee-mocha/30 hover:border-coffee-amber/60': !answers.taste || answers.taste !== '{{ $val }}'
+                                    }"
+                                    class="quiz-option relative rounded-xl border-2 bg-coffee-latte/40 p-4 text-left transition-[border-color,opacity,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coffee-amber-ink">
+                                <span class="quiz-check absolute top-3 right-3 grid h-5 w-5 place-items-center rounded-full bg-coffee-amber text-coffee-espresso"
+                                      :class="answers.taste === '{{ $val }}' ? 'opacity-100 scale-100' : 'opacity-0 scale-75'"
+                                      style="transition: opacity 150ms cubic-bezier(0.22,1,0.36,1), transform 150ms cubic-bezier(0.22,1,0.36,1)">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg>
+                                </span>
+                                <span class="block font-semibold text-coffee-espresso pr-6">{{ $label }}</span>
+                                <span class="mt-1 block text-xs text-coffee-mocha">{{ $sub }}</span>
+                            </button>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Q5: drink --}}
+                    <div x-show="current === 'drink'">
+                        <h2 class="font-display text-2xl font-bold text-coffee-espresso">{{ __('How do you drink it?') }}</h2>
+                        <div class="mt-6 grid gap-3 sm:grid-cols-2">
+                            @foreach ([
+                                ['black', __('Black'),      __('Straight, no milk')],
+                                ['milk',  __('With milk'),  __('Creamy & comforting')],
+                            ] as [$val, $label, $sub])
+                            <button type="button" @click="pick('drink', '{{ $val }}')"
+                                    :aria-pressed="answers.drink === '{{ $val }}'"
+                                    :class="{
+                                        'border-coffee-amber ring-1 ring-coffee-amber': answers.drink === '{{ $val }}',
+                                        'opacity-70': answers.drink && answers.drink !== '{{ $val }}',
+                                        'border-coffee-mocha/30 hover:border-coffee-amber/60': !answers.drink || answers.drink !== '{{ $val }}'
+                                    }"
+                                    class="quiz-option relative rounded-xl border-2 bg-coffee-latte/40 p-4 text-left transition-[border-color,opacity,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coffee-amber-ink">
+                                <span class="quiz-check absolute top-3 right-3 grid h-5 w-5 place-items-center rounded-full bg-coffee-amber text-coffee-espresso"
+                                      :class="answers.drink === '{{ $val }}' ? 'opacity-100 scale-100' : 'opacity-0 scale-75'"
+                                      style="transition: opacity 150ms cubic-bezier(0.22,1,0.36,1), transform 150ms cubic-bezier(0.22,1,0.36,1)">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg>
+                                </span>
+                                <span class="block font-semibold text-coffee-espresso pr-6">{{ $label }}</span>
+                                <span class="mt-1 block text-xs text-coffee-mocha">{{ $sub }}</span>
+                            </button>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Nav buttons --}}
+                    <div class="mt-8 flex items-center justify-between">
+                        <button type="button" x-show="step > 0" @click="back()"
+                                class="min-h-[44px] px-5 inline-flex items-center rounded-xl border-2 border-coffee-mocha/40 text-sm font-semibold text-coffee-mocha hover:border-coffee-espresso hover:text-coffee-espresso transition-colors duration-150 motion-safe:active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink focus-visible:ring-offset-2 focus-visible:ring-offset-coffee-cream">
+                            {{ __('Back') }}
                         </button>
-                        @endforeach
-                    </div>
-                </div>
+                        <span x-show="step === 0"></span>
 
-                {{-- Q2: time --}}
-                <div x-show="current === 'time'">
-                    <h2 class="font-display text-2xl font-bold text-coffee-espresso">{{ __('How much time do you have?') }}</h2>
-                    <div class="mt-6 grid gap-3 sm:grid-cols-3">
-                        @foreach ([
-                            ['quick', __('Quick'),       __('5 minutes or less')],
-                            ['ten',   __('About 10 min'),__('A short brew ritual')],
-                            ['rush',  __('No rush'),     __('Enjoy the process')],
-                        ] as [$val, $label, $sub])
-                        <button type="button" @click="pick('time', '{{ $val }}')"
-                                :aria-pressed="answers.time === '{{ $val }}'"
-                                :class="{
-                                    'border-coffee-amber ring-1 ring-coffee-amber': answers.time === '{{ $val }}',
-                                    'opacity-70': answers.time && answers.time !== '{{ $val }}',
-                                    'border-coffee-mocha/30 hover:border-coffee-amber/60': !answers.time || answers.time !== '{{ $val }}'
-                                }"
-                                class="quiz-option relative rounded-xl border-2 bg-coffee-latte/40 p-4 text-left transition-[border-color,opacity,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coffee-amber-ink">
-                            <span class="quiz-check absolute top-3 right-3 grid h-5 w-5 place-items-center rounded-full bg-coffee-amber text-coffee-espresso"
-                                  :class="answers.time === '{{ $val }}' ? 'opacity-100 scale-100' : 'opacity-0 scale-75'"
-                                  style="transition: opacity 150ms cubic-bezier(0.22,1,0.36,1), transform 150ms cubic-bezier(0.22,1,0.36,1)">
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg>
-                            </span>
-                            <span class="block font-semibold text-coffee-espresso pr-6">{{ $label }}</span>
-                            <span class="mt-1 block text-xs text-coffee-mocha">{{ $sub }}</span>
+                        {{-- Continue: disabled = grey; enabled transitions to amber over 200ms --}}
+                        <button type="button" @click="next()" :disabled="!answers[current]"
+                                class="quiz-continue min-h-[44px] px-6 inline-flex items-center rounded-xl text-sm font-semibold transition-[background-color,color,opacity,transform] duration-200 ease-out motion-safe:active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink focus-visible:ring-offset-2 focus-visible:ring-offset-coffee-cream"
+                                :class="answers[current]
+                                    ? 'bg-coffee-espresso text-coffee-latte hover:bg-coffee-amber hover:text-coffee-espresso'
+                                    : 'bg-coffee-mocha/20 text-coffee-mocha cursor-not-allowed'">
+                            <span x-show="step + 1 < total">{{ __('Continue') }}</span>
+                            <span x-show="step + 1 >= total">{{ __('Show my recipe') }}</span>
                         </button>
-                        @endforeach
                     </div>
-                </div>
-
-                {{-- Q3: gear (skipped for sachet) --}}
-                <div x-show="current === 'gear'">
-                    <h2 class="font-display text-2xl font-bold text-coffee-espresso">{{ __('What gear do you have?') }}</h2>
-
-                    {{-- The one large illustration on the site: it swaps with
-                         the chosen gear. x-if keeps exactly one SVG in the
-                         DOM, so the per-part CSS runs once per choice. --}}
-                    <div class="mt-5 flex justify-center" aria-hidden="true">
-                        <template x-if="!answers.gear"><x-coffee-illustration type="bean" size="h-24 w-24 sm:h-28 sm:w-28" tone="amber-ink" /></template>
-                        <template x-if="answers.gear === 'mug'"><x-coffee-illustration type="sachet" size="h-24 w-24 sm:h-28 sm:w-28" tone="amber-ink" /></template>
-                        <template x-if="answers.gear === 'french-press'"><x-coffee-illustration type="french-press" size="h-24 w-24 sm:h-28 sm:w-28" tone="amber-ink" /></template>
-                        <template x-if="answers.gear === 'v60'"><x-coffee-illustration type="v60" size="h-24 w-24 sm:h-28 sm:w-28" tone="amber-ink" /></template>
-                        <template x-if="answers.gear === 'aeropress'"><x-coffee-illustration type="aeropress" size="h-24 w-24 sm:h-28 sm:w-28" tone="amber-ink" /></template>
-                        <template x-if="answers.gear === 'espresso'"><x-coffee-illustration type="espresso" size="h-24 w-24 sm:h-28 sm:w-28" tone="amber-ink" /></template>
-                    </div>
-
-                    <div class="mt-4 grid gap-3 sm:grid-cols-3">
-                        @foreach ([
-                            ['mug',          __('Just a mug'),        __('No brewing kit')],
-                            ['french-press',  'French press',          __('Plunger pot')],
-                            ['v60',          'Pour-over (V60)',        __('Dripper & filter')],
-                            ['aeropress',    'Aeropress',              __('Press brewer')],
-                            ['espresso',     __('Espresso machine'),   __('Pump machine')],
-                        ] as [$val, $label, $sub])
-                        <button type="button" @click="pick('gear', '{{ $val }}')"
-                                :aria-pressed="answers.gear === '{{ $val }}'"
-                                :class="{
-                                    'border-coffee-amber ring-1 ring-coffee-amber': answers.gear === '{{ $val }}',
-                                    'opacity-70': answers.gear && answers.gear !== '{{ $val }}',
-                                    'border-coffee-mocha/30 hover:border-coffee-amber/60': !answers.gear || answers.gear !== '{{ $val }}'
-                                }"
-                                class="quiz-option relative rounded-xl border-2 bg-coffee-latte/40 p-4 text-left transition-[border-color,opacity,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coffee-amber-ink">
-                            <span class="quiz-check absolute top-3 right-3 grid h-5 w-5 place-items-center rounded-full bg-coffee-amber text-coffee-espresso"
-                                  :class="answers.gear === '{{ $val }}' ? 'opacity-100 scale-100' : 'opacity-0 scale-75'"
-                                  style="transition: opacity 150ms cubic-bezier(0.22,1,0.36,1), transform 150ms cubic-bezier(0.22,1,0.36,1)">
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg>
-                            </span>
-                            <span class="block font-semibold text-coffee-espresso pr-6">{{ $label }}</span>
-                            <span class="mt-1 block text-xs text-coffee-mocha">{{ $sub }}</span>
-                        </button>
-                        @endforeach
-                    </div>
-                </div>
-
-                {{-- Q4: taste --}}
-                <div x-show="current === 'taste'">
-                    <h2 class="font-display text-2xl font-bold text-coffee-espresso">{{ __('How do you like it?') }}</h2>
-                    <div class="mt-6 grid gap-3 sm:grid-cols-3">
-                        @foreach ([
-                            ['strong', __('Strong & bold'),   __('Full body, punchy')],
-                            ['mild',   __('Smooth & mild'),   __('Easy drinking')],
-                            ['fruity', __('Fruity & bright'), __('Acidic, floral notes')],
-                        ] as [$val, $label, $sub])
-                        <button type="button" @click="pick('taste', '{{ $val }}')"
-                                :aria-pressed="answers.taste === '{{ $val }}'"
-                                :class="{
-                                    'border-coffee-amber ring-1 ring-coffee-amber': answers.taste === '{{ $val }}',
-                                    'opacity-70': answers.taste && answers.taste !== '{{ $val }}',
-                                    'border-coffee-mocha/30 hover:border-coffee-amber/60': !answers.taste || answers.taste !== '{{ $val }}'
-                                }"
-                                class="quiz-option relative rounded-xl border-2 bg-coffee-latte/40 p-4 text-left transition-[border-color,opacity,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coffee-amber-ink">
-                            <span class="quiz-check absolute top-3 right-3 grid h-5 w-5 place-items-center rounded-full bg-coffee-amber text-coffee-espresso"
-                                  :class="answers.taste === '{{ $val }}' ? 'opacity-100 scale-100' : 'opacity-0 scale-75'"
-                                  style="transition: opacity 150ms cubic-bezier(0.22,1,0.36,1), transform 150ms cubic-bezier(0.22,1,0.36,1)">
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg>
-                            </span>
-                            <span class="block font-semibold text-coffee-espresso pr-6">{{ $label }}</span>
-                            <span class="mt-1 block text-xs text-coffee-mocha">{{ $sub }}</span>
-                        </button>
-                        @endforeach
-                    </div>
-                </div>
-
-                {{-- Q5: drink --}}
-                <div x-show="current === 'drink'">
-                    <h2 class="font-display text-2xl font-bold text-coffee-espresso">{{ __('How do you drink it?') }}</h2>
-                    <div class="mt-6 grid gap-3 sm:grid-cols-2">
-                        @foreach ([
-                            ['black', __('Black'),      __('Straight, no milk')],
-                            ['milk',  __('With milk'),  __('Creamy & comforting')],
-                        ] as [$val, $label, $sub])
-                        <button type="button" @click="pick('drink', '{{ $val }}')"
-                                :aria-pressed="answers.drink === '{{ $val }}'"
-                                :class="{
-                                    'border-coffee-amber ring-1 ring-coffee-amber': answers.drink === '{{ $val }}',
-                                    'opacity-70': answers.drink && answers.drink !== '{{ $val }}',
-                                    'border-coffee-mocha/30 hover:border-coffee-amber/60': !answers.drink || answers.drink !== '{{ $val }}'
-                                }"
-                                class="quiz-option relative rounded-xl border-2 bg-coffee-latte/40 p-4 text-left transition-[border-color,opacity,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coffee-amber-ink">
-                            <span class="quiz-check absolute top-3 right-3 grid h-5 w-5 place-items-center rounded-full bg-coffee-amber text-coffee-espresso"
-                                  :class="answers.drink === '{{ $val }}' ? 'opacity-100 scale-100' : 'opacity-0 scale-75'"
-                                  style="transition: opacity 150ms cubic-bezier(0.22,1,0.36,1), transform 150ms cubic-bezier(0.22,1,0.36,1)">
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg>
-                            </span>
-                            <span class="block font-semibold text-coffee-espresso pr-6">{{ $label }}</span>
-                            <span class="mt-1 block text-xs text-coffee-mocha">{{ $sub }}</span>
-                        </button>
-                        @endforeach
-                    </div>
-                </div>
-
-                {{-- Nav buttons --}}
-                <div class="mt-8 flex items-center justify-between">
-                    <button type="button" x-show="step > 0" @click="back()"
-                            class="min-h-[44px] px-5 inline-flex items-center rounded-xl border-2 border-coffee-mocha/40 text-sm font-semibold text-coffee-mocha hover:border-coffee-espresso hover:text-coffee-espresso transition-colors duration-150 motion-safe:active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink focus-visible:ring-offset-2 focus-visible:ring-offset-coffee-cream">
-                        {{ __('Back') }}
-                    </button>
-                    <span x-show="step === 0"></span>
-
-                    {{-- Continue: disabled = grey; enabled transitions to amber over 200ms --}}
-                    <button type="button" @click="next()" :disabled="!answers[current]"
-                            class="quiz-continue min-h-[44px] px-6 inline-flex items-center rounded-xl text-sm font-semibold transition-[background-color,color,opacity,transform] duration-200 ease-out motion-safe:active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink focus-visible:ring-offset-2 focus-visible:ring-offset-coffee-cream"
-                            :class="answers[current]
-                                ? 'bg-coffee-espresso text-coffee-latte hover:bg-coffee-amber hover:text-coffee-espresso'
-                                : 'bg-coffee-mocha/20 text-coffee-mocha cursor-not-allowed'">
-                        <span x-show="step + 1 < total">{{ __('Continue') }}</span>
-                        <span x-show="step + 1 >= total">{{ __('Show my recipe') }}</span>
-                    </button>
                 </div>
             </div>
 

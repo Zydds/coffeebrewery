@@ -155,7 +155,7 @@ Sizes: `10`, `15`, `16`, `18`, `20`, `22`, `24`, `44`, `120`; clusters are `34/4
 
 ### Decorative illustration
 
-The coffee sprigs (`components/sprig.blade.php`, symbols `cb-sprig-branch`, `cb-sprig-pair`, `cb-sprig-leaf` in `components/coffee-illustrations.blade.php`) are the only place two extra colours are allowed. They are illustration-only and **must never paint UI**: not text, icons, borders, buttons, focus rings, or surfaces.
+The coffee sprigs (`components/sprig.blade.php` for one piece, `components/sprig-hanging.blade.php` for a hanging cluster, symbols `cb-sprig-branch`, `cb-sprig-pair`, `cb-sprig-leaf` in `components/coffee-illustrations.blade.php`) are the only place two extra colours are allowed. They are illustration-only and **must never paint UI**: not text, icons, borders, buttons, focus rings, or surfaces.
 
 | Custom property | Value | Role |
 |---|---|---|
@@ -165,14 +165,16 @@ The coffee sprigs (`components/sprig.blade.php`, symbols `cb-sprig-branch`, `cb-
 - Both live in plain `:root` in `app.css`, not `@theme`, so Tailwind emits no utilities for them. Reference them only from SVG inside the sprig symbols.
 - Berries use the existing `--color-coffee-amber` (`#C87D55`), so the accent stays on-palette.
 - On the dark roast band, `.sprig-tone-dark` re-scopes `--leaf-dark: #8d9660` and `--leaf-light: #c7cba4`; the lighter olive keeps the leaves legible against `coffee-roast`.
-- Light-section sprigs render at `0.5` opacity; dark-tone sprigs also `0.5`. They are `aria-hidden`, `pointer-events: none`, sit at `z-index: -1` inside an `isolate` section, and are hidden below `768px`.
-- Motion is one `3deg → 0deg` settle over `900ms` on first viewport entry, never repeated, and skipped entirely under `prefers-reduced-motion: reduce`.
-- Home uses exactly three clusters (`components/sprig-group.blade.php`, presets `hero`, `methods`, `surprise`), each two or three pieces of different rotation, flip, and size. Group pieces render at `0.92` opacity, `0.96` on the roast band.
-- Anchor a cluster to the `max-w-[1200px]` content column with a negative offset, never to the viewport edge, and let the page wrapper's `overflow-x: clip` handle the overhang. Clusters hide below `768px`; the surprise cluster also hides below `1440px`, where the dark band's left gutter is only `32px`.
-- Size at `1440px`: branch `360–480px` tall, pair `220–300px` wide, single leaf `160–220px` tall, set with `clamp()` so each piece reaches about `70%` at `1024px`. An edge may cut at most `15%` of a piece's ink.
-- The `sprig` art carries about `13%` transparent padding per side, so anchors use negative `bottom` offsets to drop that padding under the section edge. Measure crop on the ink, never on the box.
-- Never place a cluster over text, buttons, cards, the cup illustration, or form controls. If a free area cannot hold the minimum piece size, pick another area or hide the cluster; do not shrink below the minimum.
-- Loose `.sprig` pieces outside these three clusters are only for non-home pages, at `0.5` opacity.
+- Loose `.sprig` pieces outside the hanging clusters keep the original treatment: `0.5` opacity, `aria-hidden`, `pointer-events: none`, `z-index: -1` inside an `isolate` section, and hidden below `768px`. Their motion is one `3deg → 0deg` settle over `900ms` on first entry, skipped under `prefers-reduced-motion: reduce`.
+- Hanging clusters use `components/sprig-hanging.blade.php` (`side` = `left|right`, `tone`, `variant`): a 0×0 `.sprig-hanging` anchor plus two pieces, a branch (`.sprig-piece--a`, mirrored vertically with the `flipY` prop so it points down) and a leaf pair or single leaf at `70–85%` of the branch's scale, tilted at a different angle. Clusters render at full opacity, `aria-hidden`, `pointer-events: none`, `z-index: -1`.
+- Rooting: the group's top sits behind the element above its section (navbar, stats wave, marquee, quiz card), which paints above it because the element carries `z-10` or `sticky z-40`. `top` is negative and variant-tuned; no stem end is ever visible in mid-air.
+- Anchor to the `max-w-[1200px]` content column, never the viewport edge: `left/right: calc(max(0px, 50% - 600px) + 32px)`. The page wrapper's `overflow-x: clip` takes the overhang; never put `overflow: hidden` on a section.
+- Size: the branch is `clamp(300px, 21.5vw, 560px)` tall (≈`310px` at 1440, `413px` at 1920); the measured cluster is about `178 × 304–340px` at 1440 and grows with the viewport. Tilt is `8deg` away from the content for the branch and `18–20deg` for the second piece, applied as a CSS `transform` with its origin on the stem end, so rotating never clips the tips.
+- Position: the cluster may reach up to `40px` into the container padding only where that band is empty (above every heading). It must never cover text, buttons, cards, the cup illustration, search bars or carousel arrows. Viewport-edge crop stays at or under `15%` of the painted ink.
+- Breakpoints: shown from `1440px`, the first width whose `120–152px` gutter holds the cluster under `15%` crop; `1280px` and below hide (`72px`/`32px` gutters). The Custom quiz card is narrower than the content column, so its two clusters show from `1024px`, rooted behind the card's top corners.
+- Motion: one `2deg → 0deg` swing around the root (`transform-origin: 50% 0`) over `1200ms` on first viewport entry, never repeated, skipped entirely under `prefers-reduced-motion: reduce`.
+- One group per section. Home: hero left, bean catalog right (behind the stats wave), brew methods left (behind the marquee), Surprise right with `tone="dark"` (behind the top wave); the stats bar gets none. Recipes right; Cheap left; Custom left and right of the quiz card; Cafes and the footer get none.
+- Measure crop on the painted ink, never on the element box: the art carries transparent padding and the leaf bboxes overstate the shape.
 
 ## 10. Accessibility
 

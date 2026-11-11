@@ -566,10 +566,11 @@ document.addEventListener('DOMContentLoaded', () => {
         revealEls.forEach((el) => el.classList.add('in-view'));
     }
 
-    // Decorative sprigs: one 3° settle when the sprig first enters the
-    // viewport. CSS owns the tween; this only flips the class once. The
-    // resting angle is already the no-JS / reduced-motion state.
-    const sprigs = document.querySelectorAll('.sprig');
+    // Decorative sprigs: one 3° settle when a loose sprig enters the
+    // viewport, and one 2° swing for a hanging cluster. CSS owns both
+    // tweens; this only flips the class once. The resting angle is already
+    // the no-JS / reduced-motion state.
+    const sprigs = document.querySelectorAll('.sprig, .sprig-hanging');
 
     if ('IntersectionObserver' in window && sprigs.length && !prefersReduced()) {
         const sprigObserver = new IntersectionObserver((entries) => {

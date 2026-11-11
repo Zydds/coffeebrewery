@@ -29,7 +29,7 @@
             </svg>
         </div>
 
-        <x-sprig-group variant="hero" />
+        <x-sprig-hanging variant="hero" side="left" />
 
         <div class="relative max-w-[1200px] mx-auto px-5 sm:px-8 py-16 lg:py-[72px] grid gap-10 lg:grid-cols-[1.1fr_.9fr] items-center">
             <div data-reveal-stagger>
@@ -122,10 +122,11 @@
         </div>
     </section>
 
-    <x-wave-divider from-color="espresso" to-color="latte" />
+    <x-wave-divider from-color="espresso" to-color="latte" class="relative z-10" />
 
     {{-- Bean catalog --}}
     <section id="bean-catalog" class="relative isolate max-w-[1200px] mx-auto px-5 sm:px-8 section-top">
+        <x-sprig-hanging variant="catalog" side="right" />
         <div data-reveal-stagger class="flex flex-wrap items-end justify-between gap-6">
             <h2 class="font-display font-bold text-section">{{ __('Bean Catalog') }}</h2>
             <div class="relative flex flex-wrap gap-2" role="navigation" aria-label="{{ __('Filter beans by type') }}" data-filter-pills>
@@ -275,7 +276,7 @@
         <x-marquee />
 
         <section id="brew-methods" class="relative isolate max-w-[1200px] mx-auto px-5 sm:px-8 section-top pb-22">
-            <x-sprig-group variant="methods" />
+            <x-sprig-hanging variant="methods" side="left" />
             <h2 data-reveal class="font-display font-bold text-section">{{ __('Brew Methods') }}</h2>
 
             <x-search-bar :action="route('home')" name="method_q" :placeholder="__('Search brew methods…')" :value="request('method_q')" />
@@ -301,7 +302,7 @@
     {{-- The cream band flows into the roast surprise section: cream above
          the wave (the band's own background), roast below, continuing
          into the section. --}}
-    <x-wave-divider from-color="cream" to-color="roast" />
+    <x-wave-divider from-color="cream" to-color="roast" class="relative z-10" />
 
     <x-surprise-section :sprig="true" />
 @endsection
