@@ -241,13 +241,24 @@ html.js-motion .sprig.is-settled {
     pointer-events: none;
 }
 
-/* 1440 is the first width where the tilted cluster fits a side gutter with
-   no crop and no intrusion (152px at 1440, 72px at 1280, 32px below). The
-   quiz card is narrower than the content column, so its gutter fits 70%
-   earlier: shown from 1024. */
+/* 1440 is the first width where the full-size cluster fits a side gutter
+   (152px at 1440, 72px at 1280, 32px below). The quiz card is narrower
+   than the content column, so its gutter fits 70% earlier: shown from 1024. */
 @media (min-width: 1440px) {
     .sprig-hanging {
         display: block;
+    }
+}
+
+/* 1280-1439: the gutter is 72-152px and the free band is shallow (the hero
+   eyebrow sits at y 223, the Brew Methods h2 at y 2703), so the full cluster
+   cannot fit without covering text. The same two pieces render at about half
+   size, fully inside the gutter: no crop, no text overlap. */
+@media (min-width: 1280px) and (max-width: 1439px) {
+    .sprig-hanging:not(.sprig-hanging--custom) {
+        display: block;
+        --h: clamp(122px, 9.3vw, 152px);
+        --nudge: -16px;
     }
 }
 
