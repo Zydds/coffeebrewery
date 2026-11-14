@@ -114,7 +114,11 @@
     <x-wave-divider from-color="espresso" to-color="latte" class="relative z-10" />
 
     {{-- Bean catalog --}}
-    <section id="bean-catalog" class="relative isolate max-w-[1200px] mx-auto px-5 sm:px-8 section-top">
+    {{-- z-20 lifts the section above the wave divider (z-10) so a side sprig
+         that overhangs the top edge paints over it instead of being clipped
+         by it. The section box starts below the divider, so nothing else
+         changes. --}}
+    <section id="bean-catalog" class="relative isolate z-20 max-w-[1200px] mx-auto px-5 sm:px-8 section-top">
         <x-sprig-side side="left" top="4.6" />
         <div data-reveal-stagger class="flex flex-wrap items-end justify-between gap-6">
             <h2 class="font-display font-bold text-section">{{ __('Bean Catalog') }}</h2>
