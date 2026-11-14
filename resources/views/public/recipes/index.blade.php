@@ -6,7 +6,10 @@
 
 @section('content')
     <div class="relative isolate max-w-[1200px] mx-auto px-5 sm:px-8 py-[88px]">
-        <x-sprig-hanging variant="recipes" side="right" />
+        {{-- The chips and search fill the header, so the only band wide and
+             tall enough is the page's top padding above them. The navbar caps
+             the branch at 250px (an ink height of 132px fits the 178px band). --}}
+        <x-sprig-side side="right" top="10.6" class="sprig-side--recipes" />
         <div class="flex flex-wrap items-end justify-between gap-6">
             <h1 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Recipes') }}</h1>
 

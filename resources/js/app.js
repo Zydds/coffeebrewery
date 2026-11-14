@@ -566,11 +566,12 @@ document.addEventListener('DOMContentLoaded', () => {
         revealEls.forEach((el) => el.classList.add('in-view'));
     }
 
-    // Decorative sprigs: one 3° settle when a loose sprig enters the
-    // viewport, and one 2° swing for a hanging cluster. CSS owns both
-    // tweens; this only flips the class once. The resting angle is already
-    // the no-JS / reduced-motion state.
-    const sprigs = document.querySelectorAll('.sprig, .sprig-hanging');
+    // Decorative sprigs: one 2° sway when a side branch enters the
+    // viewport, around its edge end. CSS owns the tween; this only flips
+    // the class once. The resting angle is already the no-JS /
+    // reduced-motion state. The 0x0 anchor sits outside the viewport, so
+    // observe the art (its box crosses the edge) and settle the anchor.
+    const sprigs = document.querySelectorAll('.sprig-side');
 
     if ('IntersectionObserver' in window && sprigs.length && !prefersReduced()) {
         const sprigObserver = new IntersectionObserver((entries) => {
@@ -579,7 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                entry.target.classList.add('is-settled');
+                entry.target.closest('.sprig-side')?.classList.add('is-settled');
                 sprigObserver.unobserve(entry.target);
             });
         }, {
@@ -587,7 +588,7 @@ document.addEventListener('DOMContentLoaded', () => {
             rootMargin: '0px 0px -40px 0px',
         });
 
-        sprigs.forEach((el) => sprigObserver.observe(el));
+        sprigs.forEach((el) => sprigObserver.observe(el.querySelector('.sprig-side__art') || el));
     }
 
     // Hero tilt: mouse only (fine pointer), max 3 degrees per axis, and

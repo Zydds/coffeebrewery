@@ -8,7 +8,6 @@
     {{-- Page header: same card-panel style as the cafe map page.
          pt-6 keeps the gap tight (navbar is sticky, nothing to clear). --}}
     <div class="relative isolate max-w-[1200px] mx-auto px-5 sm:px-8 pt-6 pb-5">
-        <x-sprig-hanging variant="cheap" side="left" />
         <div class="rounded-2xl border border-coffee-mocha/40 bg-coffee-cream p-5 sm:p-6">
             <div class="flex items-center gap-3">
                 <span class="grid h-11 w-11 place-items-center rounded-xl bg-coffee-amber text-coffee-espresso shrink-0">
@@ -75,7 +74,8 @@
 
     {{-- Cheap brew methods: cream band, matching the home page --}}
     <div class="bg-coffee-cream">
-        <section id="brew-methods" class="max-w-[1200px] mx-auto px-5 sm:px-8 section-top pb-22">
+        <section id="brew-methods" class="relative isolate max-w-[1200px] mx-auto px-5 sm:px-8 section-top pb-22">
+            <x-sprig-side side="right" top="28" />
             <h2 data-reveal class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Brew Methods') }}</h2>
 
             <x-search-bar :action="route('cheap.index')" name="method_q" :placeholder="__('Search brew methods…')" :value="request('method_q')" />

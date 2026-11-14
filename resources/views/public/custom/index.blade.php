@@ -6,6 +6,7 @@
 
 @section('content')
     <div class="relative isolate max-w-[1200px] mx-auto px-5 sm:px-8 pt-16 pb-10" x-data="brewFinder()">
+        <x-sprig-side side="left" top="58" />
         <div class="max-w-2xl mx-auto text-center">
             <h1 class="font-display font-bold text-[clamp(2rem,4vw,2.75rem)]">{{ __('Find Your Brew') }}</h1>
             <p class="mt-4 text-coffee-mocha">
@@ -36,8 +37,6 @@
             {{-- Question card: fixed min-height so the footer never jumps
                  during the slide transition between steps. --}}
             <div class="relative isolate mt-4" x-show="!finished && !loading" x-cloak>
-                <x-sprig-hanging variant="custom" side="left" />
-                <x-sprig-hanging variant="custom" side="right" />
                 <div x-ref="questions"
                      class="rounded-3xl border border-coffee-mocha/30 bg-coffee-cream p-6 sm:p-8"
                      style="min-height: 280px">

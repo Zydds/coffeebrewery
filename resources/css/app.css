@@ -181,33 +181,15 @@ html.js-motion .reveal.is-revealed {
 }
 
 /* ── Decorative sprigs ──────────────────────────────────── */
-/* Illustration only, never UI. The host section isolates its stacking
-   context so z-index -1 sits above that section's background and below
-   its content. Hidden below 768px, and no pointer events at any size.
-   One-shot 3° settle on viewport entry, driven by app.js; without JS
-   (or with reduced motion) the sprig renders at its resting angle. */
+/* Illustration only, never UI: `aria-hidden`, no pointer events, and
+   `z-index: -1` inside an `isolate` section. The only sprigs on the site
+   are side-entry branches; nothing hangs from or grows out of a section's
+   top or bottom edge. */
 .sprig {
     position: absolute;
     z-index: -1;
-    display: none;
     pointer-events: none;
-    opacity: 0.5;
-    transform-origin: center;
-}
-
-@media (min-width: 768px) {
-    .sprig {
-        display: block;
-    }
-}
-
-html.js-motion .sprig {
-    rotate: 3deg;
-    transition: rotate 900ms var(--ease-out);
-}
-
-html.js-motion .sprig.is-settled {
-    rotate: 0deg;
+    opacity: 1;
 }
 
 /* The roast band needs a lighter olive or the leaves disappear. Still
@@ -215,25 +197,16 @@ html.js-motion .sprig.is-settled {
 .sprig-tone-dark {
     --leaf-dark: #8d9660;
     --leaf-light: #c7cba4;
-    opacity: 0.5;
 }
 
-@media (prefers-reduced-motion: reduce) {
-    html.js-motion .sprig {
-        rotate: 0deg;
-        transition: none;
-    }
-}
-
-.sprig-hanging {
-    --h: clamp(300px, 21.5vw, 560px);
-    /* 8deg of tilt spreads a 300px+ branch to ~0.6 * --h. The 1440 gutter
-       is 120px, so the cluster nudges 40px into the container padding: the
-       only pixels that cross the content edge are the top of the stem,
-       above every heading. */
-    --nudge: -40px;
+/* A 0x0 anchor just outside the viewport edge, at `top` inside its section.
+   The branch is rotated to run horizontally around its base end, which sits
+   10% of the branch length outside the edge, so the cut stem is always
+   cropped by a few pixels. Length follows the free area (200-320px) and
+   thickness scales with it. */
+.sprig-side {
+    --len: calc(clamp(200px, 16vw, 320px) * var(--sprig-scale, 1));
     position: absolute;
-    top: -47px;
     z-index: -1;
     display: none;
     width: 0;
@@ -241,149 +214,77 @@ html.js-motion .sprig.is-settled {
     pointer-events: none;
 }
 
-/* 1440 is the first width where the full-size cluster fits a side gutter
-   (152px at 1440, 72px at 1280, 32px below). The quiz card is narrower
-   than the content column, so its gutter fits 70% earlier: shown from 1024. */
-@media (min-width: 1440px) {
-    .sprig-hanging {
-        display: block;
-    }
+.sprig-side--left {
+    left: calc(50% - 50vw - var(--len) * 0.1);
 }
 
-/* 1280-1439: the gutter is 72-152px and the free band is shallow (the hero
-   eyebrow sits at y 223, the Brew Methods h2 at y 2703), so the full cluster
-   cannot fit without covering text. The same two pieces render at about half
-   size, fully inside the gutter: no crop, no text overlap. */
-@media (min-width: 1280px) and (max-width: 1439px) {
-    .sprig-hanging:not(.sprig-hanging--custom) {
-        display: block;
-        --h: clamp(122px, 9.3vw, 152px);
-        --nudge: -16px;
-    }
+.sprig-side--right {
+    right: calc(50% - 50vw - var(--len) * 0.1);
 }
 
-/* The catalog hangs from the dark stats wave and Surprise from the wave
-   above its roast band; both start higher than a plain section edge so the
-   cut stem end stays behind the wave instead of floating in the band. */
-.sprig-hanging--catalog {
-    top: -72px;
-}
-
-.sprig-hanging--surprise {
-    top: -74px;
-}
-
-html .sprig-hanging .sprig {
+.sprig-side .sprig-side__art {
     display: block;
+    position: absolute;
+    width: calc(var(--len) * 0.6468);
+    height: calc(var(--len) * 1.068);
     opacity: 1;
     rotate: 0deg;
     transition: none;
 }
 
-/* The whole cluster swings once around the 0x0 anchor, which is the root. */
-html.js-motion .sprig-hanging {
-    rotate: 2deg;
-    transform-origin: 50% 0;
-    transition: rotate 1200ms var(--ease-out);
+/* 114deg turns the diagonal branch horizontal with a 10deg droop; the
+   right side mirrors the art and the angle. Only the stem base is cropped. */
+.sprig-side--left .sprig-side__art {
+    top: calc(var(--len) * -1.004);
+    left: calc(var(--len) * -0.629);
+    transform: rotate(114deg);
+    transform-origin: 97.4% 94.1%;
 }
 
-html.js-motion .sprig-hanging.is-settled {
-    rotate: 0deg;
+.sprig-side--right .sprig-side__art {
+    top: calc(var(--len) * -1.004);
+    right: calc(var(--len) * -0.629);
+    transform: rotate(-114deg);
+    transform-origin: 2.6% 94.1%;
 }
 
-@media (prefers-reduced-motion: reduce) {
-    html.js-motion .sprig-hanging {
-        rotate: 0deg;
-        transition: none;
-    }
-}
-
-.sprig-hanging .sprig-piece {
-    position: absolute;
-}
-
-.sprig-hanging .sprig-piece--a {
-    top: 0;
-    height: var(--h);
-    width: auto;
-    transform: rotate(var(--a-tilt, 8deg));
-    transform-origin: 95% 6%;
-}
-
-.sprig-hanging .sprig-piece--b {
-    top: calc(var(--h) * 0.55);
-    width: calc(var(--h) * var(--b-w, 0.62));
-    height: auto;
-    transform: rotate(var(--b-tilt, 18deg));
-}
-
-.sprig-hanging .sprig-piece--pair {
-    transform-origin: 16% 5%;
-}
-
-.sprig-hanging .sprig-piece--leaf {
-    transform-origin: 36% 12%;
-}
-
-.sprig-hanging--left .sprig-piece {
-    right: var(--nudge);
-}
-
-.sprig-hanging--right .sprig-piece {
-    left: var(--nudge);
-}
-
-.sprig-hanging--right .sprig-piece--a {
-    transform: rotate(calc(-1 * var(--a-tilt, 8deg)));
-    transform-origin: 5% 6%;
-}
-
-.sprig-hanging--right .sprig-piece--b {
-    transform: rotate(calc(-1 * var(--b-tilt, 18deg)));
-}
-
-.sprig-hanging--right .sprig-piece--pair {
-    transform-origin: 84% 5%;
-}
-
-.sprig-hanging--right .sprig-piece--leaf {
-    transform-origin: 64% 12%;
-}
-
-.sprig-hanging--left:not(.sprig-hanging--custom) {
-    left: calc(max(0px, 50% - 600px) + 32px);
-}
-
-.sprig-hanging--right:not(.sprig-hanging--custom) {
-    right: calc(max(0px, 50% - 600px) + 32px);
-}
-
-/* Quiz card: narrower than the content column, so the cluster anchors to
-   the card and the root tucks under its top corner. */
-.sprig-hanging--custom {
-    top: 18px;
-}
-
-.sprig-hanging--custom.sprig-hanging--left {
-    left: 26px;
-}
-
-.sprig-hanging--custom.sprig-hanging--right {
-    right: 26px;
-}
-
-@media (min-width: 1024px) {
-    .sprig-hanging--custom {
+/* Below 1280 the side bands (32px) cannot fit a 120px branch plus 24px
+   clearance. */
+@media (min-width: 1280px) {
+    .sprig-side {
         display: block;
     }
 }
 
-/* The leaf sits lower and smaller than the pair so the cluster reads as a
-   branch with one shoot, not two identical twigs. */
-.sprig-hanging .sprig-piece--leaf {
-    --b-w: 0.55;
-    --b-tilt: 20deg;
-    top: calc(var(--h) * 0.6);
+/* The catalog band between the filter pills and the cards is only ~112px
+   tall. A 116px branch (ink 63px) is the only size that keeps 24px clear of
+   both, so this instance stays under the usual 200px floor at every width. */
+.sprig-side--catalog {
+    --len: 116px;
+}
+
+/* The recipes header band runs from the navbar (bottom 72px) to the chips
+   (250px). 250px keeps its ink at 132px so it clears both. */
+.sprig-side--recipes {
+    --len: clamp(200px, 13vw, 250px);
+}
+
+/* One 2deg sway around the edge end, once, on first viewport entry.
+   app.js only flips the class; the resting angle is the no-JS state. */
+html.js-motion .sprig-side {
+    rotate: 2deg;
+    transition: rotate 1200ms var(--ease-out);
+}
+
+html.js-motion .sprig-side.is-settled {
+    rotate: 0deg;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.js-motion .sprig-side {
+        rotate: 0deg;
+        transition: none;
+    }
 }
 
 /* ── Catalog card hover ─────────────────────────────────── */

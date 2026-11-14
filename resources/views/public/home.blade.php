@@ -7,9 +7,8 @@
     <section class="relative isolate bg-coffee-cream">
         {{-- The wave layers belong to the section, not to the cup drawing:
              they span the full width and are clipped by the page wrapper's
-             overflow-x: clip, never by the section, so the sprig group can
-             sit on the waterline. The SVG is twice as wide as the section so
-             the scroll shift can never expose a side edge. --}}
+             overflow-x: clip, never by the section. The SVG is twice as wide
+             as the section so the scroll shift can never expose a side edge. --}}
         <div class="pointer-events-none absolute inset-x-0 -bottom-0.5 h-44 sm:h-56 lg:h-64" aria-hidden="true">
             <svg class="h-full w-[200%] -translate-x-1/4" viewBox="0 0 1440 240" preserveAspectRatio="none">
                 <g class="wave-drift wave-back">
@@ -20,8 +19,6 @@
                 </g>
             </svg>
         </div>
-
-        <x-sprig-hanging variant="hero" side="left" />
 
         <div class="relative max-w-[1200px] mx-auto px-5 sm:px-8 py-16 lg:py-[72px] grid gap-10 lg:grid-cols-[1.1fr_.9fr] items-center">
             <div data-reveal-stagger>
@@ -118,7 +115,7 @@
 
     {{-- Bean catalog --}}
     <section id="bean-catalog" class="relative isolate max-w-[1200px] mx-auto px-5 sm:px-8 section-top">
-        <x-sprig-hanging variant="catalog" side="right" />
+        <x-sprig-side side="right" top="18.55" class="sprig-side--catalog" />
         <div data-reveal-stagger class="flex flex-wrap items-end justify-between gap-6">
             <h2 class="font-display font-bold text-section">{{ __('Bean Catalog') }}</h2>
             <div class="relative flex flex-wrap gap-2" role="navigation" aria-label="{{ __('Filter beans by type') }}" data-filter-pills>
@@ -268,7 +265,7 @@
         <x-marquee />
 
         <section id="brew-methods" class="relative isolate max-w-[1200px] mx-auto px-5 sm:px-8 section-top pb-22">
-            <x-sprig-hanging variant="methods" side="left" />
+            <x-sprig-side side="right" top="25" />
             <h2 data-reveal class="font-display font-bold text-section">{{ __('Brew Methods') }}</h2>
 
             <x-search-bar :action="route('home')" name="method_q" :placeholder="__('Search brew methods…')" :value="request('method_q')" />
@@ -296,5 +293,5 @@
          into the section. --}}
     <x-wave-divider from-color="cream" to-color="roast" class="relative z-10" />
 
-    <x-surprise-section :sprig="true" />
+    <x-surprise-section />
 @endsection
