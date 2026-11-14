@@ -115,7 +115,7 @@
 
     {{-- Bean catalog --}}
     <section id="bean-catalog" class="relative isolate max-w-[1200px] mx-auto px-5 sm:px-8 section-top">
-        <x-sprig-side side="right" top="18.55" class="sprig-side--catalog" />
+        <x-sprig-side side="left" top="4.6" />
         <div data-reveal-stagger class="flex flex-wrap items-end justify-between gap-6">
             <h2 class="font-display font-bold text-section">{{ __('Bean Catalog') }}</h2>
             <div class="relative flex flex-wrap gap-2" role="navigation" aria-label="{{ __('Filter beans by type') }}" data-filter-pills>

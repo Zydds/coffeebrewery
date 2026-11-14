@@ -256,13 +256,6 @@ html.js-motion .reveal.is-revealed {
     }
 }
 
-/* The catalog band between the filter pills and the cards is only ~112px
-   tall. A 116px branch (ink 63px) is the only size that keeps 24px clear of
-   both, so this instance stays under the usual 200px floor at every width. */
-.sprig-side--catalog {
-    --len: 116px;
-}
-
 /* The recipes header band runs from the navbar (bottom 72px) to the chips
    (250px). 250px keeps its ink at 132px so it clears both. */
 .sprig-side--recipes {
