@@ -19,6 +19,8 @@ class Recipe extends Model
         'step_by_step',
         'is_featured',
         'cheap',
+        'image_url',
+        'image_public_id',
     ];
 
     protected function casts(): array

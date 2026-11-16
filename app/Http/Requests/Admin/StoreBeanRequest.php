@@ -14,9 +14,23 @@ class StoreBeanRequest extends FormRequest
 
     public function rules(): array
     {
+        $rules = self::fieldRules();
+
+        $rules['name'][] = new UniqueSlug('coffee_beans', $this->route('bean'));
+        $rules['image'] = 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096';
+
+        return $rules;
+    }
+
+    /**
+     * Column rules shared by the admin form and the CSV importer, so both
+     * paths validate the same fields the same way.
+     */
+    public static function fieldRules(): array
+    {
         return [
             'category_id' => 'required|exists:categories,id',
-            'name' => ['required', 'string', 'max:150', new UniqueSlug('coffee_beans', $this->route('bean'))],
+            'name' => ['required', 'string', 'max:150'],
             'origin_country' => 'required|string|max:100',
             'acidity_level' => 'required|integer|between:1,5',
             'body_level' => 'required|integer|between:1,5',
@@ -27,7 +41,9 @@ class StoreBeanRequest extends FormRequest
             'flavor_notes.*' => 'string|max:40',
             'recommended_drinks' => 'nullable|array|max:6',
             'recommended_drinks.*' => 'string|max:60',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+            'recommended_methods' => 'nullable|array|max:6',
+            'recommended_methods.*' => 'string|exists:brew_methods,slug',
+            'image_url' => 'nullable|string|max:255',
         ];
     }
 

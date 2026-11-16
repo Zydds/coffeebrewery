@@ -49,6 +49,10 @@
                    class="flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium transition-colors {{ request()->routeIs('admin.categories.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
                     Categories
                 </a>
+                <a href="{{ route('admin.import.create') }}"
+                   class="flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium transition-colors {{ request()->routeIs('admin.import.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
+                    Import
+                </a>
 
                 <div class="pt-4 mt-4 border-t border-coffee-roast">
                     <a href="{{ route('home') }}"

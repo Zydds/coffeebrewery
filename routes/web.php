@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\BeanController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\MethodController;
 use App\Http\Controllers\Admin\RecipeController;
 use App\Http\Controllers\BrewFinderController;
@@ -34,6 +35,12 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::resource('beans', BeanController::class)->except(['show']);
         Route::resource('methods', MethodController::class)->except(['show']);
         Route::resource('recipes', RecipeController::class)->except(['show']);
+
+        Route::get('import', [ImportController::class, 'create'])->name('import.create');
+        Route::get('import/template/{type}', [ImportController::class, 'template'])->name('import.template');
+        Route::post('import/preview', [ImportController::class, 'preview'])->name('import.preview');
+        Route::post('import/commit', [ImportController::class, 'commit'])->name('import.commit');
+        Route::get('import/failed', [ImportController::class, 'failed'])->name('import.failed');
     });
 });
 

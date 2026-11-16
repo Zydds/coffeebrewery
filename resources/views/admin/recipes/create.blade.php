@@ -9,7 +9,7 @@
     </div>
 
     <div class="mt-6 max-w-2xl rounded-lg border border-coffee-mocha/30 bg-white p-6">
-        <form method="POST" action="{{ route('admin.recipes.store') }}">
+        <form method="POST" action="{{ route('admin.recipes.store') }}" enctype="multipart/form-data">
             @csrf
 
             <div>
@@ -70,6 +70,15 @@
                 <x-text-input id="ratio" name="ratio" type="text" class="mt-1 block w-full focus:border-coffee-amber focus:ring-coffee-amber"
                               :value="old('ratio')" placeholder="e.g. 1:15 (18g / 270g)" required maxlength="50" />
                 <x-input-error :messages="$errors->get('ratio')" class="mt-2" />
+            </div>
+
+            <div class="mt-4">
+                <x-input-label for="image" value="Image" />
+                <input id="image" name="image" type="file"
+                       accept="image/jpg,image/jpeg,image/png,image/webp"
+                       class="mt-1 block w-full text-sm text-coffee-mocha" />
+                <p class="mt-1 text-xs text-coffee-mocha">JPG, PNG or WebP - max 4MB</p>
+                <x-input-error :messages="$errors->get('image')" class="mt-2" />
             </div>
 
             <div class="mt-4">

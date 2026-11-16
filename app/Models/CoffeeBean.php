@@ -20,6 +20,7 @@ class CoffeeBean extends Model
         'is_cheap',
         'flavor_notes',
         'recommended_drinks',
+        'recommended_methods',
         'image_url',
         'image_public_id',
     ];
@@ -29,6 +30,7 @@ class CoffeeBean extends Model
         return [
             'flavor_notes' => 'array',
             'recommended_drinks' => 'array',
+            'recommended_methods' => 'array',
             'price' => 'decimal:2',
             'is_cheap' => 'boolean',
         ];

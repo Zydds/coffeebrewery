@@ -1,6 +1,6 @@
 # Coffeebrewery Architecture
 
-This document is a snapshot, not a rulebook. Change it when the stack changes, and record the date and reason in the Decision log at the bottom. Where this document and the code disagree, the code wins; mismatches are flagged in section 10. Verified against the repository on 6 November 2026; no secret values are listed.
+This document is a snapshot, not a rulebook. Change it when the stack changes, and record the date and reason in the Decision log at the bottom. Where this document and the code disagree, the code wins; mismatches are flagged in section 10. Verified against the repository on 16 November 2026; no secret values are listed.
 
 ## 1. Tech stack
 
@@ -72,7 +72,7 @@ The controller sorts the quick filter by `brew_time_min` and paginates at 9. Vit
 
 ### 3.2 Admin saving content with an image
 
-**Mismatch:** the request asked for "admin saving a recipe with an image upload", but `recipes` has no image column and the recipe form has no file input. Only beans and methods upload images. The diagram below shows the real bean path.
+Beans, methods, and recipes all use the same path; recipes upload to `coffee-app/recipes`.
 
 ```mermaid
 sequenceDiagram
@@ -81,19 +81,29 @@ sequenceDiagram
     participant L as Laravel
     participant DB as Neon
     participant C as Cloudinary
-    A->>V: POST /admin/beans (multipart)
+    A->>V: POST /admin/beans or /admin/recipes (multipart)
     V->>L: forward request
     L->>L: auth, admin middleware, validation
-    L->>C: upload to coffee-app/beans
+    L->>C: upload to coffee-app/{type}
     C-->>L: secure_url and public_id
-    L->>DB: INSERT coffee_beans
-    DB-->>L: new id
-    L-->>A: 302 /admin/beans and flash
+    L->>DB: INSERT or UPDATE row
+    DB-->>L: row id
+    L-->>A: 302 to the admin index and flash
 ```
 
 On edit, `CatalogWriter` uploads the new file before `CloudinaryUploader::replace()` deletes the old public id. On delete, `CatalogWriter` removes the row first and the image second; a foreign-key failure is caught and shown as a flash error, and an image failure only orphans the asset.
 
-### 3.3 JSON API contract
+### 3.3 Admin CSV import
+
+`CatalogImporter` reads the same file twice: `preview()` parses and validates without writing, `commit()` repeats the pass and writes inside one transaction. Both passes call `fieldRules()` on `StoreBeanRequest` / `StoreRecipeRequest`, so the preview and the commit cannot disagree and there is no second copy of the column rules. The uploaded file is copied to `sys_get_temp_dir()` and its path is kept in the session between the two steps.
+
+- Match key is `slug`; a blank slug comes from the name/title. An existing slug updates that row, otherwise the row is created.
+- Recipes resolve `bean_slug` and `method_slug` to ids; an unknown slug fails the row.
+- Blank optional cells are dropped from the payload, so a re-import never clears an image, price, or unit.
+- Limits: 500 rows, 1 MB, UTF-8, comma delimiter. Multi-value cells use `|`.
+- Failed rows are returned in the result page and streamed as a CSV with a `reason` column. `image_url` is stored verbatim; the importer never calls Cloudinary.
+
+### 3.4 JSON API contract
 
 `routes/api.php` serves three same-origin endpoints. Their keys are a contract with `resources/js/app.js` and `resources/js/cafes.js`; `RecipeReadTest` and `CafeMapTest` assert the exact key sets, so a rename fails the suite instead of silently breaking the UI.
 
@@ -113,7 +123,7 @@ There is no URL version prefix. The endpoints are internal and unversioned on pu
 | Vercel edge | TLS, routing, one PHP function (planned) | Request metadata, environment variables, function logs. Not durable disk. |
 | Laravel | Routing, controllers, Form Requests, Blade, auth, admin, CLI imports | Neon through PDO, Cloudinary API, `/tmp`, environment. |
 | Neon PostgreSQL | Catalog, cafe, session, cache, queue tables | Only the Laravel database user. The browser never connects. |
-| Cloudinary | Bean and method images | Laravel writes and deletes; the browser only reads returned URLs. |
+| Cloudinary | Bean, method, and recipe images | Laravel writes and deletes; the browser only reads returned URLs. The CSV import never calls Cloudinary. |
 | CARTO and OpenStreetMap | Basemap tiles and OSM source data | The browser reads tiles. The import command reads Overpass. No user data is sent. |
 | Bunny Fonts and Google Maps | Font files, directions page | Browser requests only. |
 
@@ -125,15 +135,15 @@ Only the folders that carry architectural weight.
 
 | Path | Responsibility |
 |---|---|
-| `app/Http/Controllers/` | Public catalog, recipe, cafe, JSON API, admin, auth, and profile controllers |
-| `app/Http/Middleware/`, `Requests/` | `SetLocale` (session on web, `?locale=` on the stateless API); `EnsureUserIsAdmin`; `CafeMapRequest` and the admin form requests |
+| `app/Http/Controllers/` | Public catalog, recipe, cafe, JSON API, admin, auth, and profile controllers; `Admin\ImportController` runs the CSV preview/commit flow |
+| `app/Http/Middleware/`, `Requests/` | `SetLocale` (session on web, `?locale=` on the stateless API); `EnsureUserIsAdmin`; `CafeMapRequest` and the admin form requests, whose static `fieldRules()` is shared with the importer |
 | `app/Http/Resources/` | `CafeResource`, the stable pin payload for `cafes.js` |
 | `app/Models/` | `Category`, `CoffeeBean`, `BrewMethod`, `Recipe`, `Cafe`, `CafeArea`, `Wilayah`, `User` |
-| `app/Services/`, `Console/Commands/` | `CatalogWriter` and `CloudinaryUploader`; `RecipeMatcher`; `CafeImporter`, `AreaAssigner`, `OverpassClient`; `wilayah:import` and `import:cafes` |
+| `app/Services/`, `Console/Commands/` | `CatalogWriter` and `CloudinaryUploader`; `CatalogImporter` (CSV preview and commit); `RecipeMatcher`; `CafeImporter`, `AreaAssigner`, `OverpassClient`; `wilayah:import` and `import:cafes` |
 | `app/Rules/` | `UniqueSlug`, shared by the four admin form requests |
 | `app/Support/` | `CafeMapPage` (café cascade, counts, bounds, bootstrap); `RecipeSeo` (meta, share image, Recipe JSON-LD) |
 | `bootstrap/app.php`, `config/` | Routing, middleware aliases, and app/database/session/cache/`cafes.php` config |
-| `database/migrations/`, `seeders/` | 12 migrations including session, cache, and job tables; seed catalog and admin |
+| `database/migrations/`, `seeders/` | 14 migrations including session, cache, and job tables; seed catalog and admin |
 | `lang/` | Indonesian JSON and auth/password translation files |
 | `resources/css/`, `resources/js/` | Tailwind entry and tokens; `cafes.css` (loaded by the `cafes.js` entry); `app.js`, `cafes.js`, `easing.js`, `bootstrap.js` |
 | `resources/views/` | `layouts`, `components`, `public`, `admin`, `auth`, `profile` |
@@ -170,6 +180,7 @@ erDiagram
         string slug UK
         boolean is_cheap
         decimal price
+        json recommended_methods
     }
     BREW_METHODS {
         bigint id PK
@@ -184,6 +195,8 @@ erDiagram
         int brew_time_min
         boolean cheap
         boolean is_featured
+        string image_url
+        string image_public_id
     }
     WILAYAH {
         string kode PK
@@ -206,6 +219,8 @@ erDiagram
 Relations:
 
 - `categories` 1 to many `coffee_beans`; `coffee_beans` and `brew_methods` each 1 to many `recipes`. `recipes` requires both parents, and both foreign keys use `restrictOnDelete`.
+- `coffee_beans.recommended_drinks` and `recommended_methods` are nullable JSON arrays of drink names and `brew_methods.slug` values. They are display hints only, so there is no pivot table and no foreign key.
+- `recipes.image_url` and `image_public_id` mirror the bean columns and are written by `CatalogWriter` from the recipe form; the CSV importer stores `image_url` verbatim and leaves `image_public_id` null.
 - `wilayah` stores official province and city/regency codes. `parent_kode` points to a province row; it is not a database foreign key.
 - `cafes.region_kode` and `cafe_areas.region_kode` match `wilayah.kode` logically, with no constraint. Cafes carry address, hours, raw OSM tags, `area_name`, and `last_seen_at`; rows upsert by `(osm_id, osm_type)` and are flagged `is_missing`, never deleted.
 - Framework tables not shown: `sessions`, `cache`, `cache_locks`, `jobs`, `job_batches`, `failed_jobs`, `migrations`, `password_reset_tokens`.
@@ -271,6 +286,7 @@ Current restriction is `auth` plus the `admin` middleware checking `users.is_adm
 - **Cloudinary is a dev dependency.** It is in `require-dev`, but admin image uploads need it in production. `composer install --no-dev` drops the package and breaks uploads.
 - **Cold starts and ephemeral disk.** Vercel archives idle functions; Neon free tiers can pause. File sessions, file cache, and compiled views cannot persist, and current defaults use database sessions and cache, adding a write per request.
 - **Upload ceiling.** Vercel accepts 4.5 MB per request. The admin image rule is 4 MB, close to the edge; larger files fail before Laravel validates them.
+- **CSV import keeps a temp file between two requests.** `ImportController` copies the upload to `sys_get_temp_dir()` and stores the path in the session, so preview and commit must land on an instance that shares that disk. That holds locally and on a single container, but not necessarily on Vercel Functions, where `/tmp` is per-instance. Keep the import on one instance or move the pending file to object storage before relying on it in production.
 - **No queue worker or scheduler.** `QUEUE_CONNECTION` defaults to database and there is no worker. Catalog and cafe imports are manual CLI commands, which blocks background jobs.
 - **Database connections.** Every warm function instance can open its own Neon connection. Use a pooled endpoint and check the connection ceiling; the production topology is TBD.
 - **Content is English only in the database.** Indonesian covers interface strings and exact-match stored strings. New recipes, beans, and methods are not localized.
@@ -312,4 +328,5 @@ Current restriction is `auth` plus the `admin` middleware checking `users.is_adm
 | 2026-11-01 | CARTO Positron tiles and map polish | Lighter basemap and clearer popups (`75d0d1a`, `23d0eac`) |
 | 2026-11-02 | UI redesign phases 1 and 2 | Shared tokens, home and bean detail (`56580c1`, `73335eb`, `7074edb`) |
 | 2026-11-06 | PRD and architecture documents | Onboarding and decision record |
+| 2026-11-16 | Admin CSV import, recipe images, `recommended_methods` | Bulk catalog entry with one validation source; manual Cloudinary upload for recipes; method hints on beans |
 | TBD (planned) | Vercel with `vercel-php`; admin IP allowlist | Free PHP hosting and extra `/admin` protection, not yet in code |

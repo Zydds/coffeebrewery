@@ -32,7 +32,12 @@ class RecipeController extends Controller
 
     public function store(StoreRecipeRequest $request)
     {
-        $this->writer->save(new Recipe, $request->validated());
+        $this->writer->save(
+            new Recipe,
+            $request->validated(),
+            $request->file('image'),
+            'coffee-app/recipes'
+        );
 
         return redirect()->route('admin.recipes.index')
             ->with('success', 'Recipe created.');
@@ -48,7 +53,12 @@ class RecipeController extends Controller
 
     public function update(StoreRecipeRequest $request, Recipe $recipe)
     {
-        $this->writer->save($recipe, $request->validated());
+        $this->writer->save(
+            $recipe,
+            $request->validated(),
+            $request->file('image'),
+            'coffee-app/recipes'
+        );
 
         return redirect()->route('admin.recipes.index')
             ->with('success', 'Recipe updated.');
