@@ -54,6 +54,37 @@ class ViewSmokeTest extends TestCase
         $this->getJson('/api/recipes/random?quick=1')->assertOk();
     }
 
+    public function test_catalog_pagination_links_keep_the_section_anchor(): void
+    {
+        $category = Category::firstOrFail();
+
+        foreach ([false, true] as $cheap) {
+            foreach (range(1, 12) as $i) {
+                CoffeeBean::create([
+                    'category_id' => $category->id,
+                    'name' => ($cheap ? 'Cheap' : 'Paging')." Bean {$i}",
+                    'slug' => ($cheap ? 'cheap-paging' : 'paging')."-bean-{$i}",
+                    'origin_country' => 'Indonesia',
+                    'acidity_level' => 3,
+                    'body_level' => 3,
+                    'is_cheap' => $cheap,
+                    'flavor_notes' => ['Sweet'],
+                    'recommended_drinks' => [],
+                ]);
+            }
+        }
+
+        $this->get('/?bean_page=2')
+            ->assertOk()
+            ->assertSee('bean_page=1#bean-catalog', false)
+            ->assertSee('bean_page=3#bean-catalog', false);
+
+        $this->get('/cheap?bean_page=2')
+            ->assertOk()
+            ->assertSee('bean_page=1#bean-catalog', false)
+            ->assertSee('bean_page=3#bean-catalog', false);
+    }
+
     public function test_quick_filter_only_shows_quick_recipes(): void
     {
         $this->get('/recipes?quick=1')

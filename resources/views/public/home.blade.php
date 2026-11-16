@@ -128,11 +128,11 @@
                      change slides it instead of swapping backgrounds. --}}
                 <span data-filter-pill aria-hidden="true"
                       class="pointer-events-none absolute left-0 top-0 rounded-full bg-coffee-espresso"></span>
-                <x-chip :href="route('home', array_filter(['q' => request('q')]))" :active="request('category') === null">
+                <x-chip :href="route('home', array_filter(['q' => request('q')])).'#bean-catalog'" :active="request('category') === null">
                     {{ __('All') }}
                 </x-chip>
                 @foreach ($categories as $category)
-                    <x-chip :href="route('home', array_filter(['q' => request('q'), 'category' => $category->slug]))"
+                    <x-chip :href="route('home', array_filter(['q' => request('q'), 'category' => $category->slug])).'#bean-catalog'"
                             :active="request('category') === $category->slug">
                         {{ $category->name }}
                     </x-chip>
@@ -140,7 +140,7 @@
             </div>
         </div>
 
-        <x-search-bar :action="route('home')" :placeholder="__('Search beans…')" :value="request('q')" :preserves="['category' => request('category')]" />
+        <x-search-bar :action="route('home').'#bean-catalog'" :placeholder="__('Search beans…')" :value="request('q')" :preserves="['category' => request('category')]" />
 
         @php
             // A full block tiles exactly: the featured 2x2 plus four small
@@ -179,7 +179,7 @@
                 @endif
                 @if (request()->filled('q') || request()->filled('category'))
                     <span aria-hidden="true">·</span>
-                    <a href="{{ route('home') }}"
+                    <a href="{{ route('home').'#bean-catalog' }}"
                        class="font-semibold text-coffee-amber-ink hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink rounded-sm">
                         {{ __('Clear search & filters') }}
                     </a>
@@ -256,7 +256,7 @@
             </div>
         @endif
 
-        <x-page-arrows :paginator="$featuredBeans" />
+        <x-page-arrows :paginator="$featuredBeans" anchor="bean-catalog" />
     </section>
 
     {{-- Cream band. The divider makes the latte-to-cream change flow: it
@@ -272,7 +272,7 @@
             <x-sprig-side side="right" top="25" />
             <h2 data-reveal class="font-display font-bold text-section">{{ __('Brew Methods') }}</h2>
 
-            <x-search-bar :action="route('home')" name="method_q" :placeholder="__('Search brew methods…')" :value="request('method_q')" />
+            <x-search-bar :action="route('home').'#brew-methods'" name="method_q" :placeholder="__('Search brew methods…')" :value="request('method_q')" />
 
             <div class="mt-8 grid grid-cols-2 items-start md:grid-cols-3 lg:grid-cols-4 gap-6 [view-transition-name:method-results]">
                 @forelse ($methods as $method)
@@ -288,7 +288,7 @@
                 @endforelse
             </div>
 
-            <x-page-arrows :paginator="$methods" />
+            <x-page-arrows :paginator="$methods" anchor="brew-methods" />
         </section>
     </div>
 

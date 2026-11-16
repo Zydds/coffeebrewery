@@ -13,8 +13,8 @@ class CatalogController extends Controller
     public function welcome(Request $request)
     {
         $categories = Category::whereHas('coffeeBeans', fn ($q) => $q->where('is_cheap', false))->get();
-        $featuredBeans = $this->beanQuery($request)->latest()->paginate(8)->withQueryString();
-        $methods = $this->methodQuery($request)->paginate(8)->withQueryString();
+        $featuredBeans = $this->beanQuery($request)->latest()->paginate(8, ['*'], 'bean_page')->withQueryString();
+        $methods = $this->methodQuery($request)->paginate(8, ['*'], 'method_page')->withQueryString();
 
         // Site-wide totals for the home proof strip — deliberately NOT the
         // paginator totals, which shrink as filters are applied.
@@ -35,8 +35,8 @@ class CatalogController extends Controller
     public function cheapIndex(Request $request)
     {
         $categories = Category::whereHas('coffeeBeans', fn ($q) => $q->where('is_cheap', true))->get();
-        $beans = $this->beanQuery($request, cheap: true)->latest()->paginate(8)->withQueryString();
-        $methods = $this->methodQuery($request, cheap: true)->paginate(8)->withQueryString();
+        $beans = $this->beanQuery($request, cheap: true)->latest()->paginate(8, ['*'], 'bean_page')->withQueryString();
+        $methods = $this->methodQuery($request, cheap: true)->paginate(8, ['*'], 'method_page')->withQueryString();
 
         return view('public.cheap.index', compact('categories', 'beans', 'methods'));
     }

@@ -1,4 +1,10 @@
-@props(['paginator'])
+@props(['paginator', 'anchor' => null])
+
+@php
+    // Keep the viewport on the section that owns the paginator instead of
+    // snapping back to the top of the page on every reload.
+    $fragment = $anchor ? '#'.$anchor : '';
+@endphp
 
 @if ($paginator->hasPages())
     <nav {{ $attributes->merge(['class' => 'mt-8 flex items-center justify-center gap-4']) }} aria-label="{{ __('Page navigation') }}">
@@ -9,7 +15,7 @@
                 </svg>
             </span>
         @else
-            <a href="{{ $paginator->previousPageUrl() }}" rel="prev"
+            <a href="{{ $paginator->previousPageUrl().$fragment }}" rel="prev"
                class="grid h-11 w-11 place-items-center rounded-full border border-coffee-mocha bg-coffee-cream text-coffee-espresso transition-[background-color,color,transform] duration-150 ease-out hover:bg-coffee-espresso hover:text-coffee-latte motion-safe:active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink"
                aria-label="{{ __('Previous page') }}">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -23,7 +29,7 @@
         </span>
 
         @if ($paginator->hasMorePages())
-            <a href="{{ $paginator->nextPageUrl() }}" rel="next"
+            <a href="{{ $paginator->nextPageUrl().$fragment }}" rel="next"
                class="grid h-11 w-11 place-items-center rounded-full border border-coffee-mocha bg-coffee-cream text-coffee-espresso transition-[background-color,color,transform] duration-150 ease-out hover:bg-coffee-espresso hover:text-coffee-latte motion-safe:active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink"
                aria-label="{{ __('Next page') }}">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
