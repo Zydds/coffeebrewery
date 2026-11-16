@@ -76,7 +76,7 @@ Tailwind default breakpoints: `sm 40rem/640px`, `md 48rem/768px`, `lg 64rem/1024
 - **Admin/app container:** Breeze `max-w-7xl` (`1280px`) with `px-4 sm:px-6 lg:px-8`.
 - **Text measures:** `max-w-[420px]`, `[460px]`, `[480px]`, `[560px]`; quiz column `max-w-2xl` (`672px`).
 
-Grids: home beans are a two-card mobile snap rail, then `lg:grid-cols-4`; methods `2 / md:3 / lg:4`; recipes `1 / sm:2 / lg:3`; bean recipes `1 / sm:2`; quiz options `1 / sm:3` (drink `1 / sm:2`); hero `1 / lg:[1.1fr_.9fr]`; Surprise `1 / lg:[.85fr_1.15fr]`.
+Grids: home beans `2 / md:3 / lg:4`, four per page so one page fills one row; cheap beans `2 / md:3 / lg:4`, eight per page; methods `2 / md:3 / lg:4`; recipes `1 / sm:2 / lg:3`; bean recipes `1 / sm:2`; quiz options `1 / sm:3` (drink `1 / sm:2`); hero `1 / lg:[1.1fr_.9fr]`; Surprise `1 / lg:[.85fr_1.15fr]`.
 
 Band rhythm: **cream** hero → **espresso** proof strip → **latte** catalog → **cream** methods → **roast** Surprise → **espresso** footer. Cheap mirrors that with a cream header card, latte catalog, cream methods, roast Surprise. Cafes sit on latte with a cream toolbar panel and a latte map card; custom sits on latte with a cream quiz shell and a roast result panel. Detail pages sit on latte with cream spec cards, roast media, white spec cells, and an espresso footer. Section tops use `section-top` = `5.5rem` (`88px`); hero uses `py-16 lg:py-[72px]`, detail pages `py-12`, cafes `pt-6 pb-5`.
 
@@ -89,28 +89,29 @@ Band rhythm: **cream** hero → **espresso** proof strip → **latte** catalog �
 | Buttons | `components/primary-button.blade.php`, `secondary-button.blade.php`, `danger-button.blade.php`; public CTAs are inline | Primary, secondary, danger, public CTA | Hover, active scale, `focus-visible`, disabled | `<a class="min-h-[52px] rounded-xl bg-coffee-espresso px-7 font-semibold text-coffee-latte">…</a>` |
 | Filter pills | `components/chip.blade.php` | Active / inactive | Hover invert, press `scale-[0.97]`, focus ring, `aria-current` | `<x-chip :href="route('home')" :active="true">All</x-chip>` |
 | Search field | `components/search-bar.blade.php` | Default | Placeholder, focus ring, submit | `<x-search-bar :action="route('home')" :placeholder="__('Search beans…')" />` |
-| Bean card | `components/bean-card.blade.php` | Bean | Closed, expanding panel, hover, image/fallback | `<x-bean-card :bean="$bean" x-reveal class="reveal" />` |
+| Bean card | `components/bean-card.blade.php` | Bean | Hover, image/fallback, Details is a link to the bean page | `<x-bean-card :bean="$bean" x-reveal class="reveal" />` |
 | Brew method card | `components/bean-card.blade.php` | Method | Same shell, 3 dots, expanding panel | `<x-bean-card :method="$method" x-reveal class="reveal" />` |
 | Recipe card | `public/recipes/index.blade.php`, `public/beans/show.blade.php` | Cheap, non-cheap, featured | Hover border/title, focus | `<a href="{{ route('recipes.show', $recipe->slug) }}" class="recipe-card …">…</a>` |
 | Badges | `public/recipes/index.blade.php`, `public/recipes/show.blade.php` | Cheap, non-cheap, featured | Static | `<span class="rounded-full bg-coffee-amber px-2 py-0.5 text-xs font-semibold text-coffee-espresso">Cheap</span>` |
 | Acidity / difficulty dots | `components/bean-card.blade.php`, `public/beans/show.blade.php` | 5 bean dots / 3 method dots | On, off, staggered fill on reveal | `@for ($i = 1; $i <= 5; $i++) <i class="h-2.5 w-2.5 rounded-full border-2 border-coffee-mocha {{ $i <= $level ? 'bg-coffee-espresso' : '' }}"></i> @endfor` |
-| Bean rail | `public/home.blade.php` | Two cards below `lg`, four from `lg` (both exact fits) | Overflow, arrow paging, keyboard tab stop only when it overflows | `<div class="flex snap-x snap-mandatory gap-6 overflow-x-auto [scrollbar-width:none]">` |
+| Bean catalog | `public/home.blade.php` | Uniform grid; page of 4 | Hover, reveal, pagination | `<div class="grid grid-cols-2 items-start md:grid-cols-3 lg:grid-cols-4 gap-6">` |
 | Pagination | `components/page-arrows.blade.php` | Previous/next enabled / disabled | Hover, focus, disabled | `<x-page-arrows :paginator="$recipes" />` |
 | Quiz option card | `public/custom/index.blade.php` | Unselected / selected / dimmed | Hover border, focus outline, `aria-pressed` | `<button type="button" :aria-pressed="answers.time === 'quick'" class="quiz-option …">…</button>` |
 | Progress bar | `public/custom/index.blade.php` | Future / active / past segment | `scaleX(0→1)`, reduced-motion snap | `<div class="h-1.5 w-8 rounded-full bg-coffee-mocha/20"><div class="quiz-seg-fill …"></div></div>` |
 | Surprise me panel | `components/surprise-section.blade.php` | Default / `cheapOnly` | Loading, error, empty, rolled | `<x-surprise-section />` or `<x-surprise-section cheap-only />` |
 | Map container | `public/cafes/index.blade.php`, `resources/js/cafes.js` | Ready / loading / empty | Fetch wave, cluster tiers, popup | `<div id="cafe-map" class="h-[68vh] min-h-[420px]" role="region" aria-label="{{ __('Cafe map') }}"></div>` |
+| Origin map | `public/beans/show.blade.php`, `resources/js/bean-map.js`, `config/coffee.php` | Country view / text fallback when the origin has no coordinates | One pin, no scroll-wheel zoom, text fallback | `<div id="bean-origin-map" class="h-[300px] w-full sm:h-[380px] lg:h-[440px]" role="region">` |
 | Marquee | `components/marquee.blade.php` | Home only | Looping, paused offscreen | `<x-marquee />` |
 | Brew mode | `public/recipes/show.blade.php`, `resources/js/app.js` | Closed / open / running / finished | Native `dialog`, total-time countdown, step paging | `<dialog x-ref="dialog" @close="cleanup()">…</dialog>` |
 | Footer | `layouts/public.blade.php` | Single | Static | `<footer class="bg-coffee-espresso text-coffee-cream">…</footer>` |
 
-Selected values: navbar is `72px` tall, sticky at `z-40`, links `44px`; the language switch is a `44×44px` globe that opens to a `132×44px` pill with two `44×44px` language links. Bean card: `16px` radius, `96px`/`112px` image block, `p-4` body, `44px` Details button; the panel expands in flow at `320ms`. Recipe card: `16px` radius, `p-5`, `sm:grid-cols-4` stats. Pagination circles are `44px`. Map is `68vh` / `min 420px` inside a `16px` frame.
+Selected values: navbar is `72px` tall, sticky at `z-40`, links `44px`; the language switch is a `44×44px` globe that opens to a `132×44px` pill with two `44×44px` language links. Bean card: `16px` radius, `96px`/`112px` image block, `p-4` body, `44px` Details link to the bean page. Method card: same shell, `44px` Details button; the panel expands in flow at `320ms`. Bean page: `7/5` map/spec split at `lg`, origin map `440px` desktop / `300px` mobile inside a `24px` frame. Recipe card: `16px` radius, `p-5`, `sm:grid-cols-4` stats. Pagination circles are `44px`. Cafe map is `68vh` / `min 420px` inside a `16px` frame.
 
 ## 7. Interaction rules
 
 **Current code:** bean and method cards **do have a hover effect**: `.card-lift` transitions `translate`, shadow, and border over `200ms`; the class also applies `hover-fine:-translate-y-1`, an amber border, and a `0 10px 24px` shadow. Recipe cards change border and title color only. The brief’s “cards have no hover effect” is **not implemented**; see Cleanup.
 
-**Details behaviour (implemented):** clicking Details toggles an in-flow panel open with `grid-template-rows: 0fr → 1fr` over `320ms`; the card grows, the grid stays `items-start`, and nothing is covered. The same button becomes Close and stays focusable. On touch, the panel also carries a `36px` close button. Mouse-leave closes it on fine pointers, and `Escape` closes it. The closed panel is `visibility: hidden` after the transition, so its link cannot take focus; it is a `role="group"` with no focus trap.
+**Details behaviour (implemented):** bean cards have no panel — Details is a link straight to `/beans/{slug}`, and the bean page carries the full spec (map, flavor notes, profile, recipes). Method cards still toggle an in-flow panel with `grid-template-rows: 0fr → 1fr` over `320ms`; the card grows, the grid stays `items-start`, and nothing is covered. The same button becomes Close and stays focusable. On touch, the panel also carries a `36px` close button. Mouse-leave closes it on fine pointers, and `Escape` closes it. The closed panel is `visibility: hidden` after the transition, so its link cannot take focus; it is a `role="group"` with no focus trap.
 
 **Language switch (implemented):** on desktop the globe is a `44×44px` button with `aria-expanded` and `aria-controls`. Opening grows the pill leftwards (`grid-template-columns: 0fr → 1fr`, `250ms` spring), fades both language pills in with a `40ms` stagger, rotates the globe `90deg`, and moves focus to the active pill. Selecting a language slides the amber fill (`150ms`), collapses the pill (`200ms`), then navigates at `350ms`; selecting the current language only collapses (`200ms`). `Escape` closes and returns focus to the globe; an outside click closes without stealing focus. The closed panel is `visibility: hidden`, so its links leave the tab order. Inside the hamburger menu (below `1024px`) the two pills render directly with no globe or collapse.
 
@@ -133,7 +134,7 @@ Selected values: navbar is `72px` tall, sticky at `z-40`, links `44px`; the lang
 | Surprise swap | `250ms` out/in; steps `300ms` / `50ms` stagger | Result card |
 | Finder step / result | `200ms` out, `250ms` in, `350ms` result | Quiz |
 | Count-up | `900ms` stats; `400ms` cafe count | rAF loops |
-| Card expand | `320ms`; icon lift `420ms` | In-flow details panel |
+| Card expand | `320ms`; icon lift `420ms` | Method details panel only |
 | Language switch | `250ms` open / `200ms` close; fill `150ms`; pill fade `140ms`, `40ms` stagger; globe `250ms` / `200ms` | Width, fill slide, fade, rotate |
 | Hero pour / tilt | `1200ms` one-shot / `180ms` follow | Coffee fill, ≤3° pointer tilt |
 | Cafe loading wave | `1s` alternate, opacity only | Cafes loop |
@@ -183,7 +184,7 @@ The coffee sprigs (`components/sprig-side.blade.php` for the placement, `compone
 
 - **Contrast:** target WCAG AA, `4.5:1` for normal text and `3:1` for large text and non-text UI. Computed ratios are in section 2. `amber-ink` on cream is `4.45:1`, just under AA for normal text; `amber` on latte is `3.12:1`, so it is not body text there.
 - **Focus:** public controls use `focus-visible:ring-2` with `ring-coffee-amber-ink`, offset `2px` on latte/cream; dark surfaces use `ring-coffee-latte`; quiz options use `outline-2` with `outline-offset-2`. Legacy Breeze components still use indigo rings.
-- **Keyboard cards:** Details is a real button with `aria-controls` and `aria-expanded`; the expanded link is reachable once the panel is visible, and the closed panel cannot take focus. `Escape` closes. Recipe cards and filter chips are links. The bean rail is a tab stop (`tabindex="0"`) only when it overflows, so the browser's native keys still scroll it; its two arrow buttons page one card at a time and hide when there is nothing to scroll.
+- **Keyboard cards:** bean Details is a plain link to the bean page. On method cards Details is a real button with `aria-controls` and `aria-expanded`; the expanded link is reachable once the panel is visible, and the closed panel cannot take focus. `Escape` closes. Recipe cards and filter chips are links. Catalog paging uses the shared `44px` arrow links, which carry the section anchor (`#bean-catalog`, `#brew-methods`).
 - **Touch targets:** most controls use `min-h-[44px]` or `44px` squares. Exception: recipe serving buttons are `40×40px`.
 - **Language switch:** the globe has `aria-expanded`, `aria-controls` and a translated `aria-label` (`Language: English` / `Language: Bahasa Indonesia`); the current link carries `aria-current="true"`. Opening focuses the active pill, `Escape` returns focus to the globe, and Left/Right arrows move between pills. The closed panel is `visibility: hidden`, so its links leave the tab order.
 - **Semantics:** `aria-current="page"` on active chips, `aria-pressed` on quiz/serving toggles, `aria-live` on results and cafe counts, `role="region"` on the map, `sr-only` labels for dots and icon-only controls.
@@ -224,5 +225,4 @@ Per `docs/ui_redesign_plan.md` (status 2026-11-02): Phase 1 foundations and Phas
 - **Raw hex repeats.** `#C87D55` appears on 8 lines (5 navbar active underlines, hero art, CSS), `#6F4E37` on 6, `#4A2C21` on 3, `#2C1A14` on 3, and `#FDFBF7` on 2. Replace with `var(--color-coffee-*)` or token utilities; recommended names: `--color-coffee-amber`, `--color-coffee-mocha`, `--color-coffee-roast`, `--color-coffee-espresso`, `--color-coffee-latte`.
 - **White is outside the palette.** `bg-white`/`text-white` appear on 15 view lines (spec cells, equipment rows, sticky bar, recommended-drink chips, Breeze). Either approve `--color-coffee-paper: #FFFFFF` or replace with `coffee-latte`.
 - **Touch targets below 44px.** Recipe serving buttons are `40×40px`.
-- **Hidden focus.** The Details button becomes `opacity-0` but stays tabbable, and hover-close can leave focus on the invisible overlay link.
 - **SVG budget.** `application-logo.blade.php` is `3,045 B`, over the `2 KB` rule; the inline hero illustration also needs measurement.

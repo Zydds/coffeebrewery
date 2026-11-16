@@ -1,8 +1,9 @@
-{{-- The single catalog card: one shell, image block, level dots, Details
-     overlay and state set for beans AND brew methods. Pass either
-     :bean or :method so the two sections cannot drift into two designs.
+{{-- The single catalog card: one shell, image block, level dots and price
+     for beans AND brew methods. Pass either :bean or :method so the two
+     sections cannot drift into two designs. Details branches by type: a
+     bean links to its page, a method toggles the in-card panel.
      Level dots animate from app.css (.level-dot) when the card reveals. --}}
-@props(['bean' => null, 'method' => null, 'featured' => false])
+@props(['bean' => null, 'method' => null])
 
 @php
     $item = $bean ?? $method;
@@ -46,58 +47,63 @@
 <article {{ $attributes->merge([
     'class' => 'card-lift relative flex flex-col overflow-hidden rounded-2xl border border-coffee-mocha bg-coffee-cream hover-fine:border-coffee-amber hover-fine:shadow-[0_10px_24px_rgba(44,26,20,0.15)] motion-safe:hover-fine:-translate-y-1',
 ]) }}
-     x-data="{
-        open: false,
-        touch: matchMedia('(hover: none)').matches,
-        frozen: [],
-        releaseTimer: null,
-        toggle() {
-            clearTimeout(this.releaseTimer);
+    {{-- Beans link straight to their page; only method cards carry the
+         in-card detail panel, so only they need its state. --}}
+    @if ($isMethod)
+        x-data="{
+            open: false,
+            touch: matchMedia('(hover: none)').matches,
+            frozen: [],
+            releaseTimer: null,
+            toggle() {
+                clearTimeout(this.releaseTimer);
 
-            if (this.open) {
-                this.close();
-                return;
-            }
+                if (this.open) {
+                    this.close();
+                    return;
+                }
 
-            // Pin every sibling at its resting height before the row grows,
-            // so the open card is the only one that changes size.
-            this.frozen.forEach((el) => {
-                el.style.height = '';
-            });
+                // Pin every sibling at its resting height before the row grows,
+                // so the open card is the only one that changes size.
+                this.frozen.forEach((el) => {
+                    el.style.height = '';
+                });
 
-            this.frozen = [...this.$root.parentElement.children]
-                .filter((el) => el !== this.$root && el.tagName === 'ARTICLE');
+                this.frozen = [...this.$root.parentElement.children]
+                    .filter((el) => el !== this.$root && el.tagName === 'ARTICLE');
 
-            this.frozen.forEach((el) => {
-                el.style.height = el.getBoundingClientRect().height + 'px';
-            });
+                this.frozen.forEach((el) => {
+                    el.style.height = el.getBoundingClientRect().height + 'px';
+                });
 
-            this.open = true;
-        },
-        close() {
-            if (!this.open) {
-                return;
-            }
+                this.open = true;
+            },
+            close() {
+                if (!this.open) {
+                    return;
+                }
 
-            this.open = false;
-            clearTimeout(this.releaseTimer);
-            this.releaseTimer = setTimeout(() => {
-                this.frozen.forEach((el) => el.style.height = '');
-                this.frozen = [];
-            }, 340);
-        },
-     }"
-     :class="open ? 'is-open' : ''"
-     @mouseleave="!touch && close()"
-     @keydown.escape.window="close()">
+                this.open = false;
+                clearTimeout(this.releaseTimer);
+                this.releaseTimer = setTimeout(() => {
+                    this.frozen.forEach((el) => el.style.height = '');
+                    this.frozen = [];
+                }, 340);
+            },
+        }"
+        :class="open ? 'is-open' : ''"
+        @mouseleave="!touch && close()"
+        @keydown.escape.window="close()"
+    @endif
+>
 
-    <div class="relative grid {{ $featured ? 'h-40 lg:h-56' : 'h-24 sm:h-28' }} place-items-center overflow-hidden bg-coffee-roast text-coffee-amber shrink-0">
+    <div class="relative grid h-24 sm:h-28 place-items-center overflow-hidden bg-coffee-roast text-coffee-amber shrink-0">
         {{-- Icon block, always rendered: it doubles as the photo fallback.
              A product photo (when present) paints over it, and if that
              photo is missing or 404s it removes itself, leaving the icon.
              The symbol comes from the page sprite, so the card carries no
              per-item SVG markup. --}}
-        <svg class="card-illustration {{ $featured ? 'h-20 w-20 lg:h-28 lg:w-28' : 'h-14 w-14' }}" viewBox="0 0 48 48" aria-hidden="true">
+        <svg class="card-illustration h-14 w-14" viewBox="0 0 48 48" aria-hidden="true">
             <use href="#cb-{{ $illustration }}" />
         </svg>
 
@@ -115,12 +121,9 @@
         </svg>
     </div>
 
-    <div class="flex flex-1 flex-col gap-1.5 {{ $featured ? 'p-5 lg:p-6' : 'p-4' }}">
-        @if ($featured)
-            <p class="eyebrow">{{ __('Featured bean') }}</p>
-        @endif
-        <h3 class="font-display font-bold leading-snug text-coffee-espresso {{ $featured ? 'text-display tracking-tight' : 'text-lg' }}">{{ $item->name }}</h3>
-        <p class="text-sm font-medium text-coffee-mocha{{ $isMethod ? ' line-clamp-2' : '' }}{{ $featured ? ' text-base' : '' }}">{{ $subtitle }}</p>
+    <div class="flex flex-1 flex-col gap-1.5 p-4">
+        <h3 class="font-display font-bold leading-snug text-coffee-espresso text-lg">{{ $item->name }}</h3>
+        <p class="text-sm font-medium text-coffee-mocha{{ $isMethod ? ' line-clamp-2' : '' }}">{{ $subtitle }}</p>
 
         <div class="mt-auto flex items-center gap-2 pt-2 text-xs font-medium text-coffee-mocha">
             <span>{{ $levelLabel }}</span>
@@ -147,59 +150,70 @@
     </div>
 
     <div class="px-4 pb-4">
-        <button type="button"
-                @click.stop="toggle()"
-                aria-controls="card-panel-{{ $item->id }}"
-                :aria-expanded="open.toString()"
-                class="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl bg-coffee-espresso text-sm font-semibold text-coffee-latte transition-colors duration-150 hover:bg-coffee-amber hover:text-coffee-espresso focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink focus-visible:ring-offset-2 focus-visible:ring-offset-coffee-cream">
-            <span x-show="!open">{{ __('Details') }}</span>
-            <span x-show="open" x-cloak>{{ __('Close details') }}</span>
-            <svg x-show="open" x-cloak class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#cb-close" />
-            </svg>
-        </button>
+        @if ($isMethod)
+            <button type="button"
+                    @click.stop="toggle()"
+                    aria-controls="card-panel-{{ $item->id }}"
+                    :aria-expanded="open.toString()"
+                    class="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl bg-coffee-espresso text-sm font-semibold text-coffee-latte transition-colors duration-150 hover:bg-coffee-amber hover:text-coffee-espresso focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink focus-visible:ring-offset-2 focus-visible:ring-offset-coffee-cream">
+                <span x-show="!open">{{ __('Details') }}</span>
+                <span x-show="open" x-cloak>{{ __('Close details') }}</span>
+                <svg x-show="open" x-cloak class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                    <use href="#cb-close" />
+                </svg>
+            </button>
+        @else
+            {{-- A bean card opens the bean page directly: the panel used to
+                 add a second click to reach the same page. --}}
+            <a href="{{ $href }}"
+               class="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl bg-coffee-espresso text-sm font-semibold text-coffee-latte transition-colors duration-150 hover:bg-coffee-amber hover:text-coffee-espresso focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink focus-visible:ring-offset-2 focus-visible:ring-offset-coffee-cream">
+                {{ __('Details') }}
+            </a>
+        @endif
     </div>
 
-    {{-- Expansion is in flow, not an overlay: 0fr → 1fr on the grid row
-         grows the card itself and nothing else. The closed container is
-         hidden (not just clipped) so its link cannot take focus. --}}
-    <div id="card-panel-{{ $item->id }}" role="group" aria-label="{{ $item->name }}"
-         :aria-hidden="(!open).toString()"
-         class="card-expand" :class="open ? 'is-open' : ''">
-        <div class="card-expand-inner">
-            <div class="relative flex flex-col gap-2.5 border-t border-coffee-cream/15 bg-coffee-roast p-4 text-coffee-cream">
-                <button type="button"
-                        x-show="touch"
-                        x-cloak
-                        @click.stop="close()"
-                        class="absolute right-2 top-2 grid h-9 w-9 place-items-center rounded-full text-coffee-cream transition-colors hover:bg-coffee-cream/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-latte focus-visible:ring-offset-2 focus-visible:ring-offset-coffee-roast"
-                        aria-label="{{ __('Close details') }}">
-                    <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-                        <use href="#cb-close" />
-                    </svg>
-                </button>
+    @if ($isMethod)
+        {{-- Expansion is in flow, not an overlay: 0fr → 1fr on the grid row
+             grows the card itself and nothing else. The closed container is
+             hidden (not just clipped) so its link cannot take focus. --}}
+        <div id="card-panel-{{ $item->id }}" role="group" aria-label="{{ $item->name }}"
+             :aria-hidden="(!open).toString()"
+             class="card-expand" :class="open ? 'is-open' : ''">
+            <div class="card-expand-inner">
+                <div class="relative flex flex-col gap-2.5 border-t border-coffee-cream/15 bg-coffee-roast p-4 text-coffee-cream">
+                    <button type="button"
+                            x-show="touch"
+                            x-cloak
+                            @click.stop="close()"
+                            class="absolute right-2 top-2 grid h-9 w-9 place-items-center rounded-full text-coffee-cream transition-colors hover:bg-coffee-cream/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-latte focus-visible:ring-offset-2 focus-visible:ring-offset-coffee-roast"
+                            aria-label="{{ __('Close details') }}">
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                            <use href="#cb-close" />
+                        </svg>
+                    </button>
 
-                <template x-if="open">
-                    <x-coffee-illustration :type="$illustration" size="mx-auto h-16 w-16 sm:h-20 sm:w-20" />
-                </template>
+                    <template x-if="open">
+                        <x-coffee-illustration :type="$illustration" size="mx-auto h-16 w-16 sm:h-20 sm:w-20" />
+                    </template>
 
-                <p class="text-xs font-semibold uppercase tracking-wider text-coffee-cream/80">{{ $chipLabel }}</p>
-                <div class="flex flex-wrap gap-2">
-                    @forelse ($chips as $chip)
-                        <span class="rounded-full bg-coffee-cream px-3 py-0.5 text-sm text-coffee-espresso">{{ $chip }}</span>
-                    @empty
-                        <span class="text-sm text-coffee-cream/70">{{ __('None listed') }}</span>
-                    @endforelse
+                    <p class="text-xs font-semibold uppercase tracking-wider text-coffee-cream/80">{{ $chipLabel }}</p>
+                    <div class="flex flex-wrap gap-2">
+                        @forelse ($chips as $chip)
+                            <span class="rounded-full bg-coffee-cream px-3 py-0.5 text-sm text-coffee-espresso">{{ $chip }}</span>
+                        @empty
+                            <span class="text-sm text-coffee-cream/70">{{ __('None listed') }}</span>
+                        @endforelse
+                    </div>
+
+                    <p class="text-sm"><b>{{ $lineOne[0] }}</b> {{ $lineOne[1] }}</p>
+                    <p class="text-sm"><b>{{ $lineTwo[0] }}</b> {{ $lineTwo[1] }}</p>
+
+                    <a href="{{ $href }}"
+                       class="mt-1 inline-flex min-h-[44px] items-center justify-center rounded-xl bg-coffee-amber px-4 text-sm font-semibold text-coffee-espresso transition-colors hover:bg-coffee-latte focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-latte focus-visible:ring-offset-2 focus-visible:ring-offset-coffee-roast">
+                        {{ __('View full details') }}
+                    </a>
                 </div>
-
-                <p class="text-sm"><b>{{ $lineOne[0] }}</b> {{ $lineOne[1] }}</p>
-                <p class="text-sm"><b>{{ $lineTwo[0] }}</b> {{ $lineTwo[1] }}</p>
-
-                <a href="{{ $href }}"
-                   class="mt-1 inline-flex min-h-[44px] items-center justify-center rounded-xl bg-coffee-amber px-4 text-sm font-semibold text-coffee-espresso transition-colors hover:bg-coffee-latte focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-latte focus-visible:ring-offset-2 focus-visible:ring-offset-coffee-roast">
-                    {{ __('View full details') }}
-                </a>
             </div>
         </div>
-    </div>
+    @endif
 </article>

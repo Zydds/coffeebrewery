@@ -54,6 +54,16 @@ class ViewSmokeTest extends TestCase
         $this->getJson('/api/recipes/random?quick=1')->assertOk();
     }
 
+    public function test_bean_page_renders_the_origin_map(): void
+    {
+        $bean = CoffeeBean::where('origin_country', 'Colombia')->firstOrFail();
+
+        $this->get('/beans/'.$bean->slug)
+            ->assertOk()
+            ->assertSee('id="bean-origin-map"', false)
+            ->assertSee('window.BEAN_ORIGIN', false);
+    }
+
     public function test_catalog_pagination_links_keep_the_section_anchor(): void
     {
         $category = Category::firstOrFail();

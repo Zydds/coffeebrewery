@@ -68,7 +68,7 @@ sequenceDiagram
     L-->>B: HTML and session cookie
 ```
 
-The controller sorts the quick filter by `brew_time_min` and paginates at 9. Vite assets and fonts load after the HTML. Leaflet is not loaded here; `cafes.js` is a separate Vite entry used only on `/cafes`.
+The controller sorts the quick filter by `brew_time_min` and paginates at 9. Vite assets and fonts load after the HTML. Leaflet is not loaded here; `cafes.js` and `bean-map.js` are separate Vite entries used only on `/cafes` and `/beans/{slug}`.
 
 ### 3.2 Admin saving content with an image
 
@@ -127,7 +127,7 @@ There is no URL version prefix. The endpoints are internal and unversioned on pu
 | CARTO and OpenStreetMap | Basemap tiles and OSM source data | The browser reads tiles. The import command reads Overpass. No user data is sent. |
 | Bunny Fonts and Google Maps | Font files, directions page | Browser requests only. |
 
-The CARTO tile key is embedded in `resources/js/cafes.js`. It is a client-side basemap key, not a server secret.
+The CARTO tile key is embedded in `resources/js/cafes.js` and `config/coffee.php`. It is a client-side basemap key, not a server secret.
 
 ## 5. Folder structure
 
@@ -142,10 +142,10 @@ Only the folders that carry architectural weight.
 | `app/Services/`, `Console/Commands/` | `CatalogWriter` and `CloudinaryUploader`; `CatalogImporter` (CSV preview and commit); `RecipeMatcher`; `CafeImporter`, `AreaAssigner`, `OverpassClient`; `wilayah:import` and `import:cafes` |
 | `app/Rules/` | `UniqueSlug`, shared by the four admin form requests |
 | `app/Support/` | `CafeMapPage` (café cascade, counts, bounds, bootstrap); `RecipeSeo` (meta, share image, Recipe JSON-LD) |
-| `bootstrap/app.php`, `config/` | Routing, middleware aliases, and app/database/session/cache/`cafes.php` config |
+| `bootstrap/app.php`, `config/` | Routing, middleware aliases, and app/database/session/cache/`cafes.php`/`coffee.php` config |
 | `database/migrations/`, `seeders/` | 14 migrations including session, cache, and job tables; seed catalog and admin |
 | `lang/` | Indonesian JSON and auth/password translation files |
-| `resources/css/`, `resources/js/` | Tailwind entry and tokens; `cafes.css` (loaded by the `cafes.js` entry); `app.js`, `cafes.js`, `easing.js`, `bootstrap.js` |
+| `resources/css/`, `resources/js/` | Tailwind entry and tokens; `cafes.css` (loaded by the `cafes.js` entry); `app.js`, `cafes.js`, `bean-map.js`, `easing.js`, `bootstrap.js` |
 | `resources/views/` | `layouts`, `components`, `public`, `admin`, `auth`, `profile` |
 | `routes/` | `web.php`, `api.php`, `auth.php`, `console.php` |
 | `public/build/` | Generated Vite output (ignored by git) |

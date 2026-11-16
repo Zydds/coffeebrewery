@@ -803,6 +803,12 @@ html.is-reload .sprig-side {
     transition: none;
 }
 
+/* ── Bean origin map ───────────────────────────────────── */
+/* One amber pin per bean page, same geometry as the cafe pin. */
+.bean-pin {
+    color: var(--color-coffee-espresso);
+}
+
 /* ── Brew mode dialog ───────────────────────────────────── */
 /* The native dialog is the full screen; the page behind it must not
    scroll. Open state is a class added by the Alpine component. */

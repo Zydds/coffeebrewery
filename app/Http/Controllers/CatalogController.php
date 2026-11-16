@@ -13,7 +13,7 @@ class CatalogController extends Controller
     public function welcome(Request $request)
     {
         $categories = Category::whereHas('coffeeBeans', fn ($q) => $q->where('is_cheap', false))->get();
-        $featuredBeans = $this->beanQuery($request)->latest()->paginate(8, ['*'], 'bean_page')->withQueryString();
+        $featuredBeans = $this->beanQuery($request)->latest()->paginate(4, ['*'], 'bean_page')->withQueryString();
         $methods = $this->methodQuery($request)->paginate(8, ['*'], 'method_page')->withQueryString();
 
         // Site-wide totals for the home proof strip — deliberately NOT the
@@ -79,7 +79,22 @@ class CatalogController extends Controller
         // bean" section (avoids N+1 on the recipe method chips).
         $bean = CoffeeBean::with(['category', 'recipes.brewMethod'])->where('slug', $slug)->firstOrFail();
 
-        return view('public.beans.show', compact('bean'));
+        // Country centroid for the origin map. Missing origins render the
+        // text block instead, so the page never opens on empty ocean.
+        $origin = config('coffee.origins.'.$bean->origin_country);
+
+        if ($origin) {
+            $origin += [
+                'label' => $bean->name,
+                'tiles' => config('coffee.tiles'),
+            ];
+        }
+
+        // recommended_methods stores slugs; the spec sheet reads names.
+        $brewMethods = BrewMethod::whereIn('slug', $bean->recommended_methods ?? [])
+            ->pluck('name', 'slug');
+
+        return view('public.beans.show', compact('bean', 'origin', 'brewMethods'));
     }
 
     public function methodShow(string $slug)

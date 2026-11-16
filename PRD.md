@@ -43,7 +43,7 @@ What the user can do:
 Acceptance criteria:
 
 - [ ] `/` returns 200 and shows the bean catalog, brew methods, Surprise Me, site totals, and the cafe map link.
-- [ ] The bean and method catalogs list regular items only (`is_cheap = false`), 8 per page, with search; beans also filter by category.
+- [ ] The bean and method catalogs list regular items only (`is_cheap = false`), beans 4 per page (one 4-column row) and methods 8 per page, with search; beans also filter by category.
 - [ ] The proof strip shows total counts, not the filtered page counts.
 - [ ] Surprise Me returns a random recipe, supports cheap-only and 5-minutes-or-less filters, and links to the full recipe.
 - [ ] `/beans/{slug}` shows origin, acidity and body, price, flavor notes, recommended drinks, and recipes that use the bean.
