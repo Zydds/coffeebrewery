@@ -631,6 +631,30 @@ html.grid-settled [data-recipes-grid] {
     }
 }
 
+/* ── Reload: render settled ─────────────────────────────── */
+/* A reload already has the previous paint on screen; replaying the hero
+   rise, coffee fill, count-up and staggered reveals reads as a flash of
+   empty layout then a second entrance. First loads and navigations keep
+   the program. CSS owns the end state so it applies before JS runs. */
+html.is-reload [data-reveal],
+html.is-reload [data-reveal-stagger] > *,
+html.is-reload .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+}
+
+html.is-reload .bean,
+html.is-reload .cup-settle,
+html.is-reload .coffee-fill {
+    animation: none;
+}
+
+html.is-reload .sprig-side {
+    rotate: 0deg;
+    transition: none;
+}
+
 /* ── Brew mode dialog ───────────────────────────────────── */
 /* The native dialog is the full screen; the page behind it must not
    scroll. Open state is a class added by the Alpine component. */

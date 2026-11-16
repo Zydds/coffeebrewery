@@ -53,6 +53,18 @@
             'matchError' => __('Could not find a match. Try again.'),
         ]);
 
+        // A reload is a repeat visit: paint the page already settled instead
+        // of replaying the entrance program (which hid content until JS ran).
+        // First loads and link navigations keep the staged reveals.
+        var navEntry = performance.getEntriesByType('navigation')[0];
+        var isReload = navEntry
+            ? navEntry.type === 'reload'
+            : (performance.navigation && performance.navigation.type === 1);
+
+        if (isReload) {
+            document.documentElement.classList.add('is-reload');
+        }
+
         if ('IntersectionObserver' in window) {
             document.documentElement.classList.add('js-motion');
         }

@@ -507,12 +507,15 @@ Alpine.start();
 // Scroll to the catalog section that a search/filter belongs to.
 document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
+    const isReload = document.documentElement.classList.contains('is-reload');
 
-    if (params.has('q') || params.has('category')) {
+    // A reload keeps the URL's filter and hash; the browser already restored
+    // the anchor, so a second scrollIntoView would only nudge the page.
+    if (!window.location.hash && (params.has('q') || params.has('category'))) {
         document.getElementById('bean-catalog')?.scrollIntoView();
     }
 
-    if (params.has('method_q')) {
+    if (!window.location.hash && params.has('method_q')) {
         document.getElementById('brew-methods')?.scrollIntoView();
     }
 
@@ -523,7 +526,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // no IntersectionObserver) — JS owns the tween itself.
     const revealEls = document.querySelectorAll('[data-reveal], [data-reveal-stagger]');
 
-    if ('IntersectionObserver' in window && revealEls.length) {
+    if (isReload) {
+        // Settled by the `is-reload` rules in app.css; observing here would
+        // re-hide the page and replay the entrance the reload is skipping.
+    } else if ('IntersectionObserver' in window && revealEls.length) {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
                 const el = entry.target;
@@ -573,7 +579,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // observe the art (its box crosses the edge) and settle the anchor.
     const sprigs = document.querySelectorAll('.sprig-side');
 
-    if ('IntersectionObserver' in window && sprigs.length && !prefersReduced()) {
+    if (!isReload && 'IntersectionObserver' in window && sprigs.length && !prefersReduced()) {
         const sprigObserver = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
                 if (!entry.isIntersecting) {
@@ -639,7 +645,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // so zeroing here never flashes. tabular-nums holds the width steady.
     const countEls = document.querySelectorAll('[data-count-up]');
 
-    if ('IntersectionObserver' in window && countEls.length && !prefersReduced()) {
+    if (!isReload && 'IntersectionObserver' in window && countEls.length && !prefersReduced()) {
         const countObserver = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
                 if (!entry.isIntersecting) {
