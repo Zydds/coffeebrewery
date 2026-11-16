@@ -211,15 +211,19 @@
                     </div>
                 @endif
 
-                {{-- Everything after the block stays on one horizontal line,
-                     so a count that does not divide by four can never orphan
-                     a card. Arrow buttons are a convenience; the rail still
-                     scrolls natively, including by keyboard. --}}
+                {{-- Everything after the block stays on one horizontal line.
+                     Cards are sized so exactly two fit below `lg` and exactly
+                     four from `lg` up — the rail's width is the container
+                     width, so `25% - 1.125rem` cancels the three 24px gaps
+                     and no card is ever half-cut. The scrollbar is hidden;
+                     the arrows page one card at a time. --}}
                 @if ($railBeans->isNotEmpty())
                     <div class="mt-10" x-data="catalogRail">
                         <div class="flex items-end justify-between gap-4">
-                            <h3 class="font-display text-2xl font-bold text-coffee-espresso">{{ __('More beans') }}</h3>
-                            <div x-cloak class="flex gap-2">
+                            @if ($blockBeans->isNotEmpty())
+                                <h3 class="font-display text-2xl font-bold text-coffee-espresso">{{ __('More beans') }}</h3>
+                            @endif
+                            <div x-cloak x-show="canScroll" class="ms-auto flex gap-2">
                                 <button type="button" @click="scroll(-1)" :disabled="atStart"
                                         aria-label="{{ __('Scroll beans left') }}"
                                         class="grid h-11 w-11 place-items-center rounded-full border border-coffee-mocha bg-coffee-cream text-coffee-espresso transition-[background-color,color,opacity] duration-150 ease-out hover:bg-coffee-espresso hover:text-coffee-latte disabled:opacity-40 disabled:hover:bg-coffee-cream disabled:hover:text-coffee-espresso focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink motion-safe:active:scale-[0.97]">
@@ -241,13 +245,13 @@
                              @scroll.debounce.80ms="update()"
                              @resize.window="update()"
                              :tabindex="canScroll ? 0 : -1"
-                             class="mt-4 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink focus-visible:ring-offset-4 focus-visible:ring-offset-coffee-latte"
+                             class="mt-4 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink focus-visible:ring-offset-4 focus-visible:ring-offset-coffee-latte"
                              role="group"
                              aria-label="{{ __('More beans') }}">
                             @foreach ($railBeans as $bean)
                                 <x-bean-card :bean="$bean"
                                              x-reveal
-                                             class="reveal w-[calc(50%_-_0.75rem)] shrink-0 snap-start sm:w-[300px]"
+                                             class="reveal w-[calc(50%_-_0.75rem)] shrink-0 snap-start lg:w-[calc(25%_-_1.125rem)]"
                                              style="--reveal-delay: {{ $loop->index * 60 }}ms" />
                             @endforeach
                         </div>
