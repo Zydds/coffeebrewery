@@ -142,6 +142,154 @@
     display: none !important;
 }
 
+/* ── Language switch ────────────────────────────────────── */
+/* Closed: one 44px globe in a dark pill. Open: the pill grows left and
+   reveals EN/ID while the nav links make room. The width uses
+   grid-template-columns — the second animated layout property on the
+   site, and only because the nav links must travel with it; every other
+   part is transform/opacity. */
+.locale-switch {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: max-content;
+    height: 44px;
+    border-radius: 9999px;
+}
+
+.locale-switch__globe {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    flex: none;
+    border-radius: 9999px;
+    color: var(--color-coffee-cream);
+    transition:
+        color 180ms var(--ease-out),
+        transform 150ms var(--ease-out);
+}
+
+.locale-switch__globe:active {
+    transform: scale(0.96);
+}
+
+.locale-switch__globe svg {
+    transition: transform 200ms var(--ease-out);
+}
+
+.locale-switch.is-open .locale-switch__globe svg {
+    transform: rotate(90deg);
+    transition: transform 250ms var(--ease-spring);
+}
+
+.locale-switch__pills {
+    display: grid;
+    grid-template-columns: 0fr;
+    visibility: hidden;
+    transition:
+        grid-template-columns 200ms var(--ease-out),
+        visibility 0s linear 200ms;
+}
+
+.locale-switch.is-open .locale-switch__pills {
+    grid-template-columns: 1fr;
+    visibility: visible;
+    transition:
+        grid-template-columns 250ms var(--ease-spring),
+        visibility 0s;
+}
+
+.locale-switch__track {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 9999px;
+}
+
+.locale-switch__fill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 44px;
+    border-radius: 9999px;
+    background-color: var(--color-coffee-amber);
+    pointer-events: none;
+    transform: translateX(0);
+    transition: transform 150ms var(--ease-out);
+}
+
+.locale-switch[data-active='id'] .locale-switch__fill {
+    transform: translateX(100%);
+}
+
+.locale-switch__link {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    min-height: 44px;
+    flex: none;
+    border-radius: 9999px;
+    color: var(--color-coffee-cream);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    opacity: 0;
+    transition:
+        color 150ms var(--ease-out),
+        opacity 140ms var(--ease-out);
+}
+
+.locale-switch.is-open .locale-switch__link {
+    opacity: 1;
+}
+
+/* 40ms between the two pills as the control opens. */
+.locale-switch.is-open .locale-switch__link[data-locale='id'] {
+    transition-delay: 0ms, 40ms;
+}
+
+.locale-switch:not(.is-open) .locale-switch__link {
+    transition-delay: 0ms;
+}
+
+/* The menu shows both languages at once, so nothing fades or collapses. */
+.locale-switch--static .locale-switch__link {
+    opacity: 1;
+    transition-delay: 0ms;
+}
+
+.locale-switch[data-active='en'] .locale-switch__link[data-locale='en'],
+.locale-switch[data-active='id'] .locale-switch__link[data-locale='id'] {
+    color: var(--color-coffee-espresso);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .locale-switch__globe:hover {
+        color: var(--color-coffee-amber);
+    }
+
+    .locale-switch__link:not([aria-current='true']):hover {
+        color: var(--color-coffee-amber);
+    }
+}
+
+.locale-switch__globe:focus-visible,
+.locale-switch__link:focus-visible {
+    outline: 2px solid var(--color-coffee-latte);
+    outline-offset: -2px;
+}
+
+.locale-switch__link[aria-current='true']:focus-visible {
+    outline-color: var(--color-coffee-espresso);
+}
+
 /* ── Scroll reveal ─────────────────────────────────────── */
 /* Initial hidden state only: the tween itself runs in JS (anime.js,
    resources/js/app.js) so grids can cascade with a stagger. The

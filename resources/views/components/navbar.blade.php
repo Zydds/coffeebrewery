@@ -43,7 +43,7 @@
             </a>
 
             {{-- Language switcher --}}
-            @include('components.locale-switcher')
+            @include('components.locale-switcher', ['variant' => 'desktop'])
         </div>
     </div>
 
@@ -57,7 +57,7 @@
         <a href="{{ route('cafes.index') }}" class="min-h-[44px] px-2 inline-flex items-center font-medium text-coffee-cream hover:text-coffee-amber transition-colors">{{ __('Cafes') }}</a>
 
         <div class="mt-3 pt-3 border-t border-coffee-latte/10">
-            @include('components.locale-switcher')
+            @include('components.locale-switcher', ['variant' => 'mobile'])
         </div>
     </div>
 </nav>
