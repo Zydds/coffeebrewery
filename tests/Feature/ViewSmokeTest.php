@@ -146,6 +146,22 @@ class ViewSmokeTest extends TestCase
         }
     }
 
+    public function test_admin_edit_form_uses_put_and_prefills_the_model(): void
+    {
+        $admin = User::where('is_admin', true)->firstOrFail();
+        $bean = CoffeeBean::firstOrFail();
+
+        $this->actingAs($admin)->get('/admin/beans/'.$bean->id.'/edit')
+            ->assertOk()
+            ->assertSee('name="_method" value="PUT"', false)
+            ->assertSee('value="'.$bean->name.'"', false);
+
+        $this->actingAs($admin)->get('/admin/beans/create')
+            ->assertOk()
+            ->assertSee('action="'.route('admin.beans.store').'"', false)
+            ->assertDontSee('name="_method"', false);
+    }
+
     public function test_register_route_returns_404(): void
     {
         $this->get('/register')->assertNotFound();
