@@ -1,5 +1,3 @@
-import './bootstrap';
-
 import Alpine from 'alpinejs';
 
 import { animate, stagger, cubicBezier } from 'animejs';
