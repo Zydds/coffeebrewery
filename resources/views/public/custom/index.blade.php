@@ -231,8 +231,8 @@
 
             {{-- Error --}}
             <div x-show="error && !loading" x-cloak
-                 class="mt-4 rounded-3xl border border-red-300 bg-red-50 p-6 text-center">
-                <p class="text-sm text-red-700">
+                 class="mt-4 rounded-3xl border border-coffee-mocha/30 bg-coffee-cream p-6 text-center">
+                <p class="text-sm text-coffee-espresso">
                     <span x-text="error"></span>
                     <button type="button" @click="submit()" class="ml-1 font-semibold underline">{{ __('Try again') }}</button>
                 </p>

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\CoffeeBean;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class CoffeeBeanSeeder extends Seeder
 {
@@ -173,7 +174,7 @@ class CoffeeBeanSeeder extends Seeder
 
         foreach ($beans as $bean) {
             CoffeeBean::updateOrCreate(
-                ['slug' => \Illuminate\Support\Str::slug($bean['name'])],
+                ['slug' => Str::slug($bean['name'])],
                 [
                     'category_id' => $categories[$bean['category_slug']],
                     'name' => $bean['name'],

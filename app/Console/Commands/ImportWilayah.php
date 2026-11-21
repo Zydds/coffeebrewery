@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Wilayah;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 
 class ImportWilayah extends Command
 {
@@ -84,9 +85,9 @@ class ImportWilayah extends Command
 
         File::ensureDirectoryExists(dirname($target));
 
-        $this->line("Downloading ".self::DATASET_URL.' ...');
+        $this->line('Downloading '.self::DATASET_URL.' ...');
 
-        $response = \Illuminate\Support\Facades\Http::timeout(120)->get(self::DATASET_URL);
+        $response = Http::timeout(120)->get(self::DATASET_URL);
 
         if (! $response->successful() || strlen($response->body()) < 1_000_000) {
             $this->error('Dataset download failed. Re-run with --file=/path/to/wilayah.sql');

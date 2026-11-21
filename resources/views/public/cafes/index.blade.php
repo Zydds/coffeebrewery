@@ -39,7 +39,7 @@
                      screen readers are not read every intermediate tick. --}}
                 <p class="mt-3 flex items-baseline gap-2 text-coffee-mocha">
                     <span id="cafe-count" aria-hidden="true"
-                          class="font-display text-2xl font-bold leading-none text-coffee-espresso tabular-nums">{{ $initialCount }}</span>
+                          class="rounded-full bg-coffee-roast px-3 py-1 font-display text-2xl font-bold leading-none text-coffee-latte tabular-nums">{{ $initialCount }}</span>
                     <span aria-hidden="true" class="text-sm">{{ __('cafes in this city') }}</span>
                     <span id="cafe-count-live" role="status" aria-live="polite" class="sr-only">{{ $initialCount }} {{ __('cafes in this city') }}</span>
                 </p>
@@ -116,17 +116,14 @@
             <div id="cafe-map" class="h-[68vh] min-h-[420px] w-full bg-coffee-cream" role="region"
                  aria-label="{{ __('Cafe map') }}"></div>
 
-            {{-- Wave-shaped top edge, replacing the flat amber hairline.
-                 Always drawn (quiet amber); cafes.js adds .is-loading while a
-                 viewport fetch is in flight and the wave brightens/pulses.
-                 preserveAspectRatio=none stretches the wave to any width and
-                 non-scaling-stroke keeps the line 2.5px on every viewport. --}}
-            <svg id="cafe-progress" class="cafe-progress" viewBox="0 0 1200 12" preserveAspectRatio="none"
-                 aria-hidden="true" focusable="false">
-                <path d="M0 6 Q 75 0 150 6 Q 225 12 300 6 Q 375 0 450 6 Q 525 12 600 6 Q 675 0 750 6 Q 825 12 900 6 Q 975 0 1050 6 Q 1125 12 1200 6"
-                      fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                      vector-effect="non-scaling-stroke"/>
-            </svg>
+            {{-- Compact brew-signal loader. It stays quiet at rest and becomes
+                 a three-node fetching signal while the viewport request runs. --}}
+            <div id="cafe-progress" class="cafe-progress" role="status" aria-live="polite"
+                 aria-label="{{ __('Loading cafes') }}">
+                <span class="cafe-progress__node"></span>
+                <span class="cafe-progress__node"></span>
+                <span class="cafe-progress__node"></span>
+            </div>
 
             <div id="cafe-empty" hidden
                  class="absolute inset-0 grid place-items-center bg-coffee-cream/90 pointer-events-none">

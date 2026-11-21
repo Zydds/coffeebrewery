@@ -28,7 +28,7 @@ class CafeMapController extends Controller
             ->orderBy('name')
             ->limit((int) config('cafes.api_row_limit', 500))
             ->get([
-                'osm_id', 'osm_type', 'name', 'lat', 'lng',
+                'source', 'osm_id', 'osm_type', 'name', 'lat', 'lng',
                 'area_name', 'opening_hours', 'addr_street', 'addr_housenumber',
                 'addr_city', 'osm_timestamp',
             ]);

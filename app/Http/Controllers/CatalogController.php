@@ -13,7 +13,10 @@ class CatalogController extends Controller
     public function welcome(Request $request)
     {
         $categories = Category::whereHas('coffeeBeans', fn ($q) => $q->where('is_cheap', false))->get();
-        $featuredBeans = $this->beanQuery($request)->latest()->paginate(4, ['*'], 'bean_page')->withQueryString();
+        $beans = $this->beanQuery($request)->latest()->paginate(4, ['*'], 'bean_page')->withQueryString();
+        $beansPreloaded = $request->filled('q') || $request->filled('category')
+            ? $beans->getCollection()
+            : $this->beanQuery($request)->latest()->limit(32)->get();
         $methods = $this->methodQuery($request)->paginate(8, ['*'], 'method_page')->withQueryString();
 
         // Site-wide totals for the home proof strip — deliberately NOT the
@@ -29,7 +32,7 @@ class CatalogController extends Controller
         // the proof strip reads as a contradiction.
         $cheapBeans = CoffeeBean::where('is_cheap', true)->count();
 
-        return view('public.home', compact('featuredBeans', 'categories', 'methods', 'proof', 'cheapBeans'));
+        return view('public.home', compact('beans', 'beansPreloaded', 'categories', 'methods', 'proof', 'cheapBeans'));
     }
 
     public function cheapIndex(Request $request)

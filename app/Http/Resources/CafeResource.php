@@ -14,7 +14,7 @@ class CafeResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->osm_type.$this->osm_id,
+            'id' => $this->source === 'manual' ? 'manual'.$this->id : $this->osm_type.$this->osm_id,
             'name' => $this->name,
             'lat' => $this->lat,
             'lng' => $this->lng,

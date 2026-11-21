@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Http\Requests\Admin\StoreBeanRequest;
+use App\Http\Requests\Admin\StoreCafeRequest;
 use App\Http\Requests\Admin\StoreRecipeRequest;
 use App\Models\BrewMethod;
+use App\Models\Cafe;
 use App\Models\Category;
 use App\Models\CoffeeBean;
 use App\Models\Recipe;
@@ -23,6 +25,13 @@ class CatalogImporter
     public const MAX_ROWS = 500;
 
     public const TYPES = [
+        'cafes' => [
+            'table' => 'cafes',
+            'model' => Cafe::class,
+            'headers' => ['name', 'lat', 'lng', 'region_kode', 'area_name', 'opening_hours', 'addr_street', 'addr_housenumber', 'addr_city', 'tags'],
+            'required' => ['name', 'lat', 'lng', 'region_kode'],
+            'example' => ['Manual Cafe', '-6.2', '106.8', '31.74', 'South Jakarta', '08:00-22:00', 'Example Street', '1', 'Jakarta Selatan', ''],
+        ],
         'beans' => [
             'table' => 'coffee_beans',
             'model' => CoffeeBean::class,
@@ -85,7 +94,7 @@ class CatalogImporter
         $created = 0;
         $updated = 0;
 
-        DB::transaction(function () use ($model, $rows, &$failed, &$created, &$updated) {
+        DB::transaction(function () use ($type, $model, $rows, &$failed, &$created, &$updated) {
             foreach ($rows as $row) {
                 if ($row['status'] === 'error') {
                     $failed[] = ['line' => $row['line'], 'key' => $row['key'], 'reason' => $row['reason']];
@@ -94,9 +103,17 @@ class CatalogImporter
                 }
 
                 $payload = $row['payload'];
-                unset($payload['slug']);
-
-                $record = $model::updateOrCreate(['slug' => $row['payload']['slug']], $payload);
+                $record = $type === 'cafes'
+                    ? $model::updateOrCreate([
+                        'source' => 'manual',
+                        'name' => $payload['name'],
+                        'lat' => $payload['lat'],
+                        'lng' => $payload['lng'],
+                    ], $payload)
+                    : $model::updateOrCreate(
+                        ['slug' => $payload['slug']],
+                        $this->withoutKey($payload, 'slug')
+                    );
 
                 $record->wasRecentlyCreated ? $created++ : $updated++;
             }
@@ -200,9 +217,11 @@ class CatalogImporter
         $rows = [];
 
         foreach ($parsed['rows'] as $row) {
-            $rows[] = $type === 'beans'
-                ? $this->prepareBean($row, $categories, $existing, $seen)
-                : $this->prepareRecipe($row, $beans, $methods, $existing, $seen);
+            $rows[] = match ($type) {
+                'beans' => $this->prepareBean($row, $categories, $existing, $seen),
+                'cafes' => $this->prepareCafe($row, $existing, $seen),
+                default => $this->prepareRecipe($row, $beans, $methods, $existing, $seen),
+            };
         }
 
         return $rows;
@@ -263,6 +282,34 @@ class CatalogImporter
      * @param  array<string, true>  $seen
      * @return array<string, mixed>
      */
+    private function prepareCafe(array $row, array $existing, array &$seen): array
+    {
+        if ($row['cells'] === null) {
+            return $this->failure($row['line'], '', $row['reason']);
+        }
+
+        $cells = $row['cells'];
+        $key = Str::slug((string) $cells['name']).'-'.md5((string) $cells['lat'].'|'.$cells['lng']);
+        $candidate = $this->withoutBlanks([
+            'source' => 'manual', 'osm_id' => null, 'osm_type' => null,
+            'name' => $cells['name'], 'lat' => $cells['lat'], 'lng' => $cells['lng'],
+            'region_kode' => $cells['region_kode'], 'area_name' => $cells['area_name'],
+            'opening_hours' => $cells['opening_hours'], 'addr_street' => $cells['addr_street'],
+            'addr_housenumber' => $cells['addr_housenumber'], 'addr_city' => $cells['addr_city'],
+            'tags' => $cells['tags'] ? json_decode($cells['tags'], true) : null,
+            'is_missing' => false,
+        ]);
+        $rules = StoreCafeRequest::fieldRules();
+        $result = $this->validated($row['line'], $key, $candidate, $rules, $existing, $seen);
+
+        if ($result['status'] !== 'error') {
+            $result['payload']['source'] = 'manual';
+            $result['payload']['is_missing'] = false;
+        }
+
+        return $result;
+    }
+
     private function prepareRecipe(array $row, array $beans, array $methods, array $existing, array &$seen): array
     {
         if ($row['cells'] === null) {
@@ -333,7 +380,9 @@ class CatalogImporter
 
         $seen[$slug] = true;
         $payload = $validator->validated();
-        $payload['slug'] = $slug;
+        if (! isset($payload['source'])) {
+            $payload['slug'] = $slug;
+        }
 
         return [
             'line' => $line,
@@ -354,6 +403,13 @@ class CatalogImporter
     private function withoutBlanks(array $cells): array
     {
         return array_filter($cells, fn ($value) => $value !== null);
+    }
+
+    private function withoutKey(array $values, string $key): array
+    {
+        unset($values[$key]);
+
+        return $values;
     }
 
     private function slugProblem(string $slug): ?string
@@ -382,7 +438,7 @@ class CatalogImporter
      */
     private function existingSlugs(string $type, array $parsed): array
     {
-        $key = $type === 'beans' ? 'name' : 'title';
+        $key = $type === 'beans' ? 'name' : ($type === 'cafes' ? 'name' : 'title');
         $slugs = [];
 
         foreach ($parsed['rows'] as $row) {
@@ -397,7 +453,7 @@ class CatalogImporter
             }
         }
 
-        if ($slugs === []) {
+        if ($slugs === [] || $type === 'cafes') {
             return [];
         }
 

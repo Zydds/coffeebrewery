@@ -7,15 +7,15 @@
 @endphp
 
 @if ($paginator->hasPages())
-    <nav {{ $attributes->merge(['class' => 'mt-8 flex items-center justify-center gap-4']) }} aria-label="{{ __('Page navigation') }}">
-        @if ($paginator->onFirstPage())
+    <nav {{ $attributes->merge(['class' => 'mt-8 flex items-center justify-center gap-4']) }} aria-label="{{ __('Page navigation') }}" @if ($anchor === 'bean-catalog') data-bean-pagination @endif>
+        @if ($paginator->onFirstPage() && $anchor !== 'bean-catalog')
             <span class="grid h-11 w-11 place-items-center rounded-full border border-coffee-mocha/40 text-coffee-mocha/40 select-none" aria-disabled="true">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
                 </svg>
             </span>
         @else
-            <a href="{{ $paginator->previousPageUrl().$fragment }}" rel="prev"
+            <a href="{{ $paginator->previousPageUrl().$fragment }}" rel="prev" @if ($anchor === 'bean-catalog') data-bean-direction="prev" @endif
                class="grid h-11 w-11 place-items-center rounded-full border border-coffee-mocha bg-coffee-cream text-coffee-espresso transition-[background-color,color,transform] duration-150 ease-out hover:bg-coffee-espresso hover:text-coffee-latte motion-safe:active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink"
                aria-label="{{ __('Previous page') }}">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -24,12 +24,12 @@
             </a>
         @endif
 
-        <span class="text-sm font-medium text-coffee-mocha">
+        <span class="text-sm font-medium text-coffee-mocha" @if ($anchor === 'bean-catalog') data-bean-page-label @endif>
             {{ __('Page') }} {{ $paginator->currentPage() }} {{ __('of') }} {{ $paginator->lastPage() }}
         </span>
 
         @if ($paginator->hasMorePages())
-            <a href="{{ $paginator->nextPageUrl().$fragment }}" rel="next"
+            <a href="{{ $paginator->nextPageUrl().$fragment }}" rel="next" @if ($anchor === 'bean-catalog') data-bean-direction="next" @endif
                class="grid h-11 w-11 place-items-center rounded-full border border-coffee-mocha bg-coffee-cream text-coffee-espresso transition-[background-color,color,transform] duration-150 ease-out hover:bg-coffee-espresso hover:text-coffee-latte motion-safe:active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber-ink"
                aria-label="{{ __('Next page') }}">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

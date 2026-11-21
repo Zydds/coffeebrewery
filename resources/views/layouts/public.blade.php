@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    <link rel="alternate icon" href="{{ asset('favicon.ico') }}">
 
     <title>@yield('title', config('app.name', 'Coffeebrewery'))</title>
 
@@ -61,7 +63,7 @@
             ? navEntry.type === 'reload'
             : (performance.navigation && performance.navigation.type === 1);
 
-        if (isReload) {
+        if (isReload || new URLSearchParams(window.location.search).has('category') || new URLSearchParams(window.location.search).has('q')) {
             document.documentElement.classList.add('is-reload');
         }
 

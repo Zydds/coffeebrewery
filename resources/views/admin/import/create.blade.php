@@ -18,6 +18,7 @@
                         class="mt-1 block w-full border-gray-300 rounded-md shadow-xs focus:border-coffee-amber focus:ring-coffee-amber text-sm">
                     <option value="beans" @selected(old('type') === 'beans')>Coffee beans</option>
                     <option value="recipes" @selected(old('type') === 'recipes')>Recipes</option>
+                    <option value="cafes" @selected(old('type') === 'cafes')>Manual cafes</option>
                 </select>
                 <x-input-error :messages="$errors->get('type')" class="mt-2" />
             </div>
@@ -59,6 +60,10 @@
             <li>
                 <a href="{{ route('admin.import.template', 'recipes') }}"
                    class="font-semibold text-coffee-amber hover:underline">Recipe template (CSV)</a>
+            </li>
+            <li>
+                <a href="{{ route('admin.import.template', 'cafes') }}"
+                   class="font-semibold text-coffee-amber hover:underline">Cafe template (CSV)</a>
             </li>
         </ul>
     </div>

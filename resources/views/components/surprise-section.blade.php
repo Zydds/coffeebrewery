@@ -46,7 +46,7 @@
         <article class="flex flex-col gap-5 rounded-3xl bg-coffee-latte p-6 sm:p-8 text-coffee-espresso" aria-live="polite">
             <p x-show="loading" x-cloak class="text-sm text-coffee-mocha">{{ __('Brewing a suggestion…') }}</p>
 
-            <p x-show="error" x-cloak class="text-sm text-red-700">
+            <p x-show="error" x-cloak class="text-sm text-coffee-espresso">
                 <span x-text="error"></span>
                 <button type="button" @click="roll(recipe?.id ?? null)" class="font-semibold underline">{{ __('Try again') }}</button>
             </p>

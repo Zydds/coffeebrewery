@@ -126,6 +126,7 @@ class CafeImporter
             $cafe = Cafe::updateOrCreate(
                 ['osm_id' => $el['id'], 'osm_type' => $el['type']],
                 [
+                    'source' => 'osm',
                     'name' => $name,
                     'lat' => $lat,
                     'lng' => $lng,
@@ -147,7 +148,8 @@ class CafeImporter
 
         // Flag-not-delete: anything in this region not seen in this run is
         // marked missing, protecting against a flaky response wiping rows.
-        $flagged = Cafe::where('region_kode', $region->kode)
+        $flagged = Cafe::where('source', 'osm')
+            ->where('region_kode', $region->kode)
             ->where('last_seen_at', '<', $runStart)
             ->where('is_missing', false)
             ->update(['is_missing' => true]);

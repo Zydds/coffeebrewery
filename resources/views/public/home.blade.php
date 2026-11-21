@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', __('Coffeebrewery — Find Your Bean, Nail Your Brew'))
+@section('title', __('Coffeebrewery'))
 
 @section('content')
     {{-- Hero --}}
@@ -21,11 +21,11 @@
         </div>
 
         <div class="relative max-w-[1200px] mx-auto px-5 sm:px-8 py-16 lg:py-[72px] grid gap-10 lg:grid-cols-[1.1fr_.9fr] items-center">
-            <div data-reveal-stagger>
+            <div>
                 <p class="eyebrow">{{ __('Coffee, explained') }}</p>
                 <h1 class="mt-3 font-display font-extrabold tracking-tight text-display">
-                    {{ __('Find your bean.') }}
-                    <mark class="rounded-xl bg-coffee-amber px-[0.16em] text-coffee-espresso [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">{{ __('Nail your brew.') }}</mark>
+                    <span class="block">{{ __('Find your bean.') }}</span>
+                    <mark class="mt-2 inline-block rounded-xl bg-coffee-amber px-[0.16em] text-coffee-espresso [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">{{ __('Nail your brew.') }}</mark>
                 </h1>
                 <p class="mt-6 max-w-[480px] text-lg text-coffee-mocha">
                     {{ __('Browse beans by origin, learn how each brew method works, and get a recipe when you cannot decide.') }}
@@ -118,7 +118,7 @@
          that overhangs the top edge paints over it instead of being clipped
          by it. The section box starts below the divider, so nothing else
          changes. --}}
-    <section id="bean-catalog" class="relative isolate z-20 max-w-[1200px] mx-auto px-5 sm:px-8 section-top">
+    <section id="bean-catalog" class="relative isolate z-20 max-w-[1200px] mx-auto px-5 sm:px-8 section-top" data-bean-catalog data-bean-page="{{ $beans->currentPage() }}" data-bean-catalog-url="{{ route('home') }}">
         <x-sprig-side side="left" top="4.6" />
         <div data-reveal-stagger class="flex flex-wrap items-end justify-between gap-6">
             <h2 class="font-display font-bold text-section">{{ __('Bean Catalog') }}</h2>
@@ -128,11 +128,11 @@
                      change slides it instead of swapping backgrounds. --}}
                 <span data-filter-pill aria-hidden="true"
                       class="pointer-events-none absolute left-0 top-0 rounded-full bg-coffee-espresso"></span>
-                <x-chip :href="route('home', array_filter(['q' => request('q')])).'#bean-catalog'" :active="request('category') === null">
+                <x-chip data-bean-filter :href="route('home', array_filter(['q' => request('q')])).'#bean-catalog'" :active="request('category') === null">
                     {{ __('All') }}
                 </x-chip>
                 @foreach ($categories as $category)
-                    <x-chip :href="route('home', array_filter(['q' => request('q'), 'category' => $category->slug])).'#bean-catalog'"
+                    <x-chip data-bean-filter :href="route('home', array_filter(['q' => request('q'), 'category' => $category->slug])).'#bean-catalog'"
                             :active="request('category') === $category->slug">
                         {{ $category->name }}
                     </x-chip>
@@ -146,17 +146,17 @@
             // Every bean renders at the same weight: a plain page of equal
             // cards, the same grid the cheap catalog uses. No bean is
             // promoted above the rest.
-            $beansOnPage = $featuredBeans->getCollection();
+            $beansOnPage = $beans->getCollection();
             $shownCount = $beansOnPage->count();
         @endphp
 
         {{-- Result count + applied-filter summary --}}
-        @if ($featuredBeans->total() > 0 || request()->filled('q') || request()->filled('category'))
+        @if ($beans->total() > 0 || request()->filled('q') || request()->filled('category'))
             <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-coffee-mocha">
                 <span class="font-semibold text-coffee-espresso">
                     {{ __('Showing :shown of :total beans', [
                         'shown' => $shownCount,
-                        'total' => $featuredBeans->total(),
+                        'total' => $beans->total(),
                     ]) }}
                 </span>
                 @if (! request()->filled('q') && ! request()->filled('category') && $cheapBeans > 0)
@@ -193,22 +193,21 @@
         @else
             {{-- One named wrapper keeps the cross-document transition stable
                  whether the results render as a grid or an empty state. --}}
-            <div class="[view-transition-name:bean-results]">
-                {{-- Uniform page: 2 columns on phones, 3 on tablets, 4 on
-                     desktop. items-start keeps every card at its own height
-                     so nothing stretches with its row neighbours. --}}
-                <div class="mt-8 grid grid-cols-2 items-start md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    @foreach ($beansOnPage as $bean)
-                        <x-bean-card :bean="$bean"
-                                     x-reveal
-                                     class="reveal"
-                                     style="--reveal-delay: {{ $loop->index * 60 }}ms" />
+            <div @class(['[view-transition-name:bean-results]' => ! request()->filled('q') && ! request()->filled('category')]) data-bean-results>
+                {{-- Render the 32-item preload in four-card slices. The first
+                     slice is visible; remaining slices stay in the DOM so the
+                     arrow switches instantly without navigation. --}}
+                <div class="mt-8 grid grid-cols-2 items-start md:grid-cols-3 lg:grid-cols-4 gap-6" data-bean-grid>
+                    @foreach ($beansPreloaded as $bean)
+                        <div data-bean-card data-bean-index="{{ $loop->index }}" class="{{ $loop->index >= 4 ? 'hidden' : '' }}">
+                            <x-bean-card :bean="$bean" />
+                        </div>
                     @endforeach
                 </div>
             </div>
         @endif
 
-        <x-page-arrows :paginator="$featuredBeans" anchor="bean-catalog" />
+        <x-page-arrows :paginator="$beans" anchor="bean-catalog" />
     </section>
 
     {{-- Cream band. The divider makes the latte-to-cream change flow: it

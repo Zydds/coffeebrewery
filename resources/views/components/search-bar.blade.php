@@ -1,6 +1,6 @@
 @props(['action', 'placeholder', 'value' => '', 'name' => 'q', 'preserves' => []])
 
-<form method="GET" action="{{ $action }}" class="mt-6 flex max-w-md gap-2" role="search">
+<form method="GET" action="{{ $action }}" class="mt-6 flex max-w-md gap-2" role="search" data-bean-search>
     @foreach ($preserves as $pname => $val)
         @if ($val !== null && $val !== '')
             <input type="hidden" name="{{ $pname }}" value="{{ $val }}">

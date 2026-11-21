@@ -68,27 +68,27 @@
             {{-- Specs --}}
             <dl class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
                 @if ($recipe->brew_time_min)
-                    <div class="rounded-xl bg-white border border-coffee-mocha/20 p-4 text-center">
+                    <div class="rounded-xl bg-coffee-cream border border-coffee-mocha/20 p-4 text-center">
                         <dt class="text-xs uppercase tracking-wider text-coffee-mocha">{{ __('Total Time') }}</dt>
                         <dd class="mt-1 font-bold text-coffee-espresso">{{ $recipe->brew_time_min }} {{ __('min') }}</dd>
                     </div>
                 @endif
-                <div class="rounded-sm bg-white border border-coffee-mocha/20 p-4 text-center">
+                <div class="rounded-sm bg-coffee-cream border border-coffee-mocha/20 p-4 text-center">
                     <dt class="text-xs uppercase tracking-wider text-coffee-mocha">{{ __('Ratio') }}</dt>
                     <dd class="mt-1 font-bold text-coffee-espresso">{{ $recipe->ratio }}</dd>
                 </div>
-                <div class="rounded-sm bg-white border border-coffee-mocha/20 p-4 text-center">
+                <div class="rounded-sm bg-coffee-cream border border-coffee-mocha/20 p-4 text-center">
                     <dt class="text-xs uppercase tracking-wider text-coffee-mocha">{{ __('Water Temp') }}</dt>
                     <dd class="mt-1 font-bold text-coffee-espresso">{{ $recipe->water_temp_c }}°C</dd>
                 </div>
-                <div class="rounded-sm bg-white border border-coffee-mocha/20 p-4 text-center">
+                <div class="rounded-sm bg-coffee-cream border border-coffee-mocha/20 p-4 text-center">
                     <dt class="text-xs uppercase tracking-wider text-coffee-mocha">{{ __('Grind Size') }}</dt>
                     <dd class="mt-1 font-bold text-coffee-espresso">{{ $recipe->grind_size }}</dd>
                 </div>
             </dl>
 
             @if ($scale = $seo->scale())
-                <div class="mt-4 rounded-xl bg-white border border-coffee-mocha/20 p-4 flex flex-wrap items-center justify-between gap-4"
+                <div class="mt-4 rounded-xl bg-coffee-cream border border-coffee-mocha/20 p-4 flex flex-wrap items-center justify-between gap-4"
                      x-data="servings({{ $scale['coffee_g'] }}, {{ $scale['water_ml'] }})">
                     <div>
                         <p class="text-xs uppercase tracking-wider text-coffee-mocha">

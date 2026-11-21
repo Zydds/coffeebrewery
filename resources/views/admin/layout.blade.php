@@ -13,58 +13,51 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased bg-coffee-latte text-coffee-espresso">
-    <div class="min-h-screen flex flex-col md:flex-row">
+    <div class="min-h-screen flex flex-col lg:flex-row">
         {{-- Sidebar --}}
-        <aside class="md:w-64 shrink-0 bg-coffee-espresso text-coffee-latte md:min-h-screen"
+        <aside class="lg:w-72 shrink-0 bg-coffee-espresso text-coffee-latte lg:min-h-screen"
                x-data="{ mobileOpen: false }">
-            <div class="flex items-center justify-between px-5 py-4 border-b border-coffee-roast">
-                <a href="{{ route('dashboard') }}" class="font-bold text-lg tracking-tight">
+            <div class="flex items-center justify-between px-5 py-5 lg:sticky lg:top-0">
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-3 font-display text-xl font-bold tracking-tight">
+                    <span class="grid h-10 w-10 place-items-center rounded-xl bg-coffee-amber text-coffee-espresso" aria-hidden="true">
+                        <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8z"/><path d="M17 9h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 3v2M12 3v2"/></svg>
+                    </span>
                     Coffee CMS
                 </a>
-                <button type="button" class="md:hidden p-1" @click="mobileOpen = !mobileOpen" aria-label="Toggle sidebar">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
+                <button type="button" class="grid h-10 w-10 place-items-center rounded-xl text-coffee-latte transition-colors hover:bg-coffee-roast lg:hidden" @click="mobileOpen = !mobileOpen" aria-label="{{ __('Toggle sidebar') }}" :aria-expanded="mobileOpen.toString()">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path :d="mobileOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 7h16M4 12h16M4 17h16'" /></svg>
                 </button>
             </div>
 
-            <nav class="px-3 py-4 space-y-1" :class="mobileOpen ? 'block' : 'hidden md:block'">
-                <a href="{{ route('dashboard') }}"
-                   class="flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium transition-colors {{ request()->routeIs('dashboard') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
-                    Overview
-                </a>
-                <a href="{{ route('admin.beans.index') }}"
-                   class="flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium transition-colors {{ request()->routeIs('admin.beans.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
-                    Beans
-                </a>
-                <a href="{{ route('admin.recipes.index') }}"
-                   class="flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium transition-colors {{ request()->routeIs('admin.recipes.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
-                    Recipes
-                </a>
-                <a href="{{ route('admin.methods.index') }}"
-                   class="flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium transition-colors {{ request()->routeIs('admin.methods.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
-                    Methods
-                </a>
-                <a href="{{ route('admin.categories.index') }}"
-                   class="flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium transition-colors {{ request()->routeIs('admin.categories.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
-                    Categories
-                </a>
-                <a href="{{ route('admin.import.create') }}"
-                   class="flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium transition-colors {{ request()->routeIs('admin.import.*') ? 'bg-coffee-amber text-coffee-espresso' : 'hover:bg-coffee-roast' }}">
-                    Import
-                </a>
+            <nav class="px-4 pb-5 lg:sticky lg:top-[88px]" :class="mobileOpen ? 'block' : 'hidden lg:block'" aria-label="{{ __('Admin navigation') }}">
+                <p class="px-3 pb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-coffee-latte/45">{{ __('Workspace') }}</p>
+                <div class="space-y-1">
+                    @foreach ([
+                        ['route' => 'dashboard', 'label' => 'Overview', 'active' => request()->routeIs('dashboard')],
+                        ['route' => 'admin.beans.index', 'label' => 'Beans', 'active' => request()->routeIs('admin.beans.*')],
+                        ['route' => 'admin.recipes.index', 'label' => 'Recipes', 'active' => request()->routeIs('admin.recipes.*')],
+                        ['route' => 'admin.methods.index', 'label' => 'Methods', 'active' => request()->routeIs('admin.methods.*')],
+                        ['route' => 'admin.categories.index', 'label' => 'Categories', 'active' => request()->routeIs('admin.categories.*')],
+                        ['route' => 'admin.cafes.index', 'label' => 'Cafes', 'active' => request()->routeIs('admin.cafes.*')],
+                        ['route' => 'admin.import.create', 'label' => 'Import', 'active' => request()->routeIs('admin.import.*')],
+                    ] as $item)
+                        <a href="{{ route($item['route']) }}" @class([
+                            'group flex min-h-11 items-center justify-between rounded-xl px-3 text-sm font-medium transition-[background-color,color,transform] duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber',
+                            'bg-coffee-amber text-coffee-espresso' => $item['active'],
+                            'text-coffee-latte/75 hover:bg-coffee-roast hover:text-coffee-latte hover:translate-x-0.5' => ! $item['active'],
+                        ])>
+                            <span>{{ __($item['label']) }}</span>
+                            @if ($item['active']) <span class="h-1.5 w-1.5 rounded-full bg-coffee-espresso" aria-hidden="true"></span> @endif
+                        </a>
+                    @endforeach
+                </div>
 
-                <div class="pt-4 mt-4 border-t border-coffee-roast">
-                    <a href="{{ route('home') }}"
-                       class="flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium text-coffee-latte/70 hover:bg-coffee-roast transition-colors">
-                        View Site
-                    </a>
+                <div class="mt-8 border-t border-coffee-roast pt-5">
+                    <p class="px-3 pb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-coffee-latte/45">{{ __('Shortcuts') }}</p>
+                    <a href="{{ route('home') }}" class="flex min-h-11 items-center rounded-xl px-3 text-sm font-medium text-coffee-latte/70 transition-[background-color,color] duration-150 hover:bg-coffee-roast hover:text-coffee-latte focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber">{{ __('View site') }}</a>
                     <form method="POST" action="{{ route('logout') }}" class="mt-1">
                         @csrf
-                        <button type="submit"
-                                class="w-full text-left flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium text-coffee-latte/70 hover:bg-coffee-roast transition-colors">
-                            ← Logout
-                        </button>
+                        <button type="submit" class="flex min-h-11 w-full items-center rounded-xl px-3 text-left text-sm font-medium text-coffee-latte/70 transition-[background-color,color] duration-150 hover:bg-coffee-roast hover:text-coffee-latte focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-amber">{{ __('Log out') }}</button>
                     </form>
                 </div>
             </nav>

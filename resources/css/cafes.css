@@ -29,25 +29,60 @@
    .leaflet-container, so no Leaflet scoping is needed. */
 .cafe-progress {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 12px;
-    color: var(--color-coffee-amber);
-    opacity: .7;
+    top: 12px;
+    left: 50%;
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 28px;
+    border: 1px solid var(--color-coffee-mocha);
+    border-radius: 999px;
+    background: var(--color-coffee-roast);
+    box-shadow: 0 4px 10px rgba(44, 26, 20, .18);
+    opacity: .32;
     pointer-events: none;
+    transform: translateX(-50%);
+    transition: opacity .15s var(--ease-out);
     z-index: 1000;
-    transition: opacity .3s var(--ease-out);
 }
 
 .cafe-progress.is-loading {
     opacity: 1;
-    animation: cafe-wave-pulse 1s ease-in-out infinite alternate;
 }
 
-@keyframes cafe-wave-pulse {
-    from { opacity: .35; }
-    to   { opacity: 1; }
+.cafe-progress__node {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--color-coffee-cream);
+}
+
+.cafe-progress.is-loading .cafe-progress__node {
+    animation: cafe-progress-pulse .75s var(--ease-out) infinite alternate;
+}
+
+.cafe-progress.is-loading .cafe-progress__node:nth-child(2) {
+    animation-delay: 125ms;
+}
+
+.cafe-progress.is-loading .cafe-progress__node:nth-child(3) {
+    animation-delay: 250ms;
+}
+
+@keyframes cafe-progress-pulse {
+    to {
+        opacity: .35;
+        transform: translateY(-3px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cafe-progress.is-loading .cafe-progress__node {
+        animation: none;
+        opacity: 1;
+    }
 }
 
 /* ── Cafe pins + clusters ────────────────────────────────── */
@@ -92,7 +127,7 @@
 
 .leaflet-container .cafe-cluster--1 {
     --cluster-fill: var(--color-coffee-amber);
-    --cluster-ink: var(--color-coffee-espresso);
+    --cluster-ink: var(--color-coffee-latte);
 }
 
 .leaflet-container .cafe-cluster--1 .cafe-cluster-inner {

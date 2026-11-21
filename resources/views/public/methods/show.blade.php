@@ -33,8 +33,8 @@
                 <div class="flex flex-wrap items-start justify-between gap-3">
                     <h1 class="font-display text-[clamp(2rem,4vw,3rem)] font-extrabold leading-[1.1] tracking-tight text-coffee-espresso">{{ $method->name }}</h1>
                     <span class="text-sm font-medium px-3 py-1 rounded-full
-                        {{ $method->difficulty_level === 'easy' ? 'bg-green-100 text-green-800'
-                            : ($method->difficulty_level === 'medium' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800') }}">
+                        {{ $method->difficulty_level === 'easy' ? 'bg-coffee-cream text-coffee-espresso'
+                            : ($method->difficulty_level === 'medium' ? 'bg-coffee-amber/20 text-coffee-espresso' : 'bg-coffee-roast text-coffee-cream') }}">
                         {{ __(ucfirst($method->difficulty_level)) }}
                     </span>
                 </div>
@@ -45,7 +45,7 @@
                     <h2 class="eyebrow">{{ __('Equipment Needed') }}</h2>
                     <ul class="mt-2 grid gap-2 sm:grid-cols-2">
                         @forelse ($method->equipment_needed ?? [] as $item)
-                            <li class="flex items-center gap-2 text-sm text-coffee-espresso bg-white border border-coffee-mocha/20 rounded-xl px-3 py-2">
+                            <li class="flex items-center gap-2 text-sm text-coffee-espresso bg-coffee-cream border border-coffee-mocha/20 rounded-xl px-3 py-2">
                                 <span class="text-coffee-amber-ink" aria-hidden="true">✓</span>
                                 {{ $item }}
                             </li>

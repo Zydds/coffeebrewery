@@ -355,7 +355,7 @@ html.js-motion .reveal.is-revealed {
 .sprig-side {
     --len: calc(clamp(200px, 16vw, 320px) * var(--sprig-scale, 1));
     position: absolute;
-    z-index: -1;
+    z-index: 0;
     display: none;
     width: 0;
     height: 0;
@@ -421,11 +421,42 @@ html.js-motion .sprig-side.is-settled {
     rotate: 0deg;
 }
 
+@media (hover: hover) and (pointer: fine) {
+    .sprig-side {
+        pointer-events: auto;
+    }
+
+    .sprig-side .sprig-side__art {
+        pointer-events: auto;
+        transition: rotate 180ms var(--ease-out);
+    }
+
+    .sprig-side:hover .sprig-side__art {
+        rotate: 3deg;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     html.js-motion .sprig-side {
         rotate: 0deg;
         transition: none;
     }
+}
+
+/* The catalog itself carries the handoff, so pages never flash through a
+   blank gap while the card slice is replaced. */
+[data-bean-grid] {
+    transition: opacity 180ms var(--ease-out), transform 180ms var(--ease-out);
+}
+
+[data-bean-grid].bean-grid--leaving {
+    opacity: 0;
+    transform: translateX(var(--bean-exit-x, 0));
+}
+
+[data-bean-grid].bean-grid--entering {
+    opacity: 0;
+    transform: translateX(var(--bean-enter-x, 0));
 }
 
 /* ── Catalog card hover ─────────────────────────────────── */
@@ -751,32 +782,25 @@ html.grid-settled [data-recipes-grid] {
     transform-style: preserve-3d;
 }
 
-/* ── Hero: one-time entrances (no loops) ─────────────────── */
-/* Beans: opacity + 16px rise, 80ms stagger via --i set per bean in
-   the markup. Cup: 4px settle (drops into place) — both replace the
-   old levitate bob + hover shake, so the wave drift above stays the
-   page's only looping animation. Reduced motion: animation:none in
-   the global rule leaves both at their static end state (visible). */
+/* Beans are static on first paint. On a fine pointer, hovering one gives it
+   a small tactile tilt without competing with the hero's cursor tilt. */
 .bean {
-    animation: bean-rise 700ms var(--ease-out) both;
-    animation-delay: calc(var(--i, 0) * 80ms);
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 150ms var(--ease-out);
 }
 
-@keyframes bean-rise {
-    from {
-        opacity: 0;
-        transform: translateY(16px);
+@media (hover: hover) and (pointer: fine) {
+    .bean:hover {
+        transform: translateY(-2px) rotate(6deg);
     }
 }
 
+/* ── Hero: static first paint ─────────────────────────────── */
+/* The hero is complete before JavaScript runs: no plain-cup flash, delayed
+   copy, or staged loading state. */
 .cup-settle {
-    animation: cup-settle 700ms var(--ease-out) both;
-}
-
-@keyframes cup-settle {
-    from {
-        transform: translateY(-4px);
-    }
+    transform: translateY(0);
 }
 
 /* ── Reload: render settled ─────────────────────────────── */

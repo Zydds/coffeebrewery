@@ -467,7 +467,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // A reload keeps the URL's filter and hash; the browser already restored
     // the anchor, so a second scrollIntoView would only nudge the page.
     if (!window.location.hash && (params.has('q') || params.has('category'))) {
-        document.getElementById('bean-catalog')?.scrollIntoView();
+        window.requestAnimationFrame(() => document.getElementById('bean-catalog')?.scrollIntoView());
     }
 
     if (!window.location.hash && params.has('method_q')) {
@@ -691,6 +691,117 @@ document.addEventListener('DOMContentLoaded', () => {
         el.addEventListener('scroll', queueUpdate, { passive: true });
         window.addEventListener('resize', queueUpdate);
     });
+
+    // Bean filters and search update only the catalog. The server still renders
+    // the HTML, but applying either never reloads or animates the whole page.
+    const updateBeanCatalog = async (url, catalog, fallback) => {
+        try {
+            const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            if (!response.ok) throw new Error('Catalog request failed.');
+            const html = await response.text();
+            const nextCatalog = new DOMParser().parseFromString(html, 'text/html').querySelector('[data-bean-catalog]');
+            if (!nextCatalog) throw new Error('Filtered catalog missing.');
+            nextCatalog.querySelectorAll('[data-reveal], [data-reveal-stagger]').forEach((element) => {
+                element.classList.add('in-view');
+            });
+            catalog.replaceWith(nextCatalog);
+            window.history.pushState({}, '', url);
+        } catch {
+            fallback();
+        }
+    };
+
+    document.addEventListener('submit', (event) => {
+        const form = event.target.closest('[data-bean-search]');
+        if (!form) return;
+        const catalog = document.querySelector('[data-bean-catalog]');
+        if (!catalog) return;
+        event.preventDefault();
+        const url = new URL(form.action, window.location.origin);
+        new FormData(form).forEach((value, key) => {
+            if (value !== '') url.searchParams.set(key, value);
+        });
+        updateBeanCatalog(url, catalog, () => { window.location.href = url.href; });
+    });
+
+    document.addEventListener('click', async (event) => {
+        const link = event.target.closest('[data-bean-filter]');
+        if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+            return;
+        }
+
+        event.preventDefault();
+        const catalog = document.querySelector('[data-bean-catalog]');
+        if (!catalog) {
+            window.location.href = link.href;
+            return;
+        }
+
+        updateBeanCatalog(link.href, catalog, () => { window.location.href = link.href; });
+    });
+
+    // Bean catalog: 32 server-rendered beans are four-card pages. Arrow
+    // clicks only toggle slices, so the catalog never reloads.
+    const beanCatalog = document.querySelector('[data-bean-catalog]');
+
+    if (beanCatalog) {
+        const cards = Array.from(beanCatalog.querySelectorAll('[data-bean-card]'));
+        const pagination = beanCatalog.querySelector('[data-bean-pagination]');
+        const pageLabel = beanCatalog.querySelector('[data-bean-page-label]');
+        const pageSize = 4;
+        let page = Number(beanCatalog.dataset.beanPage) || 1;
+        const totalPages = Math.max(1, Math.ceil(cards.length / pageSize));
+
+        const renderBeanPage = (nextPage, direction = 0) => {
+            page = Math.min(totalPages, Math.max(1, nextPage));
+            const start = (page - 1) * pageSize;
+            const active = cards.slice(start, start + pageSize);
+
+            const grid = beanCatalog.querySelector('[data-bean-grid]');
+            const outgoing = cards.filter((card) => !active.includes(card) && !card.classList.contains('hidden'));
+            const entering = active.filter((card) => card.classList.contains('hidden'));
+
+            grid?.style.setProperty('--bean-exit-x', direction > 0 ? '-16px' : '16px');
+            grid?.classList.add('bean-grid--leaving');
+
+            window.setTimeout(() => {
+                outgoing.forEach((card) => card.classList.add('hidden'));
+                entering.forEach((card) => {
+                    card.style.setProperty('--bean-enter-x', direction > 0 ? '16px' : '-16px');
+                    card.classList.remove('hidden');
+                });
+                grid?.style.setProperty('--bean-enter-x', direction > 0 ? '16px' : '-16px');
+                grid?.classList.remove('bean-grid--leaving');
+                grid?.classList.add('bean-grid--entering');
+
+                requestAnimationFrame(() => {
+                    grid?.classList.remove('bean-grid--entering');
+                    grid?.style.removeProperty('--bean-exit-x');
+                    grid?.style.removeProperty('--bean-enter-x');
+                    entering.forEach((card) => card.style.removeProperty('--bean-enter-x'));
+                });
+            }, 180);
+
+            if (pageLabel) {
+                pageLabel.textContent = `Page ${page} of ${totalPages}`;
+            }
+                pagination?.querySelectorAll('a[rel]').forEach((control) => {
+                const disabled = control.dataset.beanDirection === 'prev' ? page === 1 : page === totalPages;
+                control.toggleAttribute('hidden', disabled);
+            });
+
+        };
+
+        pagination?.addEventListener('click', (event) => {
+            const link = event.target.closest('a[data-bean-direction]');
+            if (!link || !cards.length) return;
+            event.preventDefault();
+            const direction = link.dataset.beanDirection === 'next' ? 1 : -1;
+            renderBeanPage(page + direction, direction);
+        });
+
+        renderBeanPage(page);
+    }
 
     // Recipes: the result grid is server-rendered, so a filter or page
     // change is a document load. Fade the outgoing grid for 120ms, then

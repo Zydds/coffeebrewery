@@ -5,17 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * A café imported from OpenStreetMap (amenity=cafe).
+ * A cafe from OpenStreetMap or an admin-maintained manual record.
  *
- * Data trust chain: OSM import only. No owner claims, no admin CRUD in v1 —
- * corrections happen upstream on OSM and the next import picks them up.
- * Rows are upserted by (osm_id, osm_type) and flagged is_missing when absent
- * from a later run; they are never deleted, so a flaky Overpass response
- * can't silently wipe a region.
+ * OSM rows are upserted by (osm_id, osm_type) and flagged when absent from a
+ * later run. Manual rows have no OSM identity and are never touched by OSM imports.
  */
 class Cafe extends Model
 {
     protected $fillable = [
+        'source',
         'osm_id',
         'osm_type',
         'name',
@@ -36,6 +34,7 @@ class Cafe extends Model
     protected function casts(): array
     {
         return [
+            'source' => 'string',
             'lat' => 'float',
             'lng' => 'float',
             'tags' => 'array',
