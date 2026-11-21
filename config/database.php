@@ -3,6 +3,22 @@
 use Illuminate\Support\Str;
 use Pdo\Mysql;
 
+/*
+| Neon's pooled endpoint routes by SNI, which the libpq bundled with Vercel's
+| PHP runtime does not send. The direct endpoint reaches the same compute node,
+| so the pooled hostname is rewritten instead of failing every connection.
+*/
+$dbUrl = env('DB_URL');
+$dbHost = env('DB_HOST', '127.0.0.1');
+
+if (is_string($dbUrl)) {
+    $dbUrl = str_replace('-pooler.', '.', $dbUrl);
+}
+
+if (is_string($dbHost)) {
+    $dbHost = str_replace('-pooler.', '.', $dbHost);
+}
+
 return [
 
     /*
@@ -86,8 +102,8 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'url' => env('DB_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
+            'url' => $dbUrl,
+            'host' => $dbHost,
             'port' => env('DB_PORT', '5432'),
             'database' => env('DB_DATABASE', 'laravel'),
             'username' => env('DB_USERNAME', 'root'),
