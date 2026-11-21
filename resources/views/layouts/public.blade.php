@@ -47,6 +47,26 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    {{-- Chrome prerenders a public page on hover, so the document is already
+         built when the click lands. Excludes routes with side effects: the
+         locale switch writes to the session, and admin needs a real request. --}}
+    <script type="speculationrules">
+        {
+            "prerender": [{
+                "where": {
+                    "and": [
+                        { "href_matches": "/*" },
+                        { "not": { "href_matches": "/admin/*" } },
+                        { "not": { "href_matches": "/locale/*" } },
+                        { "not": { "href_matches": "/logout" } },
+                        { "not": { "href_matches": "/api/*" } }
+                    ]
+                },
+                "eagerness": "moderate"
+            }]
+        }
+    </script>
+
     <script>
         window.APP_LOCALE = @json(app()->getLocale());
 
