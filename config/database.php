@@ -4,19 +4,21 @@ use Illuminate\Support\Str;
 use Pdo\Mysql;
 
 /*
-| Neon's pooled endpoint routes by SNI, which the libpq bundled with Vercel's
-| PHP runtime does not send. The direct endpoint reaches the same compute node,
-| so the pooled hostname is rewritten instead of failing every connection.
+| Neon needs the endpoint ID when libpq cannot negotiate SNI. PGOPTIONS is
+| read by libpq before PDO opens the connection, so it works with Laravel's
+| native PostgreSQL connector without replacing framework classes.
 */
 $dbUrl = env('DB_URL');
 $dbHost = env('DB_HOST', '127.0.0.1');
+$neonHost = is_string($dbUrl) && $dbUrl !== ''
+    ? parse_url($dbUrl, PHP_URL_HOST)
+    : $dbHost;
+$neonEndpoint = is_string($neonHost) && str_contains($neonHost, '.neon.tech')
+    ? str_replace('-pooler', '', explode('.', $neonHost)[0])
+    : null;
 
-if (is_string($dbUrl)) {
-    $dbUrl = str_replace('-pooler.', '.', $dbUrl);
-}
-
-if (is_string($dbHost)) {
-    $dbHost = str_replace('-pooler.', '.', $dbHost);
+if ($neonEndpoint !== null) {
+    putenv('PGOPTIONS=endpoint='.$neonEndpoint);
 }
 
 return [
