@@ -9,8 +9,7 @@
             "src": "package.json",
             "use": "@vercel/static-build",
             "config": {
-                "distDir": "public/build",
-                "buildCommand": "npm run build"
+                "distDir": "public"
             }
         }
     ],
@@ -22,6 +21,7 @@
             },
             "continue": true
         },
+        { "handle": "filesystem" },
         {
             "src": "/(.*)",
             "dest": "/api/index.php"
